@@ -1,0 +1,7 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 1; position: relative; right: 0; left: 0; bottom: 0; top: 0; align-items: stretch; justify-content: center; align-self: center; align-content: center; width: 50%; height: auto; opacity: 1;">
+        <ui:Button text="Play" name="PlayButton" />
+        <ui:Button text="Settings" name="SettingsButton" />
+        <ui:Button text="Quit&#10;" name="QuitButton" />
+    </ui:VisualElement>
+</ui:UXML>

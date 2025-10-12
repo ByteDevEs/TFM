@@ -44,4 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bdedc55fb8b79d41908cd6f4384f6cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Settings
-  CameraDistance: 10
+  cameraDistance: 25
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 64

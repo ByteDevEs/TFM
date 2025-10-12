@@ -1,22 +1,22 @@
-using System;
 using UnityEngine;
 
 public class Settings : MonoBehaviour
 {
-    private static Settings instance;
-    public static Settings GetInstance() => instance;
+    static Settings _instance;
+    public static Settings GetInstance() => _instance;
 
-    public float CameraDistance = 10f;
-    public Vector3 GetCameraOffset()
-    {
-        return (Vector3.left + Vector3.up * Mathf.Sqrt(2) + Vector3.back) * CameraDistance;
-    }
+    [Header("Camera")]
+    public float cameraDistance = 10f;
+    public Vector3 CameraOffset => (Vector3.left + Vector3.up * Mathf.Sqrt(2) + Vector3.back) * cameraDistance;
+
+    [Header("Movement")]
+    public LayerMask groundLayerMask;
 
     void Awake()
     {
-        if (instance is null)
+        if (_instance is null)
         {
-            instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else

@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffaf5c66af8d7144a9a46ad1cf648e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Prefabs
-  CameraPrefab: {fileID: 2106903422170419616, guid: b0fbfee9572dfb44a89de3972460b1e4, type: 3}
+  cameraPrefab: {fileID: 2106903422170419616, guid: b0fbfee9572dfb44a89de3972460b1e4, type: 3}

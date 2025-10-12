@@ -1,18 +1,18 @@
-using JetBrains.Annotations;
+using Controllers;
 using UnityEngine;
 
 public class Prefabs : MonoBehaviour
 {
-    private static Prefabs instance;
-    public static Prefabs GetInstance() => instance;
+    static Prefabs _instance;
+    public static Prefabs GetInstance() => _instance;
 
-    public CameraController CameraPrefab;
+    public CameraController cameraPrefab;
 
     void Awake()
     {
-        if (instance is null)
+        if (_instance is null)
         {
-            instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
