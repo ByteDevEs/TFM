@@ -1,3 +1,4 @@
+using Lobby;
 using Mirror;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -23,6 +24,9 @@ namespace UI
 
         [SerializeField]
         VisualTreeAsset roomMenu;
+        
+        [SerializeField]
+        VisualTreeAsset gameMenu;
         
         void Awake()
         {
@@ -86,12 +90,13 @@ namespace UI
 
         void PlayButtonClicked() => UpdateVisualTree(playMenu);
         void SettingsButtonClicked() => UpdateVisualTree(optionsMenu);
-        void BackToMenuButtonClicked() => UpdateVisualTree(mainMenu);
-        void CreateRoomButtonClicked()
-        {
-            UpdateVisualTree(roomMenu);
-            ((GameManager)NetworkManager.singleton).CreateRoom();
-        }
-        void ReadyButtonClicked() => ((GameManager)NetworkManager.singleton).Ready();
+        void BackToMenuButtonClicked() => ((GameManager)NetworkManager.singleton).LeaveRoom();
+        void CreateRoomButtonClicked() => ((GameManager)NetworkManager.singleton).CreateRoom();
+        void ReadyButtonClicked() => GameManager.Ready();
+        
+        
+        public void OpenMainMenu() => UpdateVisualTree(mainMenu);
+        public void OpenGameMenu() => UpdateVisualTree(gameMenu);
+        public void OpenRoomMenu() => UpdateVisualTree(roomMenu);
     }
 }
