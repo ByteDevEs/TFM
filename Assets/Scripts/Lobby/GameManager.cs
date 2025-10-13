@@ -1,18 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Mirror;
+using Mirror.Discovery;
 using UI;
 using UnityEngine;
 namespace Lobby
 {
+    [RequireComponent(typeof(NetworkDiscovery))]
     public class GameManager : NetworkRoomManager
     {
         static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
-    
+
+        NetworkDiscovery networkDiscovery;
+        
+        Dictionary<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerStates;
+
+        public override void Start()
+        {
+            networkDiscovery = GetComponent<NetworkDiscovery>();
+            networkDiscovery.StartDiscovery();
+            
+            base.Start();
+        }
+
         public void CreateRoom()
         {
             Console.Write("Starting room...");
             StartHost();
+            networkDiscovery.AdvertiseServer();
             // SteamManager.GetInstance().SetRichPresence("steam_display", "#Status_AtMainMenu");
         }
 
@@ -34,6 +50,11 @@ namespace Lobby
             LocalRoomPlayer.CmdChangeReadyState(!LocalRoomPlayer.readyToBegin);
         }
 
+        public void OnServerFound(ServerResponse response)
+        {
+            UIDocumentController.GetInstance().AddServerToList(response);
+        }
+
         public override void OnRoomClientConnect()
         {
             UIDocumentController.GetInstance().OpenRoomMenu();
@@ -41,16 +62,54 @@ namespace Lobby
             base.OnRoomClientConnect();
         }
 
-        public override void OnRoomServerPlayersReady()
+        public override void OnRoomStartServer()
         {
-            print("All players ready: " + pendingPlayers.Count);
-            foreach (PendingPlayer pendingPlayer in pendingPlayers)
+            spawnerStates = FindObjectsByType<NetworkStartPosition>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID)
+                .ToDictionary(sp => sp, _ => (CustomNetworkRoomPlayer)null);
+            
+            base.OnRoomStartServer();
+        }
+
+        public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
+        {
+            (NetworkStartPosition spawner, _) = spawnerStates.FirstOrDefault(x => x.Value is null);
+
+            if (spawner != null)
             {
-                print("Player: " + pendingPlayer.conn.connectionId);
-                pendingPlayer.roomPlayer.GetComponent<CustomNetworkRoomPlayer>().OnClientPlayersReady();
+
+                GameObject roomPlayer = Instantiate(roomPlayerPrefab.gameObject, spawner.transform.position, spawner.transform.rotation);
+
+                NetworkServer.Spawn(roomPlayer, conn);
+                spawnerStates[spawner] = roomPlayer.GetComponent<CustomNetworkRoomPlayer>();
+
+                return roomPlayer;
             }
+
+            conn.Disconnect();
+            return null;
+        }
+
+        public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
+        {
+            if (conn.identity)
+            {
+                CustomNetworkRoomPlayer roomPlayer = conn.identity.GetComponent<CustomNetworkRoomPlayer>();
         
-            base.OnRoomServerPlayersReady();
+                KeyValuePair<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerEntry = spawnerStates.FirstOrDefault(sp => sp.Value == roomPlayer);
+
+                if (spawnerEntry.Key)
+                {
+                    spawnerStates[spawnerEntry.Key] = null;
+                }
+            }
+    
+            base.OnRoomServerDisconnect(conn);
+        }
+
+        public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        {
+            roomPlayer.GetComponent<CustomNetworkRoomPlayer>().OnClientPlayersReady();
+            return base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
         }
 
         public override void OnClientDisconnect()

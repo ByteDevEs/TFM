@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Lobby;
 using Mirror;
+using Mirror.Discovery;
 using UnityEngine;
 using UnityEngine.UIElements;
 namespace UI
@@ -12,7 +14,8 @@ namespace UI
         
         
         UIDocument document;
-
+        List<long> serverIds;
+        
         [SerializeField]
         VisualTreeAsset mainMenu;
 
@@ -41,6 +44,7 @@ namespace UI
             }
             
             document = GetComponent<UIDocument>();
+            serverIds = new List<long>();
             UpdateVisualTree(mainMenu);
         }
 
@@ -93,8 +97,25 @@ namespace UI
         void BackToMenuButtonClicked() => ((GameManager)NetworkManager.singleton).LeaveRoom();
         void CreateRoomButtonClicked() => ((GameManager)NetworkManager.singleton).CreateRoom();
         void ReadyButtonClicked() => GameManager.Ready();
-        
-        
+
+        public void AddServerToList(ServerResponse response)
+        {
+            if (serverIds.Contains(response.serverId))
+            {
+                return;
+            }
+            
+            ListView container = document.rootVisualElement.Q<ListView>("ServerListView");
+            Button joinButton =  new Button { text = $"Join {response.uri.Host}" };
+            
+            serverIds.Add(response.serverId);
+            joinButton.clicked += () =>
+            {
+                NetworkManager.singleton.StartClient(response.uri);
+            };
+            
+            container.hierarchy.Add(joinButton);
+        }
         public void OpenMainMenu() => UpdateVisualTree(mainMenu);
         public void OpenGameMenu() => UpdateVisualTree(gameMenu);
         public void OpenRoomMenu() => UpdateVisualTree(roomMenu);
