@@ -534,7 +534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror.Transports::Mirror.TelepathyTransport
-  port: 7777
+  port: 13473
   NoDelay: 1
   SendTimeout: 5000
   ReceiveTimeout: 30000
@@ -657,7 +657,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Mirror.Components::Mirror.Discovery.NetworkDiscovery
   enableActiveDiscovery: 1
   BroadcastAddress: 
-  serverBroadcastListenPort: 7777
+  serverBroadcastListenPort: 13473
   ActiveDiscoveryInterval: 1
   transport: {fileID: 1515485232}
   OnServerFound:
@@ -695,7 +695,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1515485226}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88c37d3deca7a834d80cfd8d3cfcc510, type: 3}
   m_Name: 

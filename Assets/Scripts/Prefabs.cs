@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class Prefabs : MonoBehaviour
 {
-    static Prefabs _instance;
-    public static Prefabs GetInstance() => _instance;
+    static Prefabs instance;
+    public static Prefabs GetInstance() => instance;
 
     public CameraController cameraPrefab;
 
     void Awake()
     {
-        if (_instance is null)
+        if (instance is null)
         {
-            _instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else

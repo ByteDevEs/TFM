@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Settings : MonoBehaviour
 {
-    static Settings _instance;
-    public static Settings GetInstance() => _instance;
+    static Settings instance;
+    public static Settings GetInstance() => instance;
 
     [Header("Camera")]
     public float cameraDistance = 10f;
@@ -14,9 +14,9 @@ public class Settings : MonoBehaviour
 
     void Awake()
     {
-        if (_instance is null)
+        if (instance is null)
         {
-            _instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else

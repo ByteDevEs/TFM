@@ -9,12 +9,12 @@ namespace UI
     [RequireComponent(typeof(UIDocument))]
     public class UIDocumentController : MonoBehaviour
     {
-        static UIDocumentController _instance;
-        public static UIDocumentController GetInstance() => _instance;
+        static UIDocumentController instance;
+        public static UIDocumentController GetInstance() => instance;
         
         
         UIDocument document;
-        List<long> serverIds;
+        Dictionary<long, ServerResponse> serversFound;
         
         [SerializeField]
         VisualTreeAsset mainMenu;
@@ -33,9 +33,9 @@ namespace UI
         
         void Awake()
         {
-            if (_instance is null)
+            if (instance is null)
             {
-                _instance = this;
+                instance = this;
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -44,7 +44,7 @@ namespace UI
             }
             
             document = GetComponent<UIDocument>();
-            serverIds = new List<long>();
+            serversFound = new Dictionary<long, ServerResponse>();
             UpdateVisualTree(mainMenu);
         }
 
@@ -84,6 +84,24 @@ namespace UI
                 readyButton.clicked -= ReadyButtonClicked;
                 readyButton.clicked += ReadyButtonClicked;
             }
+            
+            ListView container = document.rootVisualElement.Q<ListView>("ServerListView");
+            if (container is not null)
+            {
+                container.hierarchy.Clear();
+
+                foreach (KeyValuePair<long, ServerResponse> serverResponse in serversFound)
+                {
+                    Button joinButton =  new Button { text = $"Join {serverResponse.Value.uri.Host}" };
+            
+                    joinButton.clicked += () =>
+                    {
+                        NetworkManager.singleton.StartClient(serverResponse.Value.uri);
+                    };
+            
+                    container.hierarchy.Add(joinButton);
+                }
+            }
         }
 
         void UpdateVisualTree(VisualTreeAsset asset)
@@ -100,15 +118,20 @@ namespace UI
 
         public void AddServerToList(ServerResponse response)
         {
-            if (serverIds.Contains(response.serverId))
+            if (serversFound.ContainsKey(response.serverId))
             {
                 return;
             }
             
             ListView container = document.rootVisualElement.Q<ListView>("ServerListView");
+            serversFound.Add(response.serverId, response);
+            if (container is null)
+            {
+                return;
+            }
+            
             Button joinButton =  new Button { text = $"Join {response.uri.Host}" };
             
-            serverIds.Add(response.serverId);
             joinButton.clicked += () =>
             {
                 NetworkManager.singleton.StartClient(response.uri);
