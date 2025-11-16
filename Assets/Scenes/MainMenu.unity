@@ -620,7 +620,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 5133137850383519250, guid: 9b46e94a31e29324397fdc3e1c9cfb28, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 2163876004968037099, guid: d6daf0c8172e300439a9ffd55eadec5b, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -766,10 +767,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 933480681281691118, guid: aafa4513595c4e149a81c556f3d35a0d, type: 3}
-      propertyPath: gameMenu
-      value: 
-      objectReference: {fileID: 9197481963319205126, guid: 270772b03d9320e43b4d00dfd9620f0b, type: 3}
     - target: {fileID: 1980767319892821738, guid: aafa4513595c4e149a81c556f3d35a0d, type: 3}
       propertyPath: m_Name
       value: UI

@@ -1,17 +1,17 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 namespace Controllers
 {
 	[RequireComponent(typeof(NetworkIdentity), typeof(PlayerInput), typeof(MovementController))]
+	[RequireComponent(typeof(AttackController))]
 	public class PlayerController : NetworkBehaviour
 	{
 		PlayerInput playerInput;
 		CameraController cameraController;
 		MovementController movementController;
-
-		[SyncVar]
-		CharacterStats stats;
+		AttackController attackController;
 
 		void Start()
 		{
@@ -19,11 +19,11 @@ namespace Controllers
 			{
 				return;
 			}
-		
-			stats = new CharacterStats();
+
 			playerInput = GetComponent<PlayerInput>();
 			cameraController = Instantiate(Prefabs.GetInstance().cameraPrefab);
 			movementController = GetComponent<MovementController>();
+			attackController = GetComponent<AttackController>();
 		}
 
 		void Update()
@@ -34,11 +34,19 @@ namespace Controllers
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();
-
 			cameraController.SetPosition(mousePos, transform.position);
 
-			Ray ray = cameraController.Camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-			movementController.Move(ray);
+			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
+
+			if (!attackController.TryAttack(ray))
+			{
+				if (!attackController.isAttackingTarget)
+				{
+					movementController.Move(ray);
+				}
+			}
+
+			attackController.SwapWeapons(ray);
 		}
 	}
 }

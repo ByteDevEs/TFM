@@ -17,7 +17,9 @@ GameObject:
   - component: {fileID: 5174031444871251914}
   - component: {fileID: 7616292823452623313}
   - component: {fileID: 9112354025182278503}
+  - component: {fileID: 7329050955176290639}
   - component: {fileID: 2258506339775883038}
+  - component: {fileID: 1635623351972320866}
   m_Layer: 0
   m_Name: PlayerPrototype
   m_TagString: Untagged
@@ -168,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 1883402298693725001}
@@ -220,6 +222,23 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &7329050955176290639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5133137850383519250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 608a040b1bf344c43be8ec4dbe858194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Controllers.AttackController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  weapon: {fileID: 11400000, guid: 6636306fc6228a4459b3eb0e8ce8c0a1, type: 2}
+  isAttackingTarget: 0
 --- !u!114 &2258506339775883038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,3 +269,20 @@ MonoBehaviour:
   m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1635623351972320866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5133137850383519250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8b8c200d25bbdb4e9321d1c4ef356af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Controllers.HealthController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  maxHealth: 100
+  currentHealth: 100

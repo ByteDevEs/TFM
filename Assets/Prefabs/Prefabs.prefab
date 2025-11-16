@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Prefabs
   cameraPrefab: {fileID: 2106903422170419616, guid: b0fbfee9572dfb44a89de3972460b1e4, type: 3}
+  prototypeEnemy: {fileID: 2163876004968037099, guid: d6daf0c8172e300439a9ffd55eadec5b, type: 3}
