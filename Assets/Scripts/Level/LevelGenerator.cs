@@ -42,11 +42,11 @@ namespace Level
 
 			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
 			{
-				defaultGrid.GenerateMST();
+				defaultGrid.GenerateMst();
 			}
 			else
 			{
-				selectedLevelGrid.GenerateMST();
+				selectedLevelGrid.GenerateMst();
 			}
 		}
 

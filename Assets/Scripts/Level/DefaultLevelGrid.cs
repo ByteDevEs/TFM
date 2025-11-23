@@ -33,7 +33,7 @@ namespace Level
 			print($"Rooms: {rooms.Length}, Triangles: {triangles.Length / 3}");
 		}
 
-		public override void GenerateMST()
+		public override void GenerateMst()
 		{
 			mstLines = CalculateMinimumSpanningTree(triangles);
 			
