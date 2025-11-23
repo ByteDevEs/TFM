@@ -5,25 +5,22 @@ using UnityEngine;
 namespace Weapons
 {
 	[CreateAssetMenu(fileName = "WeaponScriptable", menuName = "Scriptable Objects/WeaponScriptable")]
-	public class WeaponScriptable : ScriptableObject
+	public abstract class WeaponScriptable : ScriptableObject
 	{
-		[SerializeField] public new string name;
-		[SerializeField] public float baseDamage;
-		[SerializeField] public float baseRange;
-		[SerializeField] public float baseCooldown;
-		[SerializeField] public AttackType attackType;
+		public new string name;
+		public float baseDamage;
+		public float baseRange;
+		public float baseCooldown;
+		public AttackType attackType;
 
-		[SerializeField]
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Melee)]
 		#endif
 		public float attackDegree;
-		[SerializeField]
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Ranged)]
 		#endif
 		public float attackWidth;
-		[SerializeField]
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Area)]
 		#endif

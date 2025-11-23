@@ -5,7 +5,7 @@ namespace Weapons
 {
     public class PhysicalWeapon : HoverableObject
     {
-        [SyncVar] WeaponScriptable weapon;
+        WeaponScriptable weapon;
 
         public override void SetHoverEffect()
         {

@@ -12,7 +12,7 @@ namespace Controllers
 		MovementController movementController;
 
 		[SyncVar] CharacterStats stats;
-		[SyncVar] public WeaponScriptable weapon;
+		public WeaponScriptable weapon;
 
 		EnemyController lastEnemyHit;
 		[SyncVar] EnemyController selectedEnemy;
