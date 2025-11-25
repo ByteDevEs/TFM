@@ -36,7 +36,7 @@ namespace Level
 			}
 		}
 
-		void GenerateMST()
+		void GenerateMst()
 		{
 			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
 
@@ -49,6 +49,48 @@ namespace Level
 				selectedLevelGrid.GenerateMst();
 			}
 		}
+		
+		void GenerateCells()
+		{
+			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
+
+			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
+			{
+				defaultGrid.GenerateCells();
+			}
+			else
+			{
+				selectedLevelGrid.GenerateCells();
+			}
+		}
+		
+		void GenerateStartAndExit()
+		{
+			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
+
+			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
+			{
+				defaultGrid.GenerateStartAndExit();
+			}
+			else
+			{
+				selectedLevelGrid.GenerateStartAndExit();
+			}
+		}
+		
+		void GenerateMesh()
+		{
+			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
+
+			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
+			{
+				defaultGrid.GenerateMesh();
+			}
+			else
+			{
+				selectedLevelGrid.GenerateMesh();
+			}
+		}
 
 		void OnGUI()
 		{
@@ -59,7 +101,22 @@ namespace Level
 
 			if (GUI.Button(new Rect(10, 50, 100, 20), "Generate MST"))
 			{
-				GenerateMST();
+				GenerateMst();
+			}
+			
+			if (GUI.Button(new Rect(10, 90, 100, 20), "Generate Cells"))
+			{
+				GenerateCells();
+			}
+			
+			if (GUI.Button(new Rect(10, 130, 100, 20), "Generate Start and Exit"))
+			{
+				GenerateStartAndExit();
+			}
+
+			if (GUI.Button(new Rect(10, 170, 100, 20), "Generate Mesh"))
+			{
+				GenerateMesh();
 			}
 		}
 	}

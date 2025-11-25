@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 756658302843351193}
   - component: {fileID: 4670157553713983606}
+  - component: {fileID: 2027858426659755807}
   m_Layer: 0
   m_Name: DefaultLevelGrid
   m_TagString: Untagged
@@ -44,8 +45,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8b7e055a5a0d44cb4b7231f7391c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level.DefaultLevelGrid
+  floorPrefab: {fileID: 2267696794511580876, guid: 8fd4044e47f61b04fac50223fe960997, type: 3}
+  wallPrefab: {fileID: 3266648259510826313, guid: 400f0a15c7fc85a44879c369b4c7039b, type: 3}
+  startPrefab: {fileID: 3266648259510826313, guid: bea760ba325d8854c90774d299ec05ba, type: 3}
+  exitPrefab: {fileID: 3266648259510826313, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
+  roomSize: 5
   gridX: 32
   gridY: 32
-  minRoomCount: 6
-  maxRoomCount: 15
+  minRoomCount: 10
+  maxRoomCount: 30
+  minRoomSize: 2
   maxRoomSize: 5
+  rooms: []
+--- !u!114 &2027858426659755807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650692813798286582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 0}
+  m_BuildHeightMesh: 0

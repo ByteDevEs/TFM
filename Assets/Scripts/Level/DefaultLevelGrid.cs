@@ -4,7 +4,6 @@ using System.Linq;
 using DelaunatorSharp;
 using UnityEngine;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using Random = UnityEngine.Random;
 
 namespace Level
@@ -16,36 +15,221 @@ namespace Level
 
 		public int minRoomCount = 3;
 		public int maxRoomCount = 7;
+		public int minRoomSize = 1;
 		public int maxRoomSize = 3;
 
-		public int4[] rooms = Array.Empty<int4>();
+		[HideInInspector] public int4[] rooms = Array.Empty<int4>();
 		int[] triangles = Array.Empty<int>();
 		List<(int u, int v, float distance)> allEdges;
 		List<(int u, int v, float distance)> unusedEdges;
-		HashSet<(int u, int v)> uniqueEdges = new HashSet<(int u, int v)>();
-		public List<int> mstLines;
-		
+		readonly HashSet<(int u, int v)> uniqueEdges = new HashSet<(int u, int v)>();
+		List<int> mstLines;
+		bool[,] levelCells;
+		public int3 startPosition, exitPosition;
+
 		public override void GenerateLevelGrid()
 		{
 			rooms = CreateRooms();
 			triangles = CreateTriangles();
-
-			print($"Rooms: {rooms.Length}, Triangles: {triangles.Length / 3}");
 		}
 
 		public override void GenerateMst()
 		{
 			mstLines = CalculateMinimumSpanningTree(triangles);
-			
+
 			const float reusePercentage = 0.125f;
 			int numCyclesToAdd = Mathf.RoundToInt(mstLines.Count * reusePercentage);
-			
-    
+
+
 			for (int i = 0; i < numCyclesToAdd && i < unusedEdges.Count; i++)
 			{
 				mstLines.Add(unusedEdges[i].u);
 				mstLines.Add(unusedEdges[i].v);
 			}
+		}
+
+		public override void GenerateCells()
+		{
+			levelCells = new bool[gridX, gridY];
+			for (int i = 0; i < gridX; i++)
+			{
+				for (int j = 0; j < gridY; j++)
+				{
+					foreach (int4 room in rooms)
+					{
+						if (IsOverlapping(room, new int4(i, j, 1, 1)))
+						{
+							levelCells[i, j] = true;
+						}
+					}
+				}
+			}
+
+			if (mstLines == null)
+			{
+				return;
+			}
+			
+			for (int i = 0; i < mstLines.Count; i += 2)
+			{
+				int indexA = mstLines[i];
+				int indexB = mstLines[i + 1];
+
+				int4 roomA = rooms[indexA];
+				int4 roomB = rooms[indexB];
+
+				CarvePath(roomA, roomB);
+			}
+		}
+
+		public override void GenerateStartAndExit()
+		{
+			int startRoomIndex = Random.Range(0, rooms.Length);
+			int exitRoomIndex = Random.Range(0, rooms.Length);
+
+			int attempts = 0;
+			while (startRoomIndex == exitRoomIndex && attempts < 100)
+			{
+				exitRoomIndex = Random.Range(0, rooms.Length);
+				attempts++;
+			}
+
+			int4 startRoom = rooms[startRoomIndex];
+			int4 exitRoom = rooms[exitRoomIndex];
+
+			startPosition = FindRandomWallForRoom(startRoom);
+			exitPosition = FindRandomWallForRoom(exitRoom);
+		}
+		
+		public override void GenerateMesh()
+		{
+			for (int i = 0; i < levelCells.GetLength(0); i++)
+			{
+				for (int j = 0; j < levelCells.GetLength(1); j++)
+				{
+					GameObject cellContainer = new GameObject($"CellContainer_{i}_{j}");
+					cellContainer.transform.SetParent(transform);
+					cellContainer.transform.position = new Vector3(i * roomSize, 0, j * roomSize);
+					cellContainer.transform.localScale = Vector3.one * roomSize;
+
+					if (startPosition.xy.Equals(new int2(i, j)))
+					{
+						GameObject stairsDown = Instantiate(startPrefab, cellContainer.transform);
+						stairsDown.transform.localPosition = new Vector3(0, -0.5f, 0);
+						stairsDown.transform.rotation = Quaternion.Euler(0, startPosition.z, 0);
+						stairsDown.name = $"StairsDown_{i}_{j}";
+						continue;
+					}
+
+					if (exitPosition.xy.Equals(new int2(i, j)))
+					{
+						GameObject stairsUp = Instantiate(exitPrefab, cellContainer.transform);
+						stairsUp.transform.localPosition = new Vector3(0, -0.5f, 0);
+						stairsUp.transform.rotation = Quaternion.Euler(0, exitPosition.z, 0);
+						stairsUp.name = $"StairsUp_{i}_{j}";
+						continue;
+					}
+					
+					if (levelCells[i, j])
+					{
+						GameObject floor = Instantiate(floorPrefab, cellContainer.transform);
+						floor.transform.localPosition = new Vector3(0, -0.5f, 0);
+						floor.name = $"Floor_{i}_{j}";
+					}
+					else
+					{
+						GameObject wall = Instantiate(wallPrefab, cellContainer.transform);
+						wall.name = $"Wall_{i}_{j}";
+					}
+				}
+			}
+
+			surface.BuildNavMesh();
+		}
+
+		int3 FindRandomWallForRoom(int4 room)
+		{
+			List<int3> validWalls = new List<int3>();
+
+			int xStart = room.x;
+			int xEnd = room.x + room.z - 1;
+			int yStart = room.y;
+			int yEnd = room.y + room.w - 1;
+
+			AddValidWalls(xStart, xEnd, yStart - 1, true, 0, validWalls);
+			AddValidWalls(xStart, xEnd, yEnd + 1, true, 180, validWalls);
+			AddValidWalls(yStart, yEnd, xStart - 1, false, 90, validWalls);
+			AddValidWalls(yStart, yEnd, xEnd + 1, false, 270, validWalls);
+
+			return validWalls.Count > 0 ? validWalls[Random.Range(0, validWalls.Count)] : new int3(room.x + room.z / 2, room.y + room.w / 2, 0);
+		}
+
+		void AddValidWalls(int rangeMin, int rangeMax, int fixedAxis, bool isHorizontal, int rotationY, List<int3> results)
+		{
+			for (int i = rangeMin; i <= rangeMax; i++)
+			{
+				int x = isHorizontal ? i : fixedAxis;
+				int y = isHorizontal ? fixedAxis : i;
+
+				if (x < 0 || x >= gridX || y < 0 || y >= gridY) continue;
+
+				if (!levelCells[x, y])
+				{
+					results.Add(new int3(x, y, rotationY));
+				}
+			}
+		}
+
+		void CarvePath(int4 roomA, int4 roomB)
+		{
+			int2 startPos = new int2(roomA.x + roomA.z / 2, roomA.y + roomA.w / 2);
+			int2 endPos = new int2(roomB.x + roomB.z / 2, roomB.y + roomB.w / 2);
+
+			bool goHorizontalFirst = Random.value > 0.5f;
+
+			if (goHorizontalFirst)
+			{
+				CarveHorizontal(startPos.x, endPos.x, startPos.y);
+				CarveVertical(startPos.y, endPos.y, endPos.x);
+			}
+			else
+			{
+				CarveVertical(startPos.y, endPos.y, startPos.x);
+				CarveHorizontal(startPos.x, endPos.x, endPos.y);
+			}
+		}
+
+		void CarveHorizontal(int xStart, int xEnd, int yFixed)
+		{
+			int low = math.min(xStart, xEnd);
+			int high = math.max(xStart, xEnd);
+
+			for (int x = low; x <= high; x++)
+			{
+				if (IsValid(x, yFixed))
+				{
+					levelCells[x, yFixed] = true;
+				}
+			}
+		}
+
+		void CarveVertical(int yStart, int yEnd, int xFixed)
+		{
+			int low = math.min(yStart, yEnd);
+			int high = math.max(yStart, yEnd);
+
+			for (int y = low; y <= high; y++)
+			{
+				if (IsValid(xFixed, y))
+				{
+					levelCells[xFixed, y] = true;
+				}
+			}
+		}
+
+		bool IsValid(int x, int y)
+		{
+			return x >= 0 && x < gridX && y >= 0 && y < gridY;
 		}
 
 		int4[] CreateRooms()
@@ -62,13 +246,13 @@ namespace Level
 				while (!canBePlaced && currentAttempts < maxAttempts)
 				{
 					currentAttempts++;
-					int w = Random.Range(1, maxRoomSize);
-					int h = Random.Range(1, maxRoomSize);
-					int x = Random.Range(0, gridX - w);
-					int y = Random.Range(0, gridY - h);
+					int w = Random.Range(minRoomSize, maxRoomSize);
+					int h = Random.Range(minRoomSize, maxRoomSize);
+					int x = Random.Range(1, gridX - w - 1);
+					int y = Random.Range(1, gridY - h - 1);
 					int4 newRoom = new int4(x, y, w, h);
 
-					canBePlaced = generatedRooms.All(r => !IsOverlapping(newRoom, r));
+					canBePlaced = generatedRooms.All(r => !IsOverlappingWithPadding(newRoom, r));
 
 					if (canBePlaced)
 					{
@@ -99,17 +283,12 @@ namespace Level
 				int a = originalTriangles[i];
 				int b = originalTriangles[i + 1];
 				int c = originalTriangles[i + 2];
-				
+
 				TryAddUniqueEdge(a, b);
 				TryAddUniqueEdge(b, c);
 				TryAddUniqueEdge(c, a);
 			}
 
-			foreach ((int, int, float) edge in allEdges)
-			{
-				
-			}
-			
 			allEdges.Sort((x, y) => x.distance.CompareTo(y.distance));
 
 			List<int> mstResult = new List<int>();
@@ -145,7 +324,7 @@ namespace Level
 
 			return mstResult;
 		}
-		
+
 		void TryAddUniqueEdge(int u, int v)
 		{
 			int smaller = Math.Min(u, v);
@@ -155,7 +334,7 @@ namespace Level
 			{
 				return;
 			}
-			
+
 			Vector2 posU = new Vector2(rooms[u].x, rooms[u].y);
 			Vector2 posV = new Vector2(rooms[v].x, rooms[v].y);
 			float distance = Vector2.Distance(posU, posV);
@@ -163,7 +342,7 @@ namespace Level
 			allEdges.Add((u, v, distance));
 		}
 
-		static bool IsOverlapping(int4 a, int4 b)
+		static bool IsOverlappingWithPadding(int4 a, int4 b)
 		{
 			const int padding = 3;
 
@@ -173,21 +352,76 @@ namespace Level
 			       a.y + a.w + padding > b.y;
 		}
 
+		static bool IsOverlapping(int4 a, int4 b)
+		{
+			return a.x < b.x + b.z &&
+			       a.x + a.z > b.x &&
+			       a.y < b.y + b.w &&
+			       a.y + a.w > b.y;
+		}
+
 		void OnDrawGizmos()
 		{
-			if (rooms == null || triangles == null) return;
-
-			Gizmos.color = Color.red;
-			foreach (int4 room in rooms)
+			if (rooms == null || triangles == null)
 			{
-				Gizmos.DrawCube(new Vector3(room.x, 0, room.y), new Vector3(room.z, 1, room.w));
+				return;
 			}
 
 			if (triangles.Length <= 0)
 			{
 				return;
 			}
-			
+
+			if (levelCells != null && levelCells.Length != 0)
+			{
+				for (int i = 0; i < gridX; i++)
+				{
+					for (int j = 0; j < gridY; j++)
+					{
+						Gizmos.color = levelCells[i, j] ? Color.mediumPurple : Color.white;
+						Gizmos.DrawCube(new Vector3(i * roomSize, 0, j * roomSize), Vector3.one * 0.5f * roomSize);
+
+						if (!startPosition.xy.Equals(new int2(i, j)) && !exitPosition.xy.Equals(new int2(i, j)))
+						{
+							continue;
+						}
+						
+						Gizmos.color = Color.yellow;
+						Gizmos.DrawCube(new Vector3(i * roomSize, 0, j * roomSize), Vector3.one * 0.5f * roomSize + Vector3.up * 2f);
+					}
+				}
+				
+				return;
+			}
+
+			Gizmos.color = Color.red;
+			foreach (int4 room in rooms)
+			{
+				Gizmos.DrawCube(new Vector3(room.x * roomSize, 0, room.y * roomSize), new Vector3(room.z * roomSize, roomSize, room.w * roomSize));
+			}
+
+			if (mstLines != null && mstLines.Count != 0)
+			{
+				Gizmos.color = Color.blue;
+				for (int i = 0; i < mstLines.Count; i += 2)
+				{
+					int indexA = mstLines[i];
+					int indexB = mstLines[i + 1];
+
+					if (indexA >= rooms.Length || indexB >= rooms.Length)
+					{
+						continue;
+					}
+
+					Vector3 pA = new Vector3(rooms[indexA].x * roomSize, 0, rooms[indexA].y * roomSize);
+					Vector3 pB = new Vector3(rooms[indexB].x * roomSize, 0, rooms[indexB].y * roomSize);
+
+					Gizmos.DrawLine(pA, pB);
+				}
+				
+				return;
+			}
+
 			Gizmos.color = Color.green;
 			for (int i = 0; i < triangles.Length; i += 3)
 			{
@@ -205,35 +439,13 @@ namespace Level
 					continue;
 				}
 
-				Vector3 p0 = new Vector3(rooms[index0].x, 0, rooms[index0].y);
-				Vector3 p1 = new Vector3(rooms[index1].x, 0, rooms[index1].y);
-				Vector3 p2 = new Vector3(rooms[index2].x, 0, rooms[index2].y);
+				Vector3 p0 = new Vector3(rooms[index0].x * roomSize, 0, rooms[index0].y * roomSize);
+				Vector3 p1 = new Vector3(rooms[index1].x * roomSize, 0, rooms[index1].y * roomSize);
+				Vector3 p2 = new Vector3(rooms[index2].x * roomSize, 0, rooms[index2].y * roomSize);
 
 				Gizmos.DrawLine(p0, p1);
 				Gizmos.DrawLine(p1, p2);
 				Gizmos.DrawLine(p2, p0);
-			}
-
-			if (mstLines == null || mstLines.Count == 0)
-			{
-				return;
-			}
-			
-			Gizmos.color = Color.blue;
-			for (int i = 0; i < mstLines.Count; i += 2)
-			{
-				int indexA = mstLines[i];
-				int indexB = mstLines[i + 1];
-
-				if (indexA >= rooms.Length || indexB >= rooms.Length)
-				{
-					continue;
-				}
-
-				Vector3 pA = new Vector3(rooms[indexA].x, 0, rooms[indexA].y);
-				Vector3 pB = new Vector3(rooms[indexB].x, 0, rooms[indexB].y);
-
-				Gizmos.DrawLine(pA, pB);
 			}
 		}
 	}
