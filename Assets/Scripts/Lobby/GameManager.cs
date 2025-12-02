@@ -1,23 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Controllers;
+using Level;
 using Mirror;
 using Mirror.Discovery;
 using UI;
 using UnityEngine;
+using UnityEngine.AI;
+
 namespace Lobby
 {
 	[RequireComponent(typeof(NetworkDiscovery))]
 	public class GameManager : NetworkRoomManager
 	{
+		public LevelGenerator levelGenerator;
+		
 		static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
-
 		NetworkDiscovery networkDiscovery;
-
 		Dictionary<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerStates;
 
 		public override void Start()
 		{
+			levelGenerator = GetComponent<LevelGenerator>();
 			networkDiscovery = GetComponent<NetworkDiscovery>();
 			networkDiscovery.StartDiscovery();
 
@@ -128,6 +133,34 @@ namespace Lobby
 			UIDocumentController.GetInstance().OpenMainMenu();
 
 			base.OnClientDisconnect();
+		}
+
+		[Server]
+		public void SrvMovePlayerToLevel(GameObject player, int levelNumber, int difference)
+		{
+			print("Moving player to level " + levelNumber + difference);
+			
+			LevelGrid oldLevel = levelGenerator.GetOrAddLevel(levelNumber);
+			LevelGrid newLevel = levelGenerator.GetOrAddLevel(levelNumber + difference);
+
+			if (oldLevel)
+			{
+				oldLevel.RemovePlayer();
+			}
+
+			if (newLevel)
+			{
+				newLevel.AddPlayer();
+			
+				float x = newLevel.transform.position.x + newLevel.startPosition.x * newLevel.roomSize;
+				float y = newLevel.transform.position.y + 1;
+				float z = newLevel.transform.position.z + newLevel.startPosition.y * newLevel.roomSize;
+				Vector3 position = new Vector3(x, y, z);
+				player.GetComponent<NavMeshAgent>().enabled = false;
+				player.transform.position = position;
+				player.GetComponent<NavMeshAgent>().enabled = true;
+				player.GetComponent<NavMeshAgent>().SetDestination(position);
+			}
 		}
 	}
 }

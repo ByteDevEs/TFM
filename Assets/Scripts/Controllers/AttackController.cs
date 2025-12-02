@@ -11,7 +11,7 @@ namespace Controllers
 	{
 		MovementController movementController;
 
-		[SyncVar] CharacterStats stats;
+		CharacterStats stats;
 		public WeaponScriptable weapon;
 
 		EnemyController lastEnemyHit;
@@ -25,6 +25,7 @@ namespace Controllers
 		void Start()
 		{
 			movementController = GetComponent<MovementController>();
+			stats = GetComponent<CharacterStats>();
 		}
 
 		void Update()

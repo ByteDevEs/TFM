@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DelaunatorSharp;
+using Mirror;
 using UnityEngine;
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
@@ -10,30 +11,19 @@ namespace Level
 {
 	public class DefaultLevelGrid : LevelGrid
 	{
-		public int gridX = 32;
-		public int gridY = 32;
-
-		public int minRoomCount = 3;
-		public int maxRoomCount = 7;
-		public int minRoomSize = 1;
-		public int maxRoomSize = 3;
-
-		[HideInInspector] public int4[] rooms = Array.Empty<int4>();
 		int[] triangles = Array.Empty<int>();
 		List<(int u, int v, float distance)> allEdges;
 		List<(int u, int v, float distance)> unusedEdges;
 		readonly HashSet<(int u, int v)> uniqueEdges = new HashSet<(int u, int v)>();
 		List<int> mstLines;
-		bool[,] levelCells;
-		public int3 startPosition, exitPosition;
 
-		public override void GenerateLevelGrid()
+		[Server] public void SrvGenerateLevelGrid()
 		{
 			rooms = CreateRooms();
 			triangles = CreateTriangles();
 		}
 
-		public override void GenerateMst()
+		[Server] public void SrvGenerateMst()
 		{
 			mstLines = CalculateMinimumSpanningTree(triangles);
 
@@ -48,9 +38,9 @@ namespace Level
 			}
 		}
 
-		public override void GenerateCells()
+		[Server] public void SrvGenerateCells()
 		{
-			levelCells = new bool[gridX, gridY];
+			levelCells = new bool[gridX * gridY];
 			for (int i = 0; i < gridX; i++)
 			{
 				for (int j = 0; j < gridY; j++)
@@ -59,7 +49,7 @@ namespace Level
 					{
 						if (IsOverlapping(room, new int4(i, j, 1, 1)))
 						{
-							levelCells[i, j] = true;
+							levelCells[i * gridX + j] = true;
 						}
 					}
 				}
@@ -82,7 +72,7 @@ namespace Level
 			}
 		}
 
-		public override void GenerateStartAndExit()
+		[Server] public void SrvGenerateStartAndExit()
 		{
 			int startRoomIndex = Random.Range(0, rooms.Length);
 			int exitRoomIndex = Random.Range(0, rooms.Length);
@@ -100,47 +90,55 @@ namespace Level
 			startPosition = FindRandomWallForRoom(startRoom);
 			exitPosition = FindRandomWallForRoom(exitRoom);
 		}
-		
+
 		public override void GenerateMesh()
 		{
-			for (int i = 0; i < levelCells.GetLength(0); i++)
+			print("Generating mesh");
+			
+			mesh = new GameObject($"LevelMesh_{level}");
+			mesh.transform.SetParent(transform, false); 
+			mesh.transform.localPosition = Vector3.zero;
+			
+			for (int x = 0; x < levelCells.Length; x++)
 			{
-				for (int j = 0; j < levelCells.GetLength(1); j++)
+				int i = x % gridX;
+				int j = x / gridX;
+				GameObject cellContainer = new GameObject($"CellContainer_{i}_{j}");
+				cellContainer.transform.SetParent(mesh.transform, false);
+				cellContainer.transform.localPosition = new Vector3(i * roomSize, 0, j * roomSize);
+				cellContainer.transform.localScale = Vector3.one * roomSize;
+
+				if (startPosition.xy.Equals(new int2(i, j)))
 				{
-					GameObject cellContainer = new GameObject($"CellContainer_{i}_{j}");
-					cellContainer.transform.SetParent(transform);
-					cellContainer.transform.position = new Vector3(i * roomSize, 0, j * roomSize);
-					cellContainer.transform.localScale = Vector3.one * roomSize;
+					GameObject stairsDown = Instantiate(startPrefab, cellContainer.transform);
+					stairsDown.transform.localPosition = new Vector3(0, -0.5f, 0);
+					stairsDown.transform.rotation = Quaternion.Euler(0, startPosition.z, 0);
+					stairsDown.name = $"StairsDown_{i}_{j}";
+					stairsDown.GetComponent<GateController>().currentLevel = level+1;
+					continue;
+				}
 
-					if (startPosition.xy.Equals(new int2(i, j)))
-					{
-						GameObject stairsDown = Instantiate(startPrefab, cellContainer.transform);
-						stairsDown.transform.localPosition = new Vector3(0, -0.5f, 0);
-						stairsDown.transform.rotation = Quaternion.Euler(0, startPosition.z, 0);
-						stairsDown.name = $"StairsDown_{i}_{j}";
-						continue;
-					}
-
-					if (exitPosition.xy.Equals(new int2(i, j)))
-					{
-						GameObject stairsUp = Instantiate(exitPrefab, cellContainer.transform);
-						stairsUp.transform.localPosition = new Vector3(0, -0.5f, 0);
-						stairsUp.transform.rotation = Quaternion.Euler(0, exitPosition.z, 0);
-						stairsUp.name = $"StairsUp_{i}_{j}";
-						continue;
-					}
-					
-					if (levelCells[i, j])
-					{
-						GameObject floor = Instantiate(floorPrefab, cellContainer.transform);
-						floor.transform.localPosition = new Vector3(0, -0.5f, 0);
-						floor.name = $"Floor_{i}_{j}";
-					}
-					else
-					{
-						GameObject wall = Instantiate(wallPrefab, cellContainer.transform);
-						wall.name = $"Wall_{i}_{j}";
-					}
+				if (exitPosition.xy.Equals(new int2(i, j)))
+				{
+					GameObject stairsUp = Instantiate(exitPrefab, cellContainer.transform);
+					stairsUp.transform.localPosition = new Vector3(0, -0.5f, 0);
+					stairsUp.transform.rotation = Quaternion.Euler(0, exitPosition.z, 0);
+					stairsUp.name = $"StairsUp_{i}_{j}";
+					stairsUp.GetComponent<GateController>().currentLevel = level+1;
+					continue;
+				}
+				
+				if (levelCells[i * gridX + j])
+				{
+					GameObject floor = Instantiate(floorPrefab, cellContainer.transform);
+					floor.transform.localPosition = new Vector3(0, -0.5f, 0);
+					floor.name = $"Floor_{i}_{j}";
+				}
+				else
+				{
+					GameObject wall = Instantiate(wallPrefab, cellContainer.transform);
+					wall.transform.localPosition = new Vector3(0, -0.5f, 0);
+					wall.name = $"Wall_{i}_{j}";
 				}
 			}
 
@@ -173,7 +171,7 @@ namespace Level
 
 				if (x < 0 || x >= gridX || y < 0 || y >= gridY) continue;
 
-				if (!levelCells[x, y])
+				if (!levelCells[x * gridX + y])
 				{
 					results.Add(new int3(x, y, rotationY));
 				}
@@ -208,7 +206,7 @@ namespace Level
 			{
 				if (IsValid(x, yFixed))
 				{
-					levelCells[x, yFixed] = true;
+					levelCells[x * gridX + yFixed] = true;
 				}
 			}
 		}
@@ -222,7 +220,7 @@ namespace Level
 			{
 				if (IsValid(xFixed, y))
 				{
-					levelCells[xFixed, y] = true;
+					levelCells[xFixed * gridX + y] = true;
 				}
 			}
 		}
@@ -378,7 +376,7 @@ namespace Level
 				{
 					for (int j = 0; j < gridY; j++)
 					{
-						Gizmos.color = levelCells[i, j] ? Color.mediumPurple : Color.white;
+						Gizmos.color = levelCells[i * gridX + j] ? Color.mediumPurple : Color.white;
 						Gizmos.DrawCube(new Vector3(i * roomSize, 0, j * roomSize), Vector3.one * 0.5f * roomSize);
 
 						if (!startPosition.xy.Equals(new int2(i, j)) && !exitPosition.xy.Equals(new int2(i, j)))

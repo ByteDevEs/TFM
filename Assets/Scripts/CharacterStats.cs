@@ -1,9 +1,10 @@
-public struct CharacterStats
+using Mirror;
+public class CharacterStats : NetworkBehaviour
 {
 	// Basic abilities
-	public float Speed { get; private set; }
-	public float Strength { get; private set; }
-	public float Agility { get; private set; }
+	[field: SyncVar] public float Speed { get; private set; }
+	[field: SyncVar] public float Strength { get; private set; }
+	[field: SyncVar] public float Agility { get; private set; }
 
 	// Extra abilities
 	// public float sneak { get; private set; }

@@ -500,6 +500,7 @@ GameObject:
   - component: {fileID: 1515485233}
   - component: {fileID: 1515485236}
   - component: {fileID: 1515485237}
+  - component: {fileID: 1515485238}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -622,6 +623,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 2163876004968037099, guid: d6daf0c8172e300439a9ffd55eadec5b, type: 3}
+  - {fileID: 2650692813798286582, guid: 2bee44c3f218ab84abbb193bfef6f938, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -644,6 +646,7 @@ MonoBehaviour:
   GameplayScene: Assets/Scenes/GameScene.unity
   _allPlayersReady: 0
   clientIndex: 0
+  levelGenerator: {fileID: 0}
 --- !u!114 &1515485236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -702,6 +705,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror.Components::Mirror.Discovery.NetworkDiscoveryHUD
   networkDiscovery: {fileID: 1515485236}
+--- !u!114 &1515485238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1515485226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4700745f96c2250438ce9bd51c55ca09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Level.LevelGenerator
+  levelGrids:
+  - {fileID: 4670157553713983606, guid: 2bee44c3f218ab84abbb193bfef6f938, type: 3}
+  generatedLevelGrids: []
+  lastLevel: 100
 --- !u!1001 &1777923425
 PrefabInstance:
   m_ObjectHideFlags: 0

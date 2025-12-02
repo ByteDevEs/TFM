@@ -1,123 +1,71 @@
 using System;
+using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 namespace Level
 {
 	public class LevelGenerator : MonoBehaviour
 	{
 		public LevelGrid[] levelGrids;
-
 		public int lastLevel = 100;
 
-		GameObject lastGenerated;
+		readonly Dictionary<int, LevelGrid> generatedLevelGrids = new Dictionary<int, LevelGrid>();
 
-		void GenerateLevel(int levelNumber)
+		public LevelGrid GetOrAddLevel(int levelNumber)
 		{
+			if (!NetworkServer.active)
+			{
+				Debug.LogWarning("[LevelGenerator] Client tried to generate a level. Ignored.");
+				return null;
+			}
+
+			if (levelNumber < 1) return null;
+
+			if (generatedLevelGrids.TryGetValue(levelNumber, out LevelGrid existingGrid))
+			{
+				if (existingGrid != null) return existingGrid;
+
+				generatedLevelGrids.Remove(levelNumber);
+			}
+
+			print($"Generating Level {levelNumber}...");
+
 			int levelGridCount = levelGrids.Length;
 
-			double ratio = (double)levelGridCount / lastLevel;
-			int index = (int)Math.Floor((levelNumber - 1) * ratio);
-			index = Math.Min(index, levelGridCount - 1);
+			float safeLastLevel = lastLevel > 0 ? lastLevel : 1f;
+			float ratio = levelGridCount / safeLastLevel;
 
-			if (lastGenerated)
+			int index = Mathf.FloorToInt((levelNumber - 1) * ratio);
+			index = Mathf.Clamp(index, 0, levelGridCount - 1);
+
+			GameObject level = Instantiate(
+				levelGrids[index].gameObject,
+				transform.position + Vector3.up * levelNumber * 50f,
+				transform.rotation
+			);
+
+			NetworkServer.Spawn(level);
+
+			LevelGrid selectedLevelGrid = level.GetComponent<LevelGrid>();
+
+			if (selectedLevelGrid != null)
 			{
-				Destroy(lastGenerated);
-			}
+				generatedLevelGrids.Add(levelNumber, selectedLevelGrid);
 
-			lastGenerated = Instantiate(levelGrids[index].gameObject);
-			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
-
-			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
-			{
-				defaultGrid.GenerateLevelGrid();
+				if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
+				{
+					defaultGrid.SrvGenerateLevelGrid();
+					defaultGrid.SrvGenerateMst();
+					defaultGrid.SrvGenerateCells();
+					defaultGrid.SrvGenerateStartAndExit();
+				}
 			}
 			else
 			{
-				selectedLevelGrid.GenerateLevelGrid();
-			}
-		}
-
-		void GenerateMst()
-		{
-			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
-
-			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
-			{
-				defaultGrid.GenerateMst();
-			}
-			else
-			{
-				selectedLevelGrid.GenerateMst();
-			}
-		}
-		
-		void GenerateCells()
-		{
-			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
-
-			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
-			{
-				defaultGrid.GenerateCells();
-			}
-			else
-			{
-				selectedLevelGrid.GenerateCells();
-			}
-		}
-		
-		void GenerateStartAndExit()
-		{
-			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
-
-			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
-			{
-				defaultGrid.GenerateStartAndExit();
-			}
-			else
-			{
-				selectedLevelGrid.GenerateStartAndExit();
-			}
-		}
-		
-		void GenerateMesh()
-		{
-			LevelGrid selectedLevelGrid = lastGenerated.GetComponent<LevelGrid>();
-
-			if (selectedLevelGrid is DefaultLevelGrid defaultGrid)
-			{
-				defaultGrid.GenerateMesh();
-			}
-			else
-			{
-				selectedLevelGrid.GenerateMesh();
-			}
-		}
-
-		void OnGUI()
-		{
-			if (GUI.Button(new Rect(10, 10, 100, 20), "Generate Level"))
-			{
-				GenerateLevel(1);
+				Debug.LogError($"Prefab at index {index} is missing a LevelGrid component!");
 			}
 
-			if (GUI.Button(new Rect(10, 50, 100, 20), "Generate MST"))
-			{
-				GenerateMst();
-			}
-			
-			if (GUI.Button(new Rect(10, 90, 100, 20), "Generate Cells"))
-			{
-				GenerateCells();
-			}
-			
-			if (GUI.Button(new Rect(10, 130, 100, 20), "Generate Start and Exit"))
-			{
-				GenerateStartAndExit();
-			}
-
-			if (GUI.Button(new Rect(10, 170, 100, 20), "Generate Mesh"))
-			{
-				GenerateMesh();
-			}
+			return selectedLevelGrid;
 		}
 	}
 }
