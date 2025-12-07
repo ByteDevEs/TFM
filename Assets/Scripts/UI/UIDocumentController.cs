@@ -64,11 +64,18 @@ namespace UI
 				settingsButton.clicked += SettingsButtonClicked;
 			}
 
-			Button backToMenuButton = document.rootVisualElement.Q<Button>("BackToMenuButton");
-			if (backToMenuButton is not null)
+			Button backToMainMenuButton = document.rootVisualElement.Q<Button>("BackToMainMenuButton");
+			if (backToMainMenuButton is not null)
 			{
-				backToMenuButton.clicked -= BackToMenuButtonClicked;
-				backToMenuButton.clicked += BackToMenuButtonClicked;
+				backToMainMenuButton.clicked -= BackToMainMenuButtonClicked;
+				backToMainMenuButton.clicked += BackToMainMenuButtonClicked;
+			}
+
+			Button backToSearchMenuButton = document.rootVisualElement.Q<Button>("BackToSearchMenuButton");
+			if (backToSearchMenuButton is not null)
+			{
+				backToSearchMenuButton.clicked -= BackToSearchMenuButtonClicked;
+				backToSearchMenuButton.clicked += BackToSearchMenuButtonClicked;
 			}
 
 			Button createRoomButton = document.rootVisualElement.Q<Button>("CreateRoomButton");
@@ -115,7 +122,8 @@ namespace UI
 
 		void PlayButtonClicked() => UpdateVisualTree(playMenu);
 		void SettingsButtonClicked() => UpdateVisualTree(optionsMenu);
-		void BackToMenuButtonClicked() => ((GameManager)NetworkManager.singleton).LeaveRoom();
+		void BackToMainMenuButtonClicked() => UpdateVisualTree(mainMenu);
+		void BackToSearchMenuButtonClicked() => ((GameManager)NetworkManager.singleton).LeaveRoom();
 		void CreateRoomButtonClicked() => ((GameManager)NetworkManager.singleton).CreateRoom();
 		void ReadyButtonClicked() => GameManager.Ready();
 

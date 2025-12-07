@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Weapons
 {
 	[CreateAssetMenu(fileName = "WeaponScriptable", menuName = "Scriptable Objects/WeaponScriptable")]
-	public abstract class WeaponScriptable : ScriptableObject
+	public class WeaponScriptable : ScriptableObject
 	{
 		public new string name;
 		public float baseDamage;

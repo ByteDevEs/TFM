@@ -1,7 +1,7 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement style="flex-grow: 1;">
         <ui:VisualElement style="flex-grow: 1; width: 10%; height: 5%; align-content: auto; margin-top: 25px; margin-right: 25px; margin-bottom: 25px; margin-left: 25px;">
-            <ui:Button text="Back" name="BackToMenuButton" style="align-items: auto; align-self: auto; align-content: auto; width: auto; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; height: 100%;" />
+            <ui:Button text="Back" name="BackToMainMenuButton" style="align-items: auto; align-self: auto; align-content: auto; width: auto; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; height: 100%;" />
         </ui:VisualElement>
         <ui:VisualElement style="flex-grow: 1; height: 100%;">
             <ui:ListView name="ServerListView" />

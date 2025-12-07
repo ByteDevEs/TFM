@@ -43,7 +43,7 @@ namespace Controllers
 			{
 				if (lastEnemyHit != enemy)
 				{
-					lastEnemyHit?.RemoveHoverEffect();
+					lastEnemyHit?.RemoveEffect();
 					lastEnemyHit = enemy;
 					lastEnemyHit.SetHoverEffect();
 				}
@@ -61,7 +61,7 @@ namespace Controllers
 				CmdStopAttacking();
 			}
 
-			lastEnemyHit?.RemoveHoverEffect();
+			lastEnemyHit?.RemoveEffect();
 			lastEnemyHit = null;
 			return false;
 		}
@@ -70,7 +70,7 @@ namespace Controllers
 		{
 			if (selectedEnemy && selectedEnemy != enemy)
 			{
-				lastEnemyHit.RemoveHoverEffect();
+				lastEnemyHit.RemoveEffect();
 			}
 
 			if (!isLocalPlayer)

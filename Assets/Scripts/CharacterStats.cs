@@ -9,10 +9,10 @@ public class CharacterStats : NetworkBehaviour
 	// Extra abilities
 	// public float sneak { get; private set; }
 
-	public CharacterStats(float initialSpeed = 1f, float initialStrength = 1f, float initialAgility = 1f)
+	public void Start()
 	{
-		Speed = initialSpeed;
-		Strength = initialStrength;
-		Agility = initialAgility;
+		Speed = 1f;
+		Strength = 1f;
+		Agility = 1f;
 	}
 }

@@ -17,9 +17,9 @@ namespace Weapons
             base.SetClickEffect();
         }
 
-        public override void RemoveHoverEffect()
+        public override void RemoveEffect()
         {
-            base.RemoveHoverEffect();
+            base.RemoveEffect();
         }
         
         public WeaponScriptable Swap(WeaponScriptable weaponScriptable)

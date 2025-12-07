@@ -1,23 +1,23 @@
+using System;
 using System.Collections;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 namespace Helpers
 {
     public class HoverableObject : NetworkBehaviour
     {
-        [SerializeField] Material outlineHoverMaterial;
-        [SerializeField] Material outlineClickMaterial;
-
-        new MeshRenderer renderer;
-
+        GameObject[] chidren;
+        
         public bool IsHovering { get; private set; }
         public bool IsClicking { get; private set; }
 
         float clickTime;
 
+
         void Start()
         {
-            renderer = GetComponent<MeshRenderer>();
+            chidren = transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
         }
 
         public virtual void SetHoverEffect()
@@ -29,12 +29,9 @@ namespace Helpers
 
             IsHovering = true;
 
-            if (renderer.sharedMaterials.Length >= 1)
+            foreach (var child in chidren)
             {
-                renderer.sharedMaterials = new[]
-                {
-                    renderer.sharedMaterials[0], outlineHoverMaterial
-                };
+                child.layer = LayerMask.NameToLayer("Hovered");
             }
         }
 
@@ -54,12 +51,9 @@ namespace Helpers
 
             IsClicking = true;
 
-            if (renderer.sharedMaterials.Length >= 1)
+            foreach (var child in chidren)
             {
-                renderer.sharedMaterials = new[]
-                {
-                    renderer.sharedMaterials[0], outlineClickMaterial
-                };
+                child.layer = LayerMask.NameToLayer("Clicked");
             }
 
             while (Time.time - clickTime < 0.2f)
@@ -68,10 +62,10 @@ namespace Helpers
             }
 
             IsClicking = false;
-            RemoveHoverEffect();
+            RemoveEffect();
         }
 
-        public virtual void RemoveHoverEffect()
+        public virtual void RemoveEffect()
         {
             if (!IsHovering)
             {
@@ -79,10 +73,10 @@ namespace Helpers
             }
 
             IsHovering = false;
-            renderer.sharedMaterials = new[]
+            foreach (var child in chidren)
             {
-                renderer.sharedMaterials[0]
-            };
+                child.layer = 0;
+            }
         }
     }
 }

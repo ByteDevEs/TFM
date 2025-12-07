@@ -17,9 +17,10 @@ namespace Controllers
 			if (isServer)
 			{
 				currentHealth = maxHealth;
+				
+				OnDeath += Die;
 			}
 		}
-
 		void OnHealthChanged(int oldValue, int newValue)
 		{
 			int damage = oldValue - newValue;
@@ -45,6 +46,12 @@ namespace Controllers
 				return;
 			}
 			currentHealth = Mathf.Max(0, currentHealth - amount);
+		}
+		
+		[Server]
+		void Die()
+		{
+			NetworkServer.Destroy(gameObject);
 		}
 	}
 }

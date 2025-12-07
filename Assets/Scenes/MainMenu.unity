@@ -719,7 +719,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Level.LevelGenerator
   levelGrids:
   - {fileID: 4670157553713983606, guid: 2bee44c3f218ab84abbb193bfef6f938, type: 3}
-  generatedLevelGrids: []
   lastLevel: 100
 --- !u!1001 &1777923425
 PrefabInstance:
