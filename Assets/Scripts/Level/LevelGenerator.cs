@@ -50,6 +50,7 @@ namespace Level
 
 			if (selectedLevelGrid != null)
 			{
+				selectedLevelGrid.level = levelNumber;
 				generatedLevelGrids.Add(levelNumber, selectedLevelGrid);
 
 				if (selectedLevelGrid is DefaultLevelGrid defaultGrid)

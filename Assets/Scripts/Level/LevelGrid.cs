@@ -15,22 +15,17 @@ namespace Level
 		public float roomSize = 1;
 		public int gridX = 32;
 		public int gridY = 32;
-
 		public int minRoomCount = 3;
 		public int maxRoomCount = 7;
 		public int minRoomSize = 1;
 		public int maxRoomSize = 3;
-
 		[HideInInspector] public int4[] rooms = Array.Empty<int4>();
-		
-		[SyncVar]
-		protected bool[] levelCells;
 		[SyncVar] public int3 startPosition, exitPosition;
-		
-		[SyncVar] protected int level = 0;
+		[SyncVar] public int level;
+
+		[SyncVar] protected bool[] levelCells;
 		[SyncVar(hook = nameof(PlayerCountChanged))] protected int playersInRoom = 0;
 		protected GameObject mesh;
-		
 		protected NavMeshSurface surface;
 
 		void Awake()

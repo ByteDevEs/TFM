@@ -114,7 +114,7 @@ namespace Level
 					stairsDown.transform.localPosition = new Vector3(0, -0.5f, 0);
 					stairsDown.transform.rotation = Quaternion.Euler(0, startPosition.z, 0);
 					stairsDown.name = $"StairsDown_{i}_{j}";
-					stairsDown.GetComponent<GateController>().currentLevel = level+1;
+					stairsDown.GetComponent<GateController>().currentLevel = level;
 					continue;
 				}
 
@@ -124,7 +124,7 @@ namespace Level
 					stairsUp.transform.localPosition = new Vector3(0, -0.5f, 0);
 					stairsUp.transform.rotation = Quaternion.Euler(0, exitPosition.z, 0);
 					stairsUp.name = $"StairsUp_{i}_{j}";
-					stairsUp.GetComponent<GateController>().currentLevel = level+1;
+					stairsUp.GetComponent<GateController>().currentLevel = level;
 					continue;
 				}
 				

@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Bow
   prefab: {fileID: 0}
   baseDamage: 4
-  baseRange: 20
+  baseRange: 5
   baseCooldown: 1.5
   attackType: 2
   attackDegree: 0

@@ -6,6 +6,7 @@ using Level;
 using Mirror;
 using Mirror.Discovery;
 using UI;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -152,9 +153,10 @@ namespace Lobby
 			{
 				newLevel.AddPlayer();
 			
-				float x = newLevel.transform.position.x + newLevel.startPosition.x * newLevel.roomSize;
+				int3 stairPosition = difference == 1 ? newLevel.startPosition : newLevel.exitPosition;
+				float x = newLevel.transform.position.x + stairPosition.x * newLevel.roomSize;
 				float y = newLevel.transform.position.y + 1;
-				float z = newLevel.transform.position.z + newLevel.startPosition.y * newLevel.roomSize;
+				float z = newLevel.transform.position.z + stairPosition.y * newLevel.roomSize;
 				Vector3 position = new Vector3(x, y, z);
 				player.GetComponent<NavMeshAgent>().enabled = false;
 				player.transform.position = position;
