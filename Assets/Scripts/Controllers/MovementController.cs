@@ -8,8 +8,11 @@ namespace Controllers
 	[RequireComponent(typeof(NavMeshAgent), typeof(NetworkTransformReliable))]
 	public class MovementController : NetworkBehaviour
 	{
+		public Vector3 Destination { get; private set; }
+		public float RemainingDistance => navMeshAgent.remainingDistance;
+		public float StoppingDistance => navMeshAgent.stoppingDistance;
+		
 		NavMeshAgent navMeshAgent;
-		Vector3 destination;
 
 		void Awake()
 		{
@@ -54,15 +57,15 @@ namespace Controllers
 		[Command]
 		void CmdMove(Vector3 position)
 		{
-			destination = position;
-			navMeshAgent.SetDestination(destination);
+			Destination = position;
+			navMeshAgent.SetDestination(Destination);
 		}
 		
 		[Server]
 		public void SrvMove(Vector3 position)
 		{
-			destination = position;
-			navMeshAgent.SetDestination(destination);
+			Destination = position;
+			navMeshAgent.SetDestination(Destination);
 		}
 
 		[Command]
@@ -73,22 +76,22 @@ namespace Controllers
 				return;
 			}
 
-			destination = hit.point;
-			navMeshAgent.SetDestination(destination);
+			Destination = hit.point;
+			navMeshAgent.SetDestination(Destination);
 		}
 
 		[Command]
 		void CmdStop()
 		{
-			destination = transform.position;
-			navMeshAgent.SetDestination(destination);
+			Destination = transform.position;
+			navMeshAgent.SetDestination(Destination);
 		}
 
 		[Server]
 		public void SrvStop()
 		{
-			destination = transform.position;
-			navMeshAgent.SetDestination(destination);
+			Destination = transform.position;
+			navMeshAgent.SetDestination(Destination);
 		}
 	}
 }

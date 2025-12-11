@@ -1,17 +1,18 @@
-#if UNITY_EDITOR
+using System;
 using UnityEngine;
+
 namespace Helpers
 {
+	[AttributeUsage(AttributeTargets.Field)]
 	public class ShowIfAttribute : PropertyAttribute
 	{
 		public string ConditionFieldName { get; }
-		public int EnumValue { get; }
+		public int[] EnumValues { get; }
 
-		public ShowIfAttribute(string conditionFieldName, int enumValue)
+		public ShowIfAttribute(string conditionFieldName, params int[] enumValues)
 		{
 			ConditionFieldName = conditionFieldName;
-			EnumValue = enumValue;
+			EnumValues = enumValues;
 		}
 	}
 }
-#endif

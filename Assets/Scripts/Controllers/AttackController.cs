@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Enemies;
 using Mirror;
 using UnityEngine;
@@ -7,25 +9,23 @@ using Weapons;
 
 namespace Controllers
 {
+	[RequireComponent(typeof(MovementController), typeof(CharacterStats))]
 	public class AttackController : NetworkBehaviour
 	{
 		MovementController movementController;
-
-		CharacterStats stats;
-		public WeaponScriptable weapon;
-
-		EnemyController lastEnemyHit;
-		[SyncVar] EnemyController selectedEnemy;
-
-		[SyncVar] public bool isAttackingTarget;
-
-		[SyncVar] float weaponCooldown;
 		Coroutine attackCoroutine;
+		EnemyController lastEnemyHit;
+		[SyncVar] GameObject selectedTarget;
+		[SyncVar] public bool isAttackingTarget;
+		[SyncVar] float weaponCooldown;
 
+		public WeaponScriptable Weapon { get; private set; }
+		public CharacterStats Stats { get; private set; }
+		
 		void Start()
 		{
 			movementController = GetComponent<MovementController>();
-			stats = GetComponent<CharacterStats>();
+			Stats = GetComponent<CharacterStats>();
 		}
 
 		void Update()
@@ -50,7 +50,7 @@ namespace Controllers
 
 				if (Mouse.current.leftButton.wasPressedThisFrame)
 				{
-					SelectTarget(enemy);
+					SelectTarget(enemy.gameObject);
 				}
 
 				return true;
@@ -66,9 +66,9 @@ namespace Controllers
 			return false;
 		}
 
-		void SelectTarget(EnemyController enemy)
+		void SelectTarget(GameObject enemy)
 		{
-			if (selectedEnemy && selectedEnemy != enemy)
+			if (selectedTarget && selectedTarget != enemy)
 			{
 				lastEnemyHit.RemoveEffect();
 			}
@@ -84,18 +84,18 @@ namespace Controllers
 		}
 		
 		[Command]
-		void CmdAttack(EnemyController enemy)
+		void CmdAttack(GameObject enemy)
 		{
-			selectedEnemy = enemy;
+			selectedTarget = enemy;
 			isAttackingTarget = true;
 
 			if (attackCoroutine != null)
 			{
-				StopCoroutine(attackCoroutine);
+				return;
 			}
 
 			movementController.SrvStop();
-			attackCoroutine = StartCoroutine(Attack(selectedEnemy.gameObject));
+			attackCoroutine = StartCoroutine(Attack(selectedTarget));
 		}
 
 		[Command]
@@ -110,26 +110,56 @@ namespace Controllers
 			movementController.SrvStop();
 			isAttackingTarget = false;
 		}
+		
+		[Server]
+		public void SrvEnemyAttack(GameObject target)
+		{
+			selectedTarget = target;
+			isAttackingTarget = true;
 
+			if (attackCoroutine != null)
+			{
+				return;
+			}
+
+			movementController.SrvStop();
+			attackCoroutine = StartCoroutine(Attack(selectedTarget));
+		}
+
+		[Server]
+		public void SrvStopAttacking()
+		{
+			if (attackCoroutine != null)
+			{
+				StopCoroutine(attackCoroutine);
+				attackCoroutine = null;
+			}
+
+			movementController.SrvStop();
+			isAttackingTarget = false;
+		}
+		
 		IEnumerator Attack(GameObject target)
 		{
-			while (isAttackingTarget && target != null)
+			while (isAttackingTarget && target)
 			{
-				while (weaponCooldown < weapon.baseCooldown) yield return null;
-
 				float distance = Vector3.Distance(transform.position, target.transform.position);
-
-				if (distance > weapon.baseRange)
+				bool inRange = distance <= Weapon.baseRange;
+				
+				if (!inRange)
 				{
-					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, weapon.baseRange * 0.9f);
+					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, Weapon.baseRange * 0.75f);
 					movementController.SrvMove(stopPos);
-					print("Out Of Range");
 				}
 				else
 				{
 					movementController.SrvStop();
-					weaponCooldown = 0;
-					PerformAttack(target);
+
+					if (weaponCooldown >= Weapon.baseCooldown)
+					{
+						weaponCooldown = 0;
+						PerformAttack(target);
+					}
 				}
 
 				yield return null;
@@ -140,48 +170,82 @@ namespace Controllers
 		{
 			if (!isServer) return;
 
-			float damage = weapon.baseDamage * (1f + stats.Strength);
+			float damage = Weapon.baseDamage + Stats.Strength;
 
-			switch (weapon.attackType)
+			switch (Weapon.attackType)
 			{
 				case AttackType.Melee:
-					AttackMelee(target, damage);
+					StartCoroutine(AttackMelee(target.transform, damage));
 					break;
 
 				case AttackType.Ranged:
-					AttackRanged(target, damage);
+					StartCoroutine(AttackRanged(target.transform, damage));
 					break;
 
 				case AttackType.Area:
-					AttackArea(target, damage);
+					StartCoroutine(AttackArea(target.transform, damage));
 					break;
 			}
 		}
 
-		void AttackMelee(GameObject target, float damage)
+		IEnumerator AttackMelee(Transform target, float damage)
 		{
-			if (target.GetComponent<HealthController>() is {} healthController)
-			{
-				healthController.TakeDamage((int)damage);
-			}
+			Vector3 position = (target.position + transform.position) / 2f;
+			IEnumerable<Collider> hits = Physics.OverlapSphere(position, Weapon.baseRange / 2.0f).Except(GetComponents<Collider>());
+
+			Attack(hits, damage);
+			yield return null;
 		}
 
-		void AttackRanged(GameObject target, float damage)
+		IEnumerator AttackRanged(Transform target, float damage)
 		{
-			if (target.GetComponent<HealthController>() is {} healthController)
+			Vector3 startPos = transform.position;
+			Vector3 targetPos = target.position;
+    
+			float distance = Vector3.Distance(startPos, targetPos);
+			const float resolutionPerMetre = 5f;
+    
+			int steps = Mathf.CeilToInt(resolutionPerMetre * distance); 
+
+			for (int i = 0; i <= steps; i++)
 			{
-				healthController.TakeDamage((int)damage);
+				float t = (float)i / steps;
+        
+				Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
+
+				List<Collider> hits = Physics.OverlapSphere(currentPos, Weapon.areaDiameter / 2.0f)
+					.Except(GetComponents<Collider>())
+					.ToList();
+
+				if (hits.Count > 0)
+				{
+					Attack(hits, damage);
+					break;
+				}
+
+				yield return new WaitForSeconds(1.0f / steps);
 			}
+    
+			yield return null;
 		}
 
-		void AttackArea(GameObject target, float damage)
+		IEnumerator AttackArea(Transform target, float damage)
 		{
-			Collider[] hits = Physics.OverlapSphere(target.transform.position, weapon.areaDiameter / 2.0f);
+			yield return new WaitForSeconds(Weapon.castTime);
+			
+			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, Weapon.areaDiameter / 2.0f).Except(GetComponents<Collider>());
+			
+			Attack(hits, damage);
+			yield return null;
+		}
+
+		void Attack(IEnumerable<Collider> hits, float damage)
+		{
 			foreach (Collider c in hits)
 			{
 				if (c.GetComponent<HealthController>() is {} healthController)
 				{
-					healthController.TakeDamage((int)damage);
+					healthController.TakeDamage(damage);
 				}
 			}
 		}
@@ -210,9 +274,14 @@ namespace Controllers
 			{
 				if (Mouse.current.leftButton.wasPressedThisFrame)
 				{
-					weapon = physicalWeapon.Swap(weapon);
+					Weapon = physicalWeapon.Swap(Weapon);
 				}
 			}
+		}
+		
+		public void SwapWeapons(WeaponScriptable newWeapon)
+		{
+			Weapon = newWeapon;
 		}
 	}
 }

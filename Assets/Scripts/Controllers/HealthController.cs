@@ -7,10 +7,10 @@ namespace Controllers
 	public class HealthController : NetworkBehaviour
 	{
 		[SyncVar] public int maxHealth = 100;
-		[SyncVar(hook = nameof(OnHealthChanged))] public int currentHealth;
+		[SyncVar(hook = nameof(OnHealthChanged))] public float currentHealth;
 
 		public System.Action OnDeath;
-		public System.Action<int> OnDamaged;
+		public System.Action<float> OnDamaged;
 
 		void Start()
 		{
@@ -21,13 +21,13 @@ namespace Controllers
 				OnDeath += Die;
 			}
 		}
-		void OnHealthChanged(int oldValue, int newValue)
+		void OnHealthChanged(float oldValue, float newValue)
 		{
-			int damage = oldValue - newValue;
+			float damage = oldValue - newValue;
 			if (damage > 0)
 			{
 				DamageTextSpawner spawner = FindAnyObjectByType<DamageTextSpawner>();
-				spawner.SpawnDamageText(damage, transform.position + Vector3.up * Random.Range(0.5f, 1f), transform);
+				spawner.SpawnDamageText(damage, transform.position + Vector3.up * Random.Range(0.5f, 1f));
 			}
 
 			OnDamaged?.Invoke(newValue);
@@ -39,7 +39,7 @@ namespace Controllers
 		}
 
 		[Server]
-		public void TakeDamage(int amount)
+		public void TakeDamage(float amount)
 		{
 			if (currentHealth <= 0)
 			{

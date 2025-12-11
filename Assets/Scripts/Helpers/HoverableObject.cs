@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Linq;
 using Mirror;
@@ -7,7 +6,7 @@ namespace Helpers
 {
     public class HoverableObject : NetworkBehaviour
     {
-        GameObject[] chidren;
+        GameObject[] children;
         
         public bool IsHovering { get; private set; }
         public bool IsClicking { get; private set; }
@@ -15,9 +14,9 @@ namespace Helpers
         float clickTime;
 
 
-        void Start()
+        protected void Start()
         {
-            chidren = transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
+            children = transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
         }
 
         public virtual void SetHoverEffect()
@@ -29,7 +28,7 @@ namespace Helpers
 
             IsHovering = true;
 
-            foreach (var child in chidren)
+            foreach (var child in children)
             {
                 child.layer = LayerMask.NameToLayer("Hovered");
             }
@@ -51,7 +50,7 @@ namespace Helpers
 
             IsClicking = true;
 
-            foreach (var child in chidren)
+            foreach (var child in children)
             {
                 child.layer = LayerMask.NameToLayer("Clicked");
             }
@@ -73,7 +72,7 @@ namespace Helpers
             }
 
             IsHovering = false;
-            foreach (var child in chidren)
+            foreach (var child in children)
             {
                 child.layer = 0;
             }

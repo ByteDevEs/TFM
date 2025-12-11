@@ -8,6 +8,7 @@ namespace Weapons
 	public class WeaponScriptable : ScriptableObject
 	{
 		public new string name;
+		public GameObject prefab;
 		public float baseDamage;
 		public float baseRange;
 		public float baseCooldown;
@@ -22,9 +23,17 @@ namespace Weapons
 		#endif
 		public float attackWidth;
 		#if UNITY_EDITOR
-		[ShowIf("attackType", (int)AttackType.Area)]
+		[ShowIf("attackType", (int)AttackType.Ranged)]
+		#endif
+		public float traverseSpeed;
+		#if UNITY_EDITOR
+		[ShowIf("attackType", (int)AttackType.Ranged, (int)AttackType.Area)]
 		#endif
 		public float areaDiameter;
+		#if UNITY_EDITOR
+		[ShowIf("attackType", (int)AttackType.Area)]
+		#endif
+		public float castTime;
 	}
 
 	public enum AttackType

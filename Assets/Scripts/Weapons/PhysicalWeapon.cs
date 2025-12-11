@@ -6,6 +6,8 @@ namespace Weapons
     public class PhysicalWeapon : HoverableObject
     {
         WeaponScriptable weapon;
+        
+        GameObject currentObj;
 
         public override void SetHoverEffect()
         {
@@ -25,7 +27,9 @@ namespace Weapons
         public WeaponScriptable Swap(WeaponScriptable weaponScriptable)
         {
             WeaponScriptable w = weapon;
+            Destroy(currentObj);
             weapon = weaponScriptable;
+            currentObj = Instantiate(weaponScriptable.prefab, transform);
             return w;
         }
     }

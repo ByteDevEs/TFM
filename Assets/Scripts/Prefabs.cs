@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Controllers;
 using UnityEngine;
+using Weapons;
 
 public class Prefabs : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class Prefabs : MonoBehaviour
 
 	public CameraController cameraPrefab;
 	public GameObject prototypeEnemy;
+	public List<WeaponScriptable> weaponPool;
 
 	void Awake()
 	{

@@ -46,3 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Prefabs
   cameraPrefab: {fileID: 2106903422170419616, guid: b0fbfee9572dfb44a89de3972460b1e4, type: 3}
   prototypeEnemy: {fileID: 2163876004968037099, guid: d6daf0c8172e300439a9ffd55eadec5b, type: 3}
+  weaponPool:
+  - {fileID: 11400000, guid: 6636306fc6228a4459b3eb0e8ce8c0a1, type: 2}
+  - {fileID: 11400000, guid: 2e3af21cc22962c429871284f35716bf, type: 2}
+  - {fileID: 11400000, guid: 091f632a057754b41a158f0c18eda5cc, type: 2}

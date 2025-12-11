@@ -24,6 +24,7 @@ namespace Controllers
 			cameraController = Instantiate(Prefabs.GetInstance().cameraPrefab);
 			movementController = GetComponent<MovementController>();
 			attackController = GetComponent<AttackController>();
+			attackController.SwapWeapons(Prefabs.GetInstance().weaponPool[Random.Range(0, Prefabs.GetInstance().weaponPool.Count)]);
 		}
 
 		void Update()
@@ -31,6 +32,11 @@ namespace Controllers
 			if (!isLocalPlayer)
 			{
 				return;
+			}
+
+			if (Keyboard.current.fKey.wasPressedThisFrame)
+			{
+				attackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();

@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
+
 namespace Helpers
 {
 	[CustomPropertyDrawer(typeof(ShowIfAttribute))]
@@ -25,19 +27,18 @@ namespace Helpers
 			return ShouldShow(conditionProp, showIf) ? EditorGUI.GetPropertyHeight(property, label, true) : 0f;
 		}
 
-		private bool ShouldShow(SerializedProperty conditionProp, ShowIfAttribute showIf)
+		static bool ShouldShow(SerializedProperty conditionProp, ShowIfAttribute showIf)
 		{
 			if (conditionProp == null) return false;
 
 			if (conditionProp.propertyType == SerializedPropertyType.Enum)
 			{
-				return conditionProp.enumValueIndex == showIf.EnumValue;
+				return showIf.EnumValues.Contains(conditionProp.enumValueIndex);
 			}
 
-			Debug.LogWarning("ShowIf only supports enums in this version.");
+			Debug.LogWarning($"[ShowIf] '{showIf.ConditionFieldName}' is not an Enum. ShowIf only supports enums.");
 			return false;
 		}
 	}
 }
-
 #endif

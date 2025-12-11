@@ -1,3 +1,4 @@
+using System.Globalization;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -14,9 +15,9 @@ namespace UI
 			text = GetComponent<TMP_Text>();
 		}
 
-		public void Set(int amount)
+		public void Set(float amount)
 		{
-			text.text = amount.ToString();
+			text.text = amount.ToString(CultureInfo.InvariantCulture);
 			velocity = new Vector3(Random.Range(-0.5f, 0.5f), 1.2f, 0);
 			lifetime = 1.6f;
 		}

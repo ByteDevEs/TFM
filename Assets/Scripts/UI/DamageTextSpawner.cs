@@ -6,10 +6,9 @@ namespace UI
 	{
 		public GameObject damageTextPrefab;
 
-		public void SpawnDamageText(int amount, Vector3 position, Transform parent)
+		public void SpawnDamageText(float amount, Vector3 position)
 		{
-			GameObject obj = Instantiate(damageTextPrefab, parent);
-			obj.transform.position = position;
+			GameObject obj = Instantiate(damageTextPrefab, position, damageTextPrefab.transform.rotation);
 			obj.GetComponent<DamageText>().Set(amount);
 		}
 	}

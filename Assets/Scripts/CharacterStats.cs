@@ -1,3 +1,4 @@
+using System.Reflection;
 using Mirror;
 public class CharacterStats : NetworkBehaviour
 {
@@ -14,5 +15,16 @@ public class CharacterStats : NetworkBehaviour
 		Speed = 1f;
 		Strength = 1f;
 		Agility = 1f;
+	}
+
+	public void LevelUpProperty(string propertyName)
+	{
+		PropertyInfo propertyInfo = typeof(CharacterStats).GetProperty(propertyName);
+		if (!int.TryParse(propertyInfo?.GetValue(this).ToString(), out int value))
+		{
+			value = 0;
+		}
+		
+		propertyInfo?.SetValue(this, ++value);
 	}
 }
