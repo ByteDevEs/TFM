@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 3014299380016649659}
   - component: {fileID: 2980713918279028058}
   - component: {fileID: 8159265548460717707}
+  - component: {fileID: 6464607023913177200}
   m_Layer: 0
   m_Name: EnemyPrototype
   m_TagString: Enemy
@@ -185,7 +186,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2163876004968037099}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 8
@@ -230,8 +231,22 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  weapon: {fileID: 0}
   isAttackingTarget: 0
+--- !u!114 &6464607023913177200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2163876004968037099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dea8f1ba57156347a92b57fe4aa590a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!1001 &321905497903280044
 PrefabInstance:
   m_ObjectHideFlags: 0

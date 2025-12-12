@@ -9,8 +9,8 @@ namespace Controllers
 	public class MovementController : NetworkBehaviour
 	{
 		public Vector3 Destination { get; private set; }
-		public float RemainingDistance => navMeshAgent.remainingDistance;
-		public float StoppingDistance => navMeshAgent.stoppingDistance;
+		public float RemainingDistance => navMeshAgent.enabled ? navMeshAgent.remainingDistance : Mathf.Infinity;
+		public float StoppingDistance => navMeshAgent.enabled ? navMeshAgent.stoppingDistance : Mathf.Infinity;
 		
 		NavMeshAgent navMeshAgent;
 

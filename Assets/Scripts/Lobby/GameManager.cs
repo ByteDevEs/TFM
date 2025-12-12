@@ -120,11 +120,11 @@ namespace Lobby
 
 		public override void OnRoomServerSceneChanged(string sceneName)
 		{
-			if (sceneName != "GameScene")
-			{
-				GameObject enemyGo = Instantiate(Prefabs.GetInstance().prototypeEnemy, new Vector3(-3, -99, -2), Quaternion.identity);
-				NetworkServer.Spawn(enemyGo);
-			}
+			// if (sceneName != "GameScene")
+			// {
+			// 	GameObject enemyGo = Instantiate(Prefabs.GetInstance().prototypeEnemy, new Vector3(-3, -99, -2), Quaternion.identity);
+			// 	NetworkServer.Spawn(enemyGo);
+			// }
 
 			base.OnRoomServerSceneChanged(sceneName);
 		}

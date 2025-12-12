@@ -3,6 +3,7 @@ using Mirror;
 using Unity.AI.Navigation;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AI;
 namespace Level
 {
 	[RequireComponent(typeof(NavMeshSurface),  typeof(NetworkIdentity))]
@@ -24,13 +25,17 @@ namespace Level
 		[SyncVar] public int level;
 
 		[SyncVar] protected bool[] levelCells;
-		[SyncVar(hook = nameof(PlayerCountChanged))] protected int playersInRoom = 0;
+		[field: SyncVar(hook = nameof(PlayerCountChanged))]
+		int PlayersInRoom { get; set; }
+		protected GameObject container;
 		protected GameObject mesh;
 		protected NavMeshSurface surface;
 
 		void Awake()
 		{
 			surface = GetComponent<NavMeshSurface>();
+			container =  new GameObject("LevelGrid");
+			container.transform.SetParent(transform, false); 
 		}
 
 		public abstract void GenerateMesh();
@@ -38,24 +43,36 @@ namespace Level
 		[Server]
 		public void AddPlayer()
 		{
-			playersInRoom++;
+			PlayersInRoom++;
 		}
 
 		[Server]
 		public void RemovePlayer()
 		{
-			playersInRoom--;
+			PlayersInRoom--;
 		}
 		
 		public void PlayerCountChanged(int oldPlayerCount, int newPlayerCount)
 		{
 			if (newPlayerCount == 0)
 			{
-				Destroy(mesh);
+				container.SetActive(false);
 			}
 			else if (oldPlayerCount == 0)
 			{
-				GenerateMesh();
+				if (mesh)
+				{
+					container.SetActive(true);
+				}
+				else
+				{
+					GenerateMesh();
+				}
+				
+				foreach (NavMeshAgent meshAgent in container.GetComponentsInChildren<NavMeshAgent>())
+				{
+					meshAgent.enabled = true;
+				}
 			}
 		}
 	}

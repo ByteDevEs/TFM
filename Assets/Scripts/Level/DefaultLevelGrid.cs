@@ -11,6 +11,9 @@ namespace Level
 {
 	public class DefaultLevelGrid : LevelGrid
 	{
+		public float spawnEnemyProbability = 0.125f;
+		public int maxEnemiesPerCell = 3;
+		
 		int[] triangles = Array.Empty<int>();
 		List<(int u, int v, float distance)> allEdges;
 		List<(int u, int v, float distance)> unusedEdges;
@@ -50,6 +53,19 @@ namespace Level
 						if (IsOverlapping(room, new int4(i, j, 1, 1)))
 						{
 							levelCells[i * gridX + j] = true;
+
+							float mE = Random.Range(1, maxEnemiesPerCell);
+							float r = Random.Range(0f, 1f);
+							for (int k = 0; k < mE; k++)
+							{
+								if (r < spawnEnemyProbability)
+								{
+									GameObject enemyGo = Instantiate(Prefabs.GetInstance().prototypeEnemy, container.transform);
+									Vector2 circle = Random.insideUnitCircle;
+									enemyGo.transform.localPosition = new Vector3(i * roomSize, 0, j * roomSize) + new Vector3(circle.x, 0, circle.y);
+									NetworkServer.Spawn(enemyGo);
+								}
+							}
 						}
 					}
 				}
@@ -96,7 +112,7 @@ namespace Level
 			print("Generating mesh");
 			
 			mesh = new GameObject($"LevelMesh_{level}");
-			mesh.transform.SetParent(transform, false); 
+			mesh.transform.SetParent(container.transform, false); 
 			mesh.transform.localPosition = Vector3.zero;
 			
 			for (int x = 0; x < levelCells.Length; x++)
