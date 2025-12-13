@@ -143,8 +143,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth: 15
+  currentHealth: 15
+  healthPercentage: 1
 --- !u!114 &6422151740325626461
 MonoBehaviour:
   m_ObjectHideFlags: 0

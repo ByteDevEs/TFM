@@ -27,7 +27,6 @@ namespace Enemies.EnemyStates
 				{
 					enemyController.state = new AttackState(enemyController, player);
 				}
-				return;
 			}
 		}
 	}

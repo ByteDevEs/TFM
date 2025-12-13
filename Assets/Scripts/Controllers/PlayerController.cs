@@ -1,4 +1,5 @@
 using Mirror;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,10 +9,13 @@ namespace Controllers
 	[RequireComponent(typeof(AttackController))]
 	public class PlayerController : NetworkBehaviour
 	{
-		PlayerInput playerInput;
-		CameraController cameraController;
-		MovementController movementController;
-		AttackController attackController;
+		public static PlayerController LocalPlayer;
+		
+		public PlayerInput PlayerInput { get; private set; }
+		public CameraController CameraController { get; private set; }
+		public MovementController MovementController { get; private set; }
+		public AttackController AttackController { get; private set; }
+		public HealthController HealthController { get; private set; }
 
 		void Start()
 		{
@@ -20,11 +24,16 @@ namespace Controllers
 				return;
 			}
 
-			playerInput = GetComponent<PlayerInput>();
-			cameraController = Instantiate(Prefabs.GetInstance().cameraPrefab);
-			movementController = GetComponent<MovementController>();
-			attackController = GetComponent<AttackController>();
-			attackController.SwapWeapons(Prefabs.GetInstance().weaponPool[Random.Range(0, Prefabs.GetInstance().weaponPool.Count)]);
+			LocalPlayer = this;
+
+			PlayerInput = GetComponent<PlayerInput>();
+			CameraController = Instantiate(Prefabs.GetInstance().cameraPrefab);
+			MovementController = GetComponent<MovementController>();
+			AttackController = GetComponent<AttackController>();
+			HealthController = GetComponent<HealthController>();
+			AttackController.SwapWeapons(Prefabs.GetInstance().weaponPool[Random.Range(0, Prefabs.GetInstance().weaponPool.Count)]);
+		
+			UIDocumentController.GetInstance().OpenGameMenu();
 		}
 
 		void Update()
@@ -36,23 +45,23 @@ namespace Controllers
 
 			if (Keyboard.current.fKey.wasPressedThisFrame)
 			{
-				attackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
+				AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();
-			cameraController.SetPosition(mousePos, transform.position);
+			CameraController.SetPosition(mousePos, transform.position);
 
-			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
+			Ray ray = CameraController.Camera.ScreenPointToRay(mousePos);
 
-			if (!attackController.TryAttack(ray))
+			if (!AttackController.TryAttack(ray))
 			{
-				if (!attackController.isAttackingTarget)
+				if (!AttackController.isAttackingTarget)
 				{
-					movementController.Move(ray);
+					MovementController.Move(ray);
 				}
 			}
 
-			attackController.SwapWeapons(ray);
+			AttackController.SwapWeapons(ray);
 		}
 	}
 }

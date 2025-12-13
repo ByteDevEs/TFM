@@ -115,7 +115,8 @@ namespace Lobby
 		public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
 		{
 			roomPlayer.GetComponent<CustomNetworkRoomPlayer>().OnClientPlayersReady();
-			return base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
+			GameObject gamePlayer = base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
+			return gamePlayer;
 		}
 
 		public override void OnRoomServerSceneChanged(string sceneName)

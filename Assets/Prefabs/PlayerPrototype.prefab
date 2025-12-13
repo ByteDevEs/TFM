@@ -213,7 +213,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  weapon: {fileID: 11400000, guid: 091f632a057754b41a158f0c18eda5cc, type: 2}
   isAttackingTarget: 0
 --- !u!114 &2258506339775883038
 MonoBehaviour:
@@ -262,6 +261,7 @@ MonoBehaviour:
   syncInterval: 0
   maxHealth: 100
   currentHealth: 100
+  healthPercentage: 1
 --- !u!114 &864048676074368002
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,19 +1,30 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+    <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row; flex-basis: 100%;">
         <ui:VisualElement style="flex-grow: 1; align-items: flex-start; align-content: auto;">
-            <ui:Button text="Back" name="BackToMenuButton" style="align-items: auto; align-self: auto; align-content: auto; width: 25%; margin-top: 25px; margin-right: 0; margin-bottom: 0; margin-left: 25px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; height: 15%;" />
+            <ui:Button text="Back" name="BackToMenuButton" style="align-items: auto; align-self: auto; align-content: auto; width: 25%; margin-top: 25px; margin-right: 0; margin-bottom: 0; margin-left: 25px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; height: 15%;"/>
         </ui:VisualElement>
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
     </ui:VisualElement>
-    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row; flex-basis: 100%;">
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
     </ui:VisualElement>
-    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1; flex-direction: column-reverse;" />
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row; flex-basis: 100%;">
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:VisualElement style="flex-grow: 1; flex-basis: 100%;"/>
+            <ui:VisualElement style="flex-grow: 1; flex-basis: 100%;"/>
+            <ui:VisualElement name="VisualElement" style="flex-basis: 100%; flex-direction: row;">
+                <ui:Image source="project://database/Assets/Textures/Prototyping/Light/texture_08.png?fileID=21300000&amp;guid=e42948097d0080b4499fe49aa930ed3e&amp;type=3#texture_08" scale-mode="ScaleAndCrop" name="HealthBarContainer" style="justify-content: flex-end; align-self: stretch; align-content: stretch; width: auto; height: initial; aspect-ratio: 1; max-width: 100%; max-height: 100%; min-height: 100%; min-width: initial;">
+                    <ui:VisualElement name="HealthMask" style="width: 100%; height: 100%; overflow: hidden; align-self: flex-end; position: absolute; left: 0; bottom: 0; right: 0;">
+                        <ui:Image name="HeartFillImage" source="project://database/Assets/Textures/Prototyping/Red/texture_08.png?fileID=2800000&amp;guid=d873744a031971446bdbee68bf3fbc7f&amp;type=3#texture_08" style="height: auto; position: absolute; bottom: 0; left: 0; width: 100%; aspect-ratio: 1; right: 0;"/>
+                    </ui:VisualElement>
+                </ui:Image>
+                <ui:Image source="project://database/Assets/Textures/Prototyping/Dark/texture_03.png?fileID=21300000&amp;guid=994a18f5991d9794691b5db13e77c473&amp;type=3#texture_03" scale-mode="ScaleAndCrop" name="BottomBar" style="width: 90%; height: 100%;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; flex-direction: column-reverse;"/>
     </ui:VisualElement>
 </ui:UXML>

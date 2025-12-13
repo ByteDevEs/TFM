@@ -52,7 +52,7 @@ namespace Lobby
 		public void OnClientPlayersReady()
 		{
 			Console.Write("Starting game...");
-			UIDocumentController.GetInstance().OpenGameMenu();
+			UIDocumentController.GetInstance().HideUI();
 			HideAll();
 		}
 

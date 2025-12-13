@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using Controllers;
 using Lobby;
 using Mirror;
 using Mirror.Discovery;
+using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
 namespace UI
@@ -9,10 +11,9 @@ namespace UI
 	[RequireComponent(typeof(UIDocument))]
 	public class UIDocumentController : MonoBehaviour
 	{
-		static UIDocumentController instance;
 		public static UIDocumentController GetInstance() => instance;
-
-
+		static UIDocumentController instance;
+		
 		UIDocument document;
 		Dictionary<long, ServerResponse> serversFound;
 
@@ -46,6 +47,12 @@ namespace UI
 			document = GetComponent<UIDocument>();
 			serversFound = new Dictionary<long, ServerResponse>();
 			UpdateVisualTree(mainMenu);
+		}
+
+		void UpdateVisualTree(VisualTreeAsset asset)
+		{
+			document.visualTreeAsset = asset;
+			RefreshButtons();
 		}
 
 		void RefreshButtons()
@@ -112,12 +119,24 @@ namespace UI
 					container.hierarchy.Add(joinButton);
 				}
 			}
-		}
+			
+			VisualElement healthMask = document.rootVisualElement.Q<VisualElement>("HealthMask");
 
-		void UpdateVisualTree(VisualTreeAsset asset)
-		{
-			document.visualTreeAsset = asset;
-			RefreshButtons();
+			if (healthMask is not null)
+			{
+				DataBinding dataBinding = new DataBinding
+				{
+					bindingMode = BindingMode.ToTarget,
+					dataSource = PlayerController.LocalPlayer.HealthController, 
+					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.HealthController.healthPercentage)),
+					updateTrigger = BindingUpdateTrigger.OnSourceChanged
+				};
+
+				dataBinding.sourceToUiConverters.AddConverter((ref float v) => 
+					new StyleLength(new Length(v * 100f, LengthUnit.Percent)));
+				
+				healthMask.SetBinding("style.height", dataBinding);
+			}
 		}
 
 		void PlayButtonClicked() => UpdateVisualTree(playMenu);
@@ -156,5 +175,6 @@ namespace UI
 		public void OpenMainMenu() => UpdateVisualTree(mainMenu);
 		public void OpenGameMenu() => UpdateVisualTree(gameMenu);
 		public void OpenRoomMenu() => UpdateVisualTree(roomMenu);
+		public void HideUI() => UpdateVisualTree(null);
 	}
 }
