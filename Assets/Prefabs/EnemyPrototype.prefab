@@ -109,8 +109,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  detectionRadius: 10
-  detectionAngle: 60
+  DetectionRadius: 10
+  DetectionAngle: 60
 --- !u!114 &7568967245815916327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,9 +143,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 15
-  currentHealth: 15
-  healthPercentage: 1
+  MaxHealth: 15
+  CurrentHealth: 0
+  HealthPercentage: 1
 --- !u!114 &6422151740325626461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +232,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  isAttackingTarget: 0
+  IsAttackingTarget: 0
 --- !u!114 &6464607023913177200
 MonoBehaviour:
   m_ObjectHideFlags: 0

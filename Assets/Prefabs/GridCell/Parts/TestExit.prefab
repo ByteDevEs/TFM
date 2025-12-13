@@ -179,8 +179,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee342259903a4c25835305aa5898fc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level.GateController
-  gateType: 1
-  currentLevel: 0
+  GateType: 1
+  CurrentLevel: 0
 --- !u!65 &6603899261009106529
 BoxCollider:
   m_ObjectHideFlags: 0

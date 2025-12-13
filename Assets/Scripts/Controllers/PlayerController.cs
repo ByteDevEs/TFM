@@ -10,11 +10,10 @@ namespace Controllers
 	public class PlayerController : NetworkBehaviour
 	{
 		public static PlayerController LocalPlayer;
-		
-		public PlayerInput PlayerInput { get; private set; }
-		public CameraController CameraController { get; private set; }
-		public MovementController MovementController { get; private set; }
-		public AttackController AttackController { get; private set; }
+
+		CameraController cameraController;
+		MovementController movementController;
+		AttackController attackController;
 		public HealthController HealthController { get; private set; }
 
 		void Start()
@@ -26,12 +25,12 @@ namespace Controllers
 
 			LocalPlayer = this;
 
-			PlayerInput = GetComponent<PlayerInput>();
-			CameraController = Instantiate(Prefabs.GetInstance().cameraPrefab);
-			MovementController = GetComponent<MovementController>();
-			AttackController = GetComponent<AttackController>();
+			GetComponent<PlayerInput>();
+			cameraController = Instantiate(Prefabs.GetInstance().CameraPrefab);
+			movementController = GetComponent<MovementController>();
+			attackController = GetComponent<AttackController>();
 			HealthController = GetComponent<HealthController>();
-			AttackController.SwapWeapons(Prefabs.GetInstance().weaponPool[Random.Range(0, Prefabs.GetInstance().weaponPool.Count)]);
+			attackController.SwapWeapons(Prefabs.GetInstance().WeaponPool[Random.Range(0, Prefabs.GetInstance().WeaponPool.Count)]);
 		
 			UIDocumentController.GetInstance().OpenGameMenu();
 		}
@@ -45,23 +44,23 @@ namespace Controllers
 
 			if (Keyboard.current.fKey.wasPressedThisFrame)
 			{
-				AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
+				attackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();
-			CameraController.SetPosition(mousePos, transform.position);
+			cameraController.SetPosition(mousePos, transform.position);
 
-			Ray ray = CameraController.Camera.ScreenPointToRay(mousePos);
+			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
 
-			if (!AttackController.TryAttack(ray))
+			if (!attackController.TryAttack(ray))
 			{
-				if (!AttackController.isAttackingTarget)
+				if (!attackController.IsAttackingTarget)
 				{
-					MovementController.Move(ray);
+					movementController.Move(ray);
 				}
 			}
 
-			AttackController.SwapWeapons(ray);
+			attackController.SwapWeapons(ray);
 		}
 	}
 }

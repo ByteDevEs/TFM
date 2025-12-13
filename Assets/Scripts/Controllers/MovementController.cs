@@ -71,7 +71,7 @@ namespace Controllers
 		[Command]
 		void CmdMove(Ray ray)
 		{
-			if (!Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, Settings.GetInstance().groundLayerMask))
+			if (!Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, Settings.GetInstance().GroundLayerMask))
 			{
 				return;
 			}

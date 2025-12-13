@@ -68,8 +68,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bd621c68e208334f994d5be6bdd7bd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.UIDocumentController
-  mainMenu: {fileID: 9197481963319205126, guid: 2245bb8127a127a4a88a7d30caf9d442, type: 3}
-  playMenu: {fileID: 9197481963319205126, guid: 1a162699f07c1f04d82e6c2ec8397abf, type: 3}
-  optionsMenu: {fileID: 0}
-  roomMenu: {fileID: 9197481963319205126, guid: 1bd7597cf2c0ab54ea0f3f510b3b08c8, type: 3}
-  gameMenu: {fileID: 9197481963319205126, guid: 270772b03d9320e43b4d00dfd9620f0b, type: 3}
+  MainMenu: {fileID: 9197481963319205126, guid: 2245bb8127a127a4a88a7d30caf9d442, type: 3}
+  PlayMenu: {fileID: 9197481963319205126, guid: 1a162699f07c1f04d82e6c2ec8397abf, type: 3}
+  OptionsMenu: {fileID: 0}
+  RoomMenu: {fileID: 9197481963319205126, guid: 1bd7597cf2c0ab54ea0f3f510b3b08c8, type: 3}
+  GameMenu: {fileID: 9197481963319205126, guid: 270772b03d9320e43b4d00dfd9620f0b, type: 3}

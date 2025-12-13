@@ -7,17 +7,17 @@ namespace Lobby
 {
 	public class CustomNetworkRoomPlayer : NetworkRoomPlayer
 	{
-		[SerializeField] TMP_Text nameText;
-		[SerializeField] TMP_Text stateText;
-		[SerializeField] GameObject visuals;
+		[SerializeField] TMP_Text NameText;
+		[SerializeField] TMP_Text StateText;
+		[SerializeField] GameObject Visuals;
 
 		[SyncVar(hook = nameof(OnNameChanged))] string playerName;
 
 		public override void Start()
 		{
-			nameText.text = playerName;
-			stateText.text = readyToBegin ? "Ready" : "Not Ready";
-			stateText.color = readyToBegin ? Color.green : Color.red;
+			NameText.text = playerName;
+			StateText.text = readyToBegin ? "Ready" : "Not Ready";
+			StateText.color = readyToBegin ? Color.green : Color.red;
 
 			base.Start();
 		}
@@ -25,8 +25,8 @@ namespace Lobby
 		public override void OnStartLocalPlayer()
 		{
 			CmdChangePlayerName(SteamManager.GetInstance().GetSteamName());
-			stateText.text = readyToBegin ? "Ready" : "Not Ready";
-			stateText.color = readyToBegin ? Color.green : Color.red;
+			StateText.text = readyToBegin ? "Ready" : "Not Ready";
+			StateText.color = readyToBegin ? Color.green : Color.red;
 			base.OnStartLocalPlayer();
 		}
 
@@ -36,15 +36,15 @@ namespace Lobby
 			playerName = newName;
 		}
 
-		void OnNameChanged(string _, string __)
+		void OnNameChanged(string _, string newName)
 		{
-			nameText.text = playerName;
+			NameText.text = newName;
 		}
 
 		public override void ReadyStateChanged(bool oldReadyState, bool newReadyState)
 		{
-			stateText.text = newReadyState ? "Ready" : "Not Ready";
-			stateText.color = newReadyState ? Color.green : Color.red;
+			StateText.text = newReadyState ? "Ready" : "Not Ready";
+			StateText.color = newReadyState ? Color.green : Color.red;
 			base.ReadyStateChanged(oldReadyState, newReadyState);
 		}
 
@@ -61,7 +61,7 @@ namespace Lobby
 			CustomNetworkRoomPlayer[] roomPlayers = FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
 			foreach (CustomNetworkRoomPlayer roomPlayer in roomPlayers)
 			{
-				roomPlayer.visuals.SetActive(false);
+				roomPlayer.Visuals.SetActive(false);
 			}
 		}
 	}

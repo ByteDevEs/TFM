@@ -7,33 +7,33 @@ namespace Weapons
 	[CreateAssetMenu(fileName = "WeaponScriptable", menuName = "Scriptable Objects/WeaponScriptable")]
 	public class WeaponScriptable : ScriptableObject
 	{
-		public new string name;
-		public GameObject prefab;
-		public float baseDamage;
-		public float baseRange;
-		public float baseCooldown;
-		public AttackType attackType;
+		public string Name;
+		public GameObject Prefab;
+		public float BaseDamage;
+		public float BaseRange;
+		public float BaseCooldown;
+		public AttackType AttackType;
 
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Melee)]
 		#endif
-		public float attackDegree;
+		public float AttackDegree;
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Ranged)]
 		#endif
-		public float attackWidth;
+		public float AttackWidth;
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Ranged)]
 		#endif
-		public float traverseSpeed;
+		public float TraverseSpeed;
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Ranged, (int)AttackType.Area)]
 		#endif
-		public float areaDiameter;
+		public float AreaDiameter;
 		#if UNITY_EDITOR
 		[ShowIf("attackType", (int)AttackType.Area)]
 		#endif
-		public float castTime;
+		public float CastTime;
 	}
 
 	public enum AttackType

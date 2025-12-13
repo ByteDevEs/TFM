@@ -11,8 +11,8 @@ namespace Helpers
 
 		public ShowIfAttribute(string conditionFieldName, params int[] enumValues)
 		{
-			ConditionFieldName = conditionFieldName;
-			EnumValues = enumValues;
+			this.ConditionFieldName = conditionFieldName;
+			this.EnumValues = enumValues;
 		}
 	}
 }

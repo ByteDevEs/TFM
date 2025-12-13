@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8211956c0ffad9741a0b2392ddefcf91, type: 3}
   m_Name: Fists
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.WeaponScriptable
-  name: Fists
-  prefab: {fileID: 0}
-  baseDamage: 1
-  baseRange: 0.5
-  baseCooldown: 0.2
-  attackType: 0
-  attackDegree: 40
-  attackWidth: 0
-  traverseSpeed: 0
-  areaDiameter: 1
-  castTime: 0
+  Name: Fists
+  Prefab: {fileID: 0}
+  BaseDamage: 1
+  BaseRange: 0.5
+  BaseCooldown: 0.33333334
+  AttackType: 0
+  AttackDegree: 0
+  AttackWidth: 0
+  TraverseSpeed: 0
+  AreaDiameter: 0
+  CastTime: 0

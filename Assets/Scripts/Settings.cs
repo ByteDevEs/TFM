@@ -6,11 +6,11 @@ public class Settings : MonoBehaviour
 	public static Settings GetInstance() => instance;
 
 	[Header("Camera")]
-	public float cameraDistance = 10f;
-	public Vector3 CameraOffset => (Vector3.left + Vector3.up * Mathf.Sqrt(2) + Vector3.back) * cameraDistance;
+	public float CameraDistance = 10f;
+	public Vector3 CameraOffset => (Vector3.left + Vector3.up * Mathf.Sqrt(2) + Vector3.back) * CameraDistance;
 
 	[Header("Movement")]
-	public LayerMask groundLayerMask;
+	public LayerMask GroundLayerMask;
 
 	void Awake()
 	{

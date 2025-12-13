@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8211956c0ffad9741a0b2392ddefcf91, type: 3}
   m_Name: Bow
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.WeaponScriptable
-  name: Bow
-  prefab: {fileID: 0}
-  baseDamage: 4
-  baseRange: 5
-  baseCooldown: 1.5
-  attackType: 2
-  attackDegree: 0
-  attackWidth: 1
-  traverseSpeed: 0
-  areaDiameter: 1
-  castTime: 0
+  Name: Bow
+  Prefab: {fileID: 0}
+  BaseDamage: 5
+  BaseRange: 5
+  BaseCooldown: 2
+  AttackType: 2
+  AttackDegree: 0
+  AttackWidth: 0
+  TraverseSpeed: 0
+  AreaDiameter: 0
+  CastTime: 0

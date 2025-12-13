@@ -6,6 +6,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Weapons;
+// ReSharper disable Unity.PreferNonAllocApi
 
 namespace Controllers
 {
@@ -13,13 +14,14 @@ namespace Controllers
 	public class AttackController : NetworkBehaviour
 	{
 		MovementController movementController;
+		AttackController attackController;
 		Coroutine attackCoroutine;
 		EnemyController lastEnemyHit;
 		[SyncVar] GameObject selectedTarget;
-		[SyncVar] public bool isAttackingTarget;
+		[SyncVar] public bool IsAttackingTarget;
 		[SyncVar] float weaponCooldown;
 
-		public WeaponScriptable Weapon { get; private set; }
+		WeaponScriptable weapon;
 		public CharacterStats Stats { get; private set; }
 		
 		void Start()
@@ -87,7 +89,7 @@ namespace Controllers
 		void CmdAttack(GameObject enemy)
 		{
 			selectedTarget = enemy;
-			isAttackingTarget = true;
+			IsAttackingTarget = true;
 
 			if (attackCoroutine != null)
 			{
@@ -108,14 +110,14 @@ namespace Controllers
 			}
 
 			movementController.SrvStop();
-			isAttackingTarget = false;
+			IsAttackingTarget = false;
 		}
 		
 		[Server]
 		public void SrvEnemyAttack(GameObject target)
 		{
 			selectedTarget = target;
-			isAttackingTarget = true;
+			IsAttackingTarget = true;
 
 			if (attackCoroutine != null)
 			{
@@ -136,26 +138,26 @@ namespace Controllers
 			}
 
 			movementController.SrvStop();
-			isAttackingTarget = false;
+			IsAttackingTarget = false;
 		}
 		
 		IEnumerator Attack(GameObject target)
 		{
-			while (isAttackingTarget && target)
+			while (IsAttackingTarget && target)
 			{
 				float distance = Vector3.Distance(transform.position, target.transform.position);
-				bool inRange = distance <= Weapon.baseRange;
+				bool inRange = distance <= weapon.BaseRange;
 				
 				if (!inRange)
 				{
-					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, Weapon.baseRange * 0.75f);
+					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, weapon.BaseRange * 0.75f);
 					movementController.SrvMove(stopPos);
 				}
 				else
 				{
 					movementController.SrvStop();
 
-					if (weaponCooldown >= Weapon.baseCooldown)
+					if (weaponCooldown >= weapon.BaseCooldown)
 					{
 						weaponCooldown = 0;
 						PerformAttack(target);
@@ -170,9 +172,9 @@ namespace Controllers
 		{
 			if (!isServer) return;
 
-			float damage = Weapon.baseDamage + Stats.Strength;
+			float damage = weapon.BaseDamage + Stats.Strength;
 
-			switch (Weapon.attackType)
+			switch (weapon.AttackType)
 			{
 				case AttackType.Melee:
 					StartCoroutine(AttackMelee(target.transform, damage));
@@ -191,7 +193,7 @@ namespace Controllers
 		IEnumerator AttackMelee(Transform target, float damage)
 		{
 			Vector3 position = (target.position + transform.position) / 2f;
-			IEnumerable<Collider> hits = Physics.OverlapSphere(position, Weapon.baseRange / 2.0f).Except(GetComponents<Collider>());
+			IEnumerable<Collider> hits = Physics.OverlapSphere(position, weapon.BaseRange / 2.0f).Except(GetComponents<Collider>());
 
 			Attack(hits, damage);
 			yield return null;
@@ -213,7 +215,7 @@ namespace Controllers
         
 				Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
 
-				List<Collider> hits = Physics.OverlapSphere(currentPos, Weapon.areaDiameter / 2.0f)
+				List<Collider> hits = Physics.OverlapSphere(currentPos, weapon.AreaDiameter / 2.0f)
 					.Except(GetComponents<Collider>())
 					.ToList();
 
@@ -231,9 +233,9 @@ namespace Controllers
 
 		IEnumerator AttackArea(Transform target, float damage)
 		{
-			yield return new WaitForSeconds(Weapon.castTime);
+			yield return new WaitForSeconds(weapon.CastTime);
 			
-			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, Weapon.areaDiameter / 2.0f).Except(GetComponents<Collider>());
+			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, weapon.AreaDiameter / 2.0f).Except(GetComponents<Collider>());
 			
 			Attack(hits, damage);
 			yield return null;
@@ -274,14 +276,14 @@ namespace Controllers
 			{
 				if (Mouse.current.leftButton.wasPressedThisFrame)
 				{
-					Weapon = physicalWeapon.Swap(Weapon);
+					weapon = physicalWeapon.Swap(weapon);
 				}
 			}
 		}
 		
 		public void SwapWeapons(WeaponScriptable newWeapon)
 		{
-			Weapon = newWeapon;
+			weapon = newWeapon;
 		}
 	}
 }

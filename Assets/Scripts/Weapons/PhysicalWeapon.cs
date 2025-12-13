@@ -1,5 +1,4 @@
 using Helpers;
-using Mirror;
 using UnityEngine;
 namespace Weapons
 {
@@ -29,7 +28,7 @@ namespace Weapons
             WeaponScriptable w = weapon;
             Destroy(currentObj);
             weapon = weaponScriptable;
-            currentObj = Instantiate(weaponScriptable.prefab, transform);
+            currentObj = Instantiate(weaponScriptable.Prefab, transform);
             return w;
         }
     }

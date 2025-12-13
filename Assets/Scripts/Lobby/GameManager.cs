@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Controllers;
 using Level;
 using Mirror;
 using Mirror.Discovery;
@@ -15,7 +14,7 @@ namespace Lobby
 	[RequireComponent(typeof(NetworkDiscovery))]
 	public class GameManager : NetworkRoomManager
 	{
-		public LevelGenerator levelGenerator;
+		public LevelGenerator LevelGenerator;
 		
 		static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
 		NetworkDiscovery networkDiscovery;
@@ -23,7 +22,7 @@ namespace Lobby
 
 		public override void Start()
 		{
-			levelGenerator = GetComponent<LevelGenerator>();
+			LevelGenerator = GetComponent<LevelGenerator>();
 			networkDiscovery = GetComponent<NetworkDiscovery>();
 			networkDiscovery.StartDiscovery();
 
@@ -119,17 +118,6 @@ namespace Lobby
 			return gamePlayer;
 		}
 
-		public override void OnRoomServerSceneChanged(string sceneName)
-		{
-			// if (sceneName != "GameScene")
-			// {
-			// 	GameObject enemyGo = Instantiate(Prefabs.GetInstance().prototypeEnemy, new Vector3(-3, -99, -2), Quaternion.identity);
-			// 	NetworkServer.Spawn(enemyGo);
-			// }
-
-			base.OnRoomServerSceneChanged(sceneName);
-		}
-
 		public override void OnClientDisconnect()
 		{
 			UIDocumentController.GetInstance().OpenMainMenu();
@@ -142,8 +130,8 @@ namespace Lobby
 		{
 			print("Moving player to level " + levelNumber + difference);
 			
-			LevelGrid oldLevel = levelGenerator.GetOrAddLevel(levelNumber);
-			LevelGrid newLevel = levelGenerator.GetOrAddLevel(levelNumber + difference);
+			LevelGrid oldLevel = LevelGenerator.GetOrAddLevel(levelNumber);
+			LevelGrid newLevel = LevelGenerator.GetOrAddLevel(levelNumber + difference);
 
 			if (oldLevel)
 			{
@@ -154,10 +142,10 @@ namespace Lobby
 			{
 				newLevel.AddPlayer();
 			
-				int3 stairPosition = difference == 1 ? newLevel.startPosition : newLevel.exitPosition;
-				float x = newLevel.transform.position.x + stairPosition.x * newLevel.roomSize;
+				int3 stairPosition = difference == 1 ? newLevel.StartPosition : newLevel.ExitPosition;
+				float x = newLevel.transform.position.x + stairPosition.x * newLevel.RoomSize;
 				float y = newLevel.transform.position.y + 1;
-				float z = newLevel.transform.position.z + stairPosition.y * newLevel.roomSize;
+				float z = newLevel.transform.position.z + stairPosition.y * newLevel.RoomSize;
 				Vector3 position = new Vector3(x, y, z);
 				player.GetComponent<NavMeshAgent>().enabled = false;
 				player.transform.position = position;

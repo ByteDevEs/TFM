@@ -118,6 +118,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &4012234247680627254
 MonoBehaviour:
@@ -177,6 +178,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -297,6 +299,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2448711624379140888
 MonoBehaviour:
@@ -356,6 +359,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -461,9 +465,9 @@ MonoBehaviour:
   showRoomGUI: 1
   readyToBegin: 0
   index: 0
-  nameText: {fileID: 2448711624379140888}
-  stateText: {fileID: 4012234247680627254}
-  visuals: {fileID: 4157486431030757982}
+  NameText: {fileID: 2448711624379140888}
+  StateText: {fileID: 4012234247680627254}
+  Visuals: {fileID: 7784330581045427138}
 --- !u!1 &7784330581045427138
 GameObject:
   m_ObjectHideFlags: 0

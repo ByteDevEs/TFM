@@ -48,7 +48,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  damageTextPrefab: {fileID: 4836456196882434035, guid: 07914ae8d1fc5c3408fa4d3402b9f0e8, type: 3}
+  DamageTextPrefab: {fileID: 4836456196882434035, guid: 07914ae8d1fc5c3408fa4d3402b9f0e8, type: 3}
 --- !u!114 &5941833024130766170
 MonoBehaviour:
   m_ObjectHideFlags: 0

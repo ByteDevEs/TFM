@@ -207,6 +207,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &93687757
 MeshFilter:
@@ -301,14 +302,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -539,6 +540,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1080193853
 MeshFilter:
@@ -630,6 +632,10 @@ PrefabInstance:
     - target: {fileID: 3266648259510826313, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
       propertyPath: m_Name
       value: TestExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 6964545302107004721, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
+      propertyPath: CurrentLevel
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6964545302107004721, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
       propertyPath: currentLevel
@@ -871,6 +877,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1720143291
 MeshFilter:

@@ -43,7 +43,7 @@ namespace Enemies.EnemyStates
 
 			if (movementController.RemainingDistance <= movementController.StoppingDistance)
 			{
-				enemyController.state = new IdleState(enemyController);
+				enemyController.State = new IdleState(enemyController);
 			}
 		}
 	}

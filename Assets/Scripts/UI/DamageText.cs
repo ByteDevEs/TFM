@@ -1,5 +1,4 @@
 using System.Globalization;
-using Mirror;
 using TMPro;
 using UnityEngine;
 namespace UI

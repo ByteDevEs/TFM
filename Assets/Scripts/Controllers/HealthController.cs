@@ -8,12 +8,12 @@ namespace Controllers
 {
 	public class HealthController : NetworkBehaviour
 	{
-		[SyncVar] public int maxHealth = 100;
-		[SyncVar(hook = nameof(OnHealthChanged))] public float currentHealth;
+		[SyncVar] public int MaxHealth = 100;
+		[SyncVar(hook = nameof(OnHealthChanged))] public float CurrentHealth;
 
-		public float healthPercentage = 1;
+		public float HealthPercentage = 1;
 		public System.Action OnDeath;
-		public System.Action<float> OnDamaged;
+		// public System.Action<float> OnDamaged;
 		EnemyController enemyController;
 
 		void Start()
@@ -23,7 +23,7 @@ namespace Controllers
 				return;
 			}
 			
-			currentHealth = maxHealth;
+			CurrentHealth = MaxHealth;
 				
 			OnDeath += Die;
 			
@@ -32,14 +32,14 @@ namespace Controllers
 		void OnHealthChanged(float oldValue, float newValue)
 		{
 			float damage = oldValue - newValue;
-			healthPercentage = newValue / maxHealth;
+			HealthPercentage = newValue / MaxHealth;
 			if (damage > 0)
 			{
 				DamageTextSpawner spawner = FindAnyObjectByType<DamageTextSpawner>();
 				spawner.SpawnDamageText(damage, transform.position + Vector3.up * Random.Range(0.5f, 1f));
 			}
 
-			OnDamaged?.Invoke(newValue);
+			// OnDamaged?.Invoke(NewValue);
 
 			if (newValue <= 0)
 			{
@@ -50,19 +50,19 @@ namespace Controllers
 		[Server]
 		public void TakeDamage(GameObject attacker, float amount)
 		{
-			if (currentHealth <= 0)
+			if (CurrentHealth <= 0)
 			{
 				return;
 			}
-			currentHealth = Mathf.Max(0, currentHealth - amount);
+			CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
 			if (enemyController)
 			{
-				if (enemyController.state.GetType() == typeof(AttackState))
+				if (enemyController.State.GetType() == typeof(AttackState))
 				{
 					return;
 				}
 				
-				enemyController.state = new AttackState(enemyController, attacker);
+				enemyController.State = new AttackState(enemyController, attacker);
 			}
 		}
 		

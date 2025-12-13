@@ -1,5 +1,3 @@
-using System;
-using Controllers;
 using Lobby;
 using Mirror;
 using UnityEngine;
@@ -7,18 +5,18 @@ namespace Level
 {
 	public class GateController : MonoBehaviour
 	{
-		static float maxCooldown = 0.5f;
+		const float MaxCooldown = 0.5f;
 		static float cooldown = 0.5f;
 
-		public enum GateType
+		public enum GateTypeEnum
 		{
 			Start,
 			Exit,
 			Door
 		}
 		
-		public GateType gateType;
-		public int currentLevel;
+		public GateTypeEnum GateType;
+		public int CurrentLevel;
 
 		void FixedUpdate()
 		{
@@ -34,19 +32,19 @@ namespace Level
 			
 			if (other.CompareTag("Player") && cooldown <= 0)
 			{
-				if (gateType.Equals(GateType.Start))
+				if (GateType.Equals(GateTypeEnum.Start))
 				{
-					if (currentLevel == 0)
+					if (CurrentLevel == 0)
 					{
 						return;
 					}
-					(NetworkManager.singleton as GameManager)?.SrvMovePlayerToLevel(other.gameObject, currentLevel, -1);
-					cooldown = maxCooldown;
+					(NetworkManager.singleton as GameManager)?.SrvMovePlayerToLevel(other.gameObject, CurrentLevel, -1);
+					cooldown = MaxCooldown;
 				}
-				else if (gateType.Equals(GateType.Exit))
+				else if (GateType.Equals(GateTypeEnum.Exit))
 				{
-					(NetworkManager.singleton as GameManager)?.SrvMovePlayerToLevel(other.gameObject, currentLevel, 1);
-					cooldown = maxCooldown;
+					(NetworkManager.singleton as GameManager)?.SrvMovePlayerToLevel(other.gameObject, CurrentLevel, 1);
+					cooldown = MaxCooldown;
 				}
 			}
 		}

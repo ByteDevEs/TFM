@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -6,8 +5,8 @@ namespace Level
 {
 	public class LevelGenerator : MonoBehaviour
 	{
-		public LevelGrid[] levelGrids;
-		public int lastLevel = 100;
+		public LevelGrid[] LevelGrids;
+		public int LastLevel = 100;
 
 		readonly Dictionary<int, LevelGrid> generatedLevelGrids = new Dictionary<int, LevelGrid>();
 
@@ -30,16 +29,16 @@ namespace Level
 
 			print($"Generating Level {levelNumber}...");
 
-			int levelGridCount = levelGrids.Length;
+			int levelGridCount = LevelGrids.Length;
 
-			float safeLastLevel = lastLevel > 0 ? lastLevel : 1f;
+			float safeLastLevel = LastLevel > 0 ? LastLevel : 1f;
 			float ratio = levelGridCount / safeLastLevel;
 
 			int index = Mathf.FloorToInt((levelNumber - 1) * ratio);
 			index = Mathf.Clamp(index, 0, levelGridCount - 1);
 
 			GameObject level = Instantiate(
-				levelGrids[index].gameObject,
+				LevelGrids[index].gameObject,
 				transform.position + Vector3.up * levelNumber * 50f,
 				transform.rotation
 			);
@@ -50,7 +49,7 @@ namespace Level
 
 			if (selectedLevelGrid != null)
 			{
-				selectedLevelGrid.level = levelNumber;
+				selectedLevelGrid.Level = levelNumber;
 				generatedLevelGrids.Add(levelNumber, selectedLevelGrid);
 
 				if (selectedLevelGrid is DefaultLevelGrid defaultGrid)

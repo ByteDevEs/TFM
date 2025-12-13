@@ -8,16 +8,16 @@ namespace Enemies
 	[RequireComponent(typeof(MovementController), typeof(AttackController))]
 	public class EnemyController : HoverableObject
 	{
-		public float detectionRadius;
-		public float detectionAngle;
+		public float DetectionRadius;
+		public float DetectionAngle;
 		
-		public IEnemyState state;
+		public IEnemyState State;
 
 		new void Start()
 		{
-			state = new IdleState(this);
+			State = new IdleState(this);
 			AttackController attackController = GetComponent<AttackController>();
-			attackController.SwapWeapons(Prefabs.GetInstance().weaponPool[Random.Range(0, Prefabs.GetInstance().weaponPool.Count)]);
+			attackController.SwapWeapons(Prefabs.GetInstance().WeaponPool[Random.Range(0, Prefabs.GetInstance().WeaponPool.Count)]);
 			
 			base.Start();
 		}
@@ -26,7 +26,7 @@ namespace Enemies
 		{
 			if (isServer)
 			{
-				state.Update(this);
+				State.Update(this);
 			}
 		}
 	}

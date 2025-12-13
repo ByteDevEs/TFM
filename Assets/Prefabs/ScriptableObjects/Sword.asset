@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8211956c0ffad9741a0b2392ddefcf91, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.WeaponScriptable
-  name: Sword
-  prefab: {fileID: 0}
-  baseDamage: 4
-  baseRange: 1
-  baseCooldown: 0.8
-  attackType: 0
-  attackDegree: 60
-  attackWidth: 0
-  traverseSpeed: 0
-  areaDiameter: 1
-  castTime: 0
+  Name: Sword
+  Prefab: {fileID: 0}
+  BaseDamage: 5
+  BaseRange: 1
+  BaseCooldown: 1
+  AttackType: 0
+  AttackDegree: 0
+  AttackWidth: 0
+  TraverseSpeed: 0
+  AreaDiameter: 0
+  CastTime: 0

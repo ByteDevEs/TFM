@@ -20,12 +20,12 @@ namespace Enemies.EnemyStates
 				float angle = Vector3.Angle(forward, direction);
 				float distance = Vector3.Distance(enemyController.transform.position, player.transform.position);
 
-				bool isInAngle = enemyController.detectionAngle > angle;
-				bool isInRadius = enemyController.detectionRadius > distance;
+				bool isInAngle = enemyController.DetectionAngle > angle;
+				bool isInRadius = enemyController.DetectionRadius > distance;
 				
 				if (isInAngle && isInRadius)
 				{
-					enemyController.state = new AttackState(enemyController, player);
+					enemyController.State = new AttackState(enemyController, player);
 				}
 			}
 		}

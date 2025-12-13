@@ -7,9 +7,9 @@ namespace Helpers
     public class HoverableObject : NetworkBehaviour
     {
         GameObject[] children;
-        
-        public bool IsHovering { get; private set; }
-        public bool IsClicking { get; private set; }
+
+        bool isHovering;
+        bool isClicking;
 
         float clickTime;
 
@@ -21,12 +21,12 @@ namespace Helpers
 
         public virtual void SetHoverEffect()
         {
-            if (IsHovering)
+            if (isHovering)
             {
                 return;
             }
 
-            IsHovering = true;
+            isHovering = true;
 
             foreach (var child in children)
             {
@@ -43,12 +43,12 @@ namespace Helpers
         {
             clickTime = Time.time;
 
-            if (!IsHovering || IsClicking)
+            if (!isHovering || isClicking)
             {
                 yield break;
             }
 
-            IsClicking = true;
+            isClicking = true;
 
             foreach (var child in children)
             {
@@ -60,18 +60,18 @@ namespace Helpers
                 yield return null;
             }
 
-            IsClicking = false;
+            isClicking = false;
             RemoveEffect();
         }
 
         public virtual void RemoveEffect()
         {
-            if (!IsHovering)
+            if (!isHovering)
             {
                 return;
             }
 
-            IsHovering = false;
+            isHovering = false;
             foreach (var child in children)
             {
                 child.layer = 0;

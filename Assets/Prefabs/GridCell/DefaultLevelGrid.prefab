@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 756658302843351193}
   - component: {fileID: 4670157553713983606}
   - component: {fileID: 2027858426659755807}
+  - component: {fileID: 2047420221847012303}
   m_Layer: 0
   m_Name: DefaultLevelGrid
   m_TagString: Untagged
@@ -45,18 +46,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8b7e055a5a0d44cb4b7231f7391c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level.DefaultLevelGrid
-  floorPrefab: {fileID: 2267696794511580876, guid: 8fd4044e47f61b04fac50223fe960997, type: 3}
-  wallPrefab: {fileID: 3266648259510826313, guid: 400f0a15c7fc85a44879c369b4c7039b, type: 3}
-  startPrefab: {fileID: 3266648259510826313, guid: bea760ba325d8854c90774d299ec05ba, type: 3}
-  exitPrefab: {fileID: 3266648259510826313, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
-  roomSize: 5
-  gridX: 32
-  gridY: 32
-  minRoomCount: 10
-  maxRoomCount: 30
-  minRoomSize: 2
-  maxRoomSize: 5
-  rooms: []
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  FloorPrefab: {fileID: 2267696794511580876, guid: 8fd4044e47f61b04fac50223fe960997, type: 3}
+  WallPrefab: {fileID: 3266648259510826313, guid: 400f0a15c7fc85a44879c369b4c7039b, type: 3}
+  StartPrefab: {fileID: 3266648259510826313, guid: bea760ba325d8854c90774d299ec05ba, type: 3}
+  ExitPrefab: {fileID: 3266648259510826313, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
+  RoomSize: 10
+  GridX: 32
+  GridY: 32
+  MinRoomCount: 10
+  MaxRoomCount: 30
+  MinRoomSize: 2
+  MaxRoomSize: 5
+  Rooms: []
+  StartPosition:
+    x: 0
+    y: 0
+    z: 0
+  ExitPosition:
+    x: 0
+    y: 0
+    z: 0
+  Level: 0
+  SpawnEnemyProbability: 0.125
+  MaxEnemiesPerCell: 3
 --- !u!114 &2027858426659755807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,3 +104,20 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
+--- !u!114 &2047420221847012303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2650692813798286582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 2206923662
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

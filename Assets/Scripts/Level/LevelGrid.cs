@@ -9,36 +9,36 @@ namespace Level
 	[RequireComponent(typeof(NavMeshSurface),  typeof(NetworkIdentity))]
 	public abstract class LevelGrid : NetworkBehaviour
 	{
-		public GameObject floorPrefab;
-		public GameObject wallPrefab;
-		public GameObject startPrefab;
-		public GameObject exitPrefab;
-		public float roomSize = 1;
-		public int gridX = 32;
-		public int gridY = 32;
-		public int minRoomCount = 3;
-		public int maxRoomCount = 7;
-		public int minRoomSize = 1;
-		public int maxRoomSize = 3;
-		[HideInInspector] public int4[] rooms = Array.Empty<int4>();
-		[SyncVar] public int3 startPosition, exitPosition;
-		[SyncVar] public int level;
+		public GameObject FloorPrefab;
+		public GameObject WallPrefab;
+		public GameObject StartPrefab;
+		public GameObject ExitPrefab;
+		public float RoomSize = 1;
+		public int GridX = 32;
+		public int GridY = 32;
+		public int MinRoomCount = 3;
+		public int MaxRoomCount = 7;
+		public int MinRoomSize = 1;
+		public int MaxRoomSize = 3;
+		[HideInInspector] public int4[] Rooms = Array.Empty<int4>();
+		[SyncVar] public int3 StartPosition, ExitPosition;
+		[SyncVar] public int Level;
 
-		[SyncVar] protected bool[] levelCells;
+		[SyncVar] protected bool[] LevelCells;
 		[field: SyncVar(hook = nameof(PlayerCountChanged))]
 		int PlayersInRoom { get; set; }
-		protected GameObject container;
-		protected GameObject mesh;
-		protected NavMeshSurface surface;
+		protected GameObject Container;
+		protected GameObject Mesh;
+		protected NavMeshSurface Surface;
 
 		void Awake()
 		{
-			surface = GetComponent<NavMeshSurface>();
-			container =  new GameObject("LevelGrid");
-			container.transform.SetParent(transform, false); 
+			Surface = GetComponent<NavMeshSurface>();
+			Container =  new GameObject("LevelGrid");
+			Container.transform.SetParent(transform, false); 
 		}
 
-		public abstract void GenerateMesh();
+		protected abstract void GenerateMesh();
 
 		[Server]
 		public void AddPlayer()
@@ -56,20 +56,20 @@ namespace Level
 		{
 			if (newPlayerCount == 0)
 			{
-				container.SetActive(false);
+				Container.SetActive(false);
 			}
 			else if (oldPlayerCount == 0)
 			{
-				if (mesh)
+				if (Mesh)
 				{
-					container.SetActive(true);
+					Container.SetActive(true);
 				}
 				else
 				{
 					GenerateMesh();
 				}
 				
-				foreach (NavMeshAgent meshAgent in container.GetComponentsInChildren<NavMeshAgent>())
+				foreach (NavMeshAgent meshAgent in Container.GetComponentsInChildren<NavMeshAgent>())
 				{
 					meshAgent.enabled = true;
 				}

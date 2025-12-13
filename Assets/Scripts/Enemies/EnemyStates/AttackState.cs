@@ -27,14 +27,14 @@ namespace Enemies.EnemyStates
 		public void Update(EnemyController enemyController)
 		{
 			Debug.Log("Updating attack state");
-			if (movementController.Destination != Vector3.zero && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.detectionRadius)
+			if (movementController.Destination != Vector3.zero && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius)
 			{
 				timer -= Time.deltaTime;
 
 				if (timer <= 0f)
 				{
 					attackController.SrvStopAttacking();
-					enemyController.state = new IdleState(enemyController, 0f);
+					enemyController.State = new IdleState(enemyController, 0f);
 				}
 				
 				return;

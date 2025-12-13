@@ -18,19 +18,19 @@ namespace UI
 		Dictionary<long, ServerResponse> serversFound;
 
 		[SerializeField]
-		VisualTreeAsset mainMenu;
+		VisualTreeAsset MainMenu;
 
 		[SerializeField]
-		VisualTreeAsset playMenu;
+		VisualTreeAsset PlayMenu;
 
 		[SerializeField]
-		VisualTreeAsset optionsMenu;
+		VisualTreeAsset OptionsMenu;
 
 		[SerializeField]
-		VisualTreeAsset roomMenu;
+		VisualTreeAsset RoomMenu;
 
 		[SerializeField]
-		VisualTreeAsset gameMenu;
+		VisualTreeAsset GameMenu;
 
 		void Awake()
 		{
@@ -46,7 +46,7 @@ namespace UI
 
 			document = GetComponent<UIDocument>();
 			serversFound = new Dictionary<long, ServerResponse>();
-			UpdateVisualTree(mainMenu);
+			UpdateVisualTree(MainMenu);
 		}
 
 		void UpdateVisualTree(VisualTreeAsset asset)
@@ -128,7 +128,7 @@ namespace UI
 				{
 					bindingMode = BindingMode.ToTarget,
 					dataSource = PlayerController.LocalPlayer.HealthController, 
-					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.HealthController.healthPercentage)),
+					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.HealthController.HealthPercentage)),
 					updateTrigger = BindingUpdateTrigger.OnSourceChanged
 				};
 
@@ -139,9 +139,9 @@ namespace UI
 			}
 		}
 
-		void PlayButtonClicked() => UpdateVisualTree(playMenu);
-		void SettingsButtonClicked() => UpdateVisualTree(optionsMenu);
-		void BackToMainMenuButtonClicked() => UpdateVisualTree(mainMenu);
+		void PlayButtonClicked() => UpdateVisualTree(PlayMenu);
+		void SettingsButtonClicked() => UpdateVisualTree(OptionsMenu);
+		void BackToMainMenuButtonClicked() => UpdateVisualTree(MainMenu);
 		void BackToSearchMenuButtonClicked() => ((GameManager)NetworkManager.singleton).LeaveRoom();
 		void CreateRoomButtonClicked() => ((GameManager)NetworkManager.singleton).CreateRoom();
 		void ReadyButtonClicked() => GameManager.Ready();
@@ -172,9 +172,9 @@ namespace UI
 
 			container.hierarchy.Add(joinButton);
 		}
-		public void OpenMainMenu() => UpdateVisualTree(mainMenu);
-		public void OpenGameMenu() => UpdateVisualTree(gameMenu);
-		public void OpenRoomMenu() => UpdateVisualTree(roomMenu);
+		public void OpenMainMenu() => UpdateVisualTree(MainMenu);
+		public void OpenGameMenu() => UpdateVisualTree(GameMenu);
+		public void OpenRoomMenu() => UpdateVisualTree(RoomMenu);
 		public void HideUI() => UpdateVisualTree(null);
 	}
 }

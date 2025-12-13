@@ -25,7 +25,7 @@ namespace Enemies.EnemyStates
 
 			if (timeToWait <= 0)
 			{
-				enemyController.state = new WanderState(enemyController);
+				enemyController.State = new WanderState(enemyController);
 			}
 		}
 	}

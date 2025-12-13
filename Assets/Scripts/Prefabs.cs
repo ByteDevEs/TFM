@@ -8,9 +8,9 @@ public class Prefabs : MonoBehaviour
 	static Prefabs instance;
 	public static Prefabs GetInstance() => instance;
 
-	public CameraController cameraPrefab;
-	public GameObject prototypeEnemy;
-	public List<WeaponScriptable> weaponPool;
+	public CameraController CameraPrefab;
+	public GameObject PrototypeEnemy;
+	public List<WeaponScriptable> WeaponPool;
 
 	void Awake()
 	{
