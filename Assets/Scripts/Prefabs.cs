@@ -11,6 +11,7 @@ public class Prefabs : MonoBehaviour
 	public CameraController CameraPrefab;
 	public GameObject PrototypeEnemy;
 	public List<WeaponScriptable> WeaponPool;
+	public PhysicalWeapon PhysicalWeapon;
 
 	void Awake()
 	{

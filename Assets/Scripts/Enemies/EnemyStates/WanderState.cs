@@ -38,7 +38,6 @@ namespace Enemies.EnemyStates
 		
 		public void Update(EnemyController enemyController)
 		{
-			Debug.Log("Updating wander state");
 			IEnemyState.LocatePlayers(enemyController);
 
 			if (movementController.RemainingDistance <= movementController.StoppingDistance)

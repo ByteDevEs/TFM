@@ -14,9 +14,10 @@ namespace Controllers
 	public class AttackController : NetworkBehaviour
 	{
 		MovementController movementController;
-		AttackController attackController;
+		HealthController healthController;
 		Coroutine attackCoroutine;
 		EnemyController lastEnemyHit;
+		PhysicalWeapon lastWeaponHit;
 		[SyncVar] GameObject selectedTarget;
 		[SyncVar] public bool IsAttackingTarget;
 		[SyncVar] float weaponCooldown;
@@ -27,6 +28,11 @@ namespace Controllers
 		void Start()
 		{
 			movementController = GetComponent<MovementController>();
+			healthController = GetComponent<HealthController>();
+			if (healthController)
+			{
+				healthController.OnDeath += OnDeath;
+			}
 			Stats = GetComponent<CharacterStats>();
 		}
 
@@ -68,6 +74,7 @@ namespace Controllers
 			return false;
 		}
 
+		// This is when I click
 		void SelectTarget(GameObject enemy)
 		{
 			if (selectedTarget && selectedTarget != enemy)
@@ -93,10 +100,13 @@ namespace Controllers
 
 			if (attackCoroutine != null)
 			{
-				return;
+				StopCoroutine(attackCoroutine);
+				attackCoroutine = null;
 			}
 
 			movementController.SrvStop();
+			
+			Debug.LogWarning("Test");
 			attackCoroutine = StartCoroutine(Attack(selectedTarget));
 		}
 
@@ -145,6 +155,12 @@ namespace Controllers
 		{
 			while (IsAttackingTarget && target)
 			{
+				if (!target)
+				{
+					StopCoroutine(attackCoroutine);
+					attackCoroutine = null;
+				}
+				
 				float distance = Vector3.Distance(transform.position, target.transform.position);
 				bool inRange = distance <= weapon.BaseRange;
 				
@@ -268,22 +284,41 @@ namespace Controllers
 		
 		public void SwapWeapons(Ray ray)
 		{
-			if (!Physics.Raycast(ray, out RaycastHit hit)) return;
-
-			PhysicalWeapon physicalWeapon = hit.collider.GetComponent<PhysicalWeapon>();
-
-			if (physicalWeapon)
+			if (Physics.Raycast(ray, out RaycastHit hit))
 			{
-				if (Mouse.current.leftButton.wasPressedThisFrame)
+				PhysicalWeapon physicalWeapon = hit.collider.GetComponent<PhysicalWeapon>();
+
+				if (physicalWeapon)
 				{
-					weapon = physicalWeapon.Swap(weapon);
+					if (lastWeaponHit != physicalWeapon)
+					{
+						lastWeaponHit?.RemoveEffect();
+						lastWeaponHit = physicalWeapon;
+						lastWeaponHit.SetHoverEffect();
+					}
+					if (Mouse.current.leftButton.wasPressedThisFrame)
+					{
+						weapon = physicalWeapon.Swap(weapon);
+					}
 				}
+			}
+			else
+			{
+				lastWeaponHit?.RemoveEffect();
 			}
 		}
 		
 		public void SwapWeapons(WeaponScriptable newWeapon)
 		{
 			weapon = newWeapon;
+		}
+		
+		[Server]
+		void OnDeath()
+		{
+			PhysicalWeapon droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
+			droppedWeapon.SetWeapon(weapon);
+			NetworkServer.Spawn(droppedWeapon.gameObject);
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace Controllers
 
 			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
 
-			if (!attackController.TryAttack(ray))
+			if (attackController && !attackController.TryAttack(ray))
 			{
 				if (!attackController.IsAttackingTarget)
 				{

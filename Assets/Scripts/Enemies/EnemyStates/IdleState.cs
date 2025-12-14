@@ -18,7 +18,6 @@ namespace Enemies.EnemyStates
 		
 		public void Update(EnemyController enemyController)
 		{
-			Debug.Log("Updating idle state");
 			IEnemyState.LocatePlayers(enemyController);
 			
 			timeToWait -= Time.deltaTime;

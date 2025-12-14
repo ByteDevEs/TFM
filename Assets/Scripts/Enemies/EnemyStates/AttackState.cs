@@ -26,7 +26,6 @@ namespace Enemies.EnemyStates
 		
 		public void Update(EnemyController enemyController)
 		{
-			Debug.Log("Updating attack state");
 			if (movementController.Destination != Vector3.zero && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius)
 			{
 				timer -= Time.deltaTime;

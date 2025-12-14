@@ -1,15 +1,24 @@
+using System.Linq;
 using Helpers;
+using Mirror;
 using UnityEngine;
 namespace Weapons
 {
     public class PhysicalWeapon : HoverableObject
     {
-        WeaponScriptable weapon;
+        [SyncVar(hook = nameof(OnWeaponChanged))] WeaponScriptable weapon;
         
         GameObject currentObj;
 
+        protected override void Start()
+        {
+            currentObj = transform.GetChild(0).gameObject;
+            base.Start();
+        }
+
         public override void SetHoverEffect()
         {
+            Children = transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
             base.SetHoverEffect();
         }
 
@@ -23,12 +32,26 @@ namespace Weapons
             base.RemoveEffect();
         }
         
+        void OnWeaponChanged(WeaponScriptable _, WeaponScriptable newValue)
+        {
+            if (currentObj)
+            {
+                Destroy(currentObj);
+            }
+            currentObj = Instantiate(newValue.Prefab, transform);
+        }
+        
+		[Server]
+        public void SetWeapon(WeaponScriptable weaponScriptable)
+        {
+            weapon = weaponScriptable;
+        }
+        
+		[Server]
         public WeaponScriptable Swap(WeaponScriptable weaponScriptable)
         {
             WeaponScriptable w = weapon;
-            Destroy(currentObj);
             weapon = weaponScriptable;
-            currentObj = Instantiate(weaponScriptable.Prefab, transform);
             return w;
         }
     }

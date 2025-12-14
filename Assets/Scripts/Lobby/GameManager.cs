@@ -144,7 +144,7 @@ namespace Lobby
 			
 				int3 stairPosition = difference == 1 ? newLevel.StartPosition : newLevel.ExitPosition;
 				float x = newLevel.transform.position.x + stairPosition.x * newLevel.RoomSize;
-				float y = newLevel.transform.position.y + 1;
+				float y = newLevel.transform.position.y;
 				float z = newLevel.transform.position.z + stairPosition.y * newLevel.RoomSize;
 				Vector3 position = new Vector3(x, y, z);
 				player.GetComponent<NavMeshAgent>().enabled = false;

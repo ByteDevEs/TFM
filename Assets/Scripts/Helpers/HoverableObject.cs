@@ -6,7 +6,7 @@ namespace Helpers
 {
     public class HoverableObject : NetworkBehaviour
     {
-        GameObject[] children;
+        protected GameObject[] Children;
 
         bool isHovering;
         bool isClicking;
@@ -14,9 +14,9 @@ namespace Helpers
         float clickTime;
 
 
-        protected void Start()
+        protected virtual void Start()
         {
-            children = transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
+            Children = transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
         }
 
         public virtual void SetHoverEffect()
@@ -28,7 +28,7 @@ namespace Helpers
 
             isHovering = true;
 
-            foreach (var child in children)
+            foreach (var child in Children)
             {
                 child.layer = LayerMask.NameToLayer("Hovered");
             }
@@ -50,7 +50,7 @@ namespace Helpers
 
             isClicking = true;
 
-            foreach (var child in children)
+            foreach (var child in Children)
             {
                 child.layer = LayerMask.NameToLayer("Clicked");
             }
@@ -72,7 +72,7 @@ namespace Helpers
             }
 
             isHovering = false;
-            foreach (var child in children)
+            foreach (var child in Children)
             {
                 child.layer = 0;
             }

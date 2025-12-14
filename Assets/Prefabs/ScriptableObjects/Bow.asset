@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bow
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.WeaponScriptable
   Name: Bow
-  Prefab: {fileID: 0}
+  Prefab: {fileID: -617144640845579278, guid: 64dddffb3cb449c488fb5d5197cb1f6f, type: 3}
   BaseDamage: 5
   BaseRange: 5
   BaseCooldown: 2
