@@ -50,4 +50,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6636306fc6228a4459b3eb0e8ce8c0a1, type: 2}
   - {fileID: 11400000, guid: 2e3af21cc22962c429871284f35716bf, type: 2}
   - {fileID: 11400000, guid: 091f632a057754b41a158f0c18eda5cc, type: 2}
-  PhysicalWeapon: {fileID: 8445666129451857553, guid: 00f034fa48ce5da43a3e1ef5742f5184, type: 3}
+  PhysicalWeapon: {fileID: 3303943036403685392, guid: 00f034fa48ce5da43a3e1ef5742f5184, type: 3}

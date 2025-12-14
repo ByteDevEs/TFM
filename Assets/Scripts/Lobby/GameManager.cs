@@ -144,13 +144,24 @@ namespace Lobby
 			
 				int3 stairPosition = difference == 1 ? newLevel.StartPosition : newLevel.ExitPosition;
 				float x = newLevel.transform.position.x + stairPosition.x * newLevel.RoomSize;
-				float y = newLevel.transform.position.y;
+				float y = newLevel.transform.position.y - 5.0f;
 				float z = newLevel.transform.position.z + stairPosition.y * newLevel.RoomSize;
-				Vector3 position = new Vector3(x, y, z);
-				player.GetComponent<NavMeshAgent>().enabled = false;
-				player.transform.position = position;
-				player.GetComponent<NavMeshAgent>().enabled = true;
-				player.GetComponent<NavMeshAgent>().SetDestination(position);
+				Vector3 targetPosition = new Vector3(x, y, z);
+				
+				print(targetPosition);
+
+				NavMeshAgent agent = player.GetComponent<NavMeshAgent>();
+				NavMeshHit hit;
+				
+				if (NavMesh.SamplePosition(targetPosition, out hit, 10.0f, NavMesh.AllAreas))
+				{
+					agent.Warp(hit.position);
+					agent.SetDestination(hit.position);
+				}
+				else
+				{
+					agent.Warp(targetPosition);
+				}
 			}
 		}
 	}

@@ -316,9 +316,9 @@ namespace Controllers
 		[Server]
 		void OnDeath()
 		{
-			PhysicalWeapon droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
-			droppedWeapon.SetWeapon(weapon);
-			NetworkServer.Spawn(droppedWeapon.gameObject);
+			GameObject droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
+			droppedWeapon.GetComponent<PhysicalWeapon>().SetWeapon(weapon);
+			NetworkServer.Spawn(droppedWeapon);
 		}
 	}
 }
