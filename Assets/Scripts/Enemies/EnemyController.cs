@@ -2,6 +2,7 @@ using Controllers;
 using Enemies.EnemyStates;
 using Helpers;
 using UnityEngine;
+using Weapons;
 
 namespace Enemies
 {
@@ -17,7 +18,7 @@ namespace Enemies
 		{
 			State = new IdleState(this);
 			AttackController attackController = GetComponent<AttackController>();
-			attackController.SwapWeapons(Prefabs.GetInstance().WeaponPool[Random.Range(0, Prefabs.GetInstance().WeaponPool.Count)]);
+			attackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());
 			
 			base.Start();
 		}

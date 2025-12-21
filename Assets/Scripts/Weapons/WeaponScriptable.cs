@@ -7,6 +7,7 @@ namespace Weapons
 	[CreateAssetMenu(fileName = "WeaponScriptable", menuName = "Scriptable Objects/WeaponScriptable")]
 	public class WeaponScriptable : ScriptableObject
 	{
+		public int WeaponID;
 		public string Name;
 		public GameObject Prefab;
 		public float BaseDamage;

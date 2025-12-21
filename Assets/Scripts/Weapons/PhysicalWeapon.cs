@@ -6,7 +6,8 @@ namespace Weapons
 {
     public class PhysicalWeapon : HoverableObject
     {
-        [SyncVar(hook = nameof(OnWeaponChanged))] public WeaponScriptable weapon;
+        [SyncVar(hook = nameof(OnWeaponIDChanged))] 
+        public int WeaponID = -1;
         
         GameObject currentObj;
 
@@ -26,26 +27,32 @@ namespace Weapons
             base.RemoveEffect();
         }
         
-        void OnWeaponChanged(WeaponScriptable _, WeaponScriptable newValue)
+        void OnWeaponIDChanged(int _, int newID)
         {
             if (currentObj)
             {
                 Destroy(currentObj);
             }
-            currentObj = Instantiate(newValue.Prefab, transform);
+
+            WeaponScriptable weaponData = WeaponLibrary.GetWeapon(newID);
+
+            if (weaponData != null && weaponData.Prefab != null)
+            {
+                currentObj = Instantiate(weaponData.Prefab, transform);
+            }
+        }
+        
+        [Server]
+        public void SetWeaponId(int weaponID)
+        {
+            WeaponID = weaponID;
         }
         
 		[Server]
-        public void SetWeapon(WeaponScriptable weaponScriptable)
+        public int Swap(int weaponID)
         {
-            weapon = weaponScriptable;
-        }
-        
-		[Server]
-        public WeaponScriptable Swap(WeaponScriptable weaponScriptable)
-        {
-            WeaponScriptable w = weapon;
-            weapon = weaponScriptable;
+            int w = WeaponID;
+            WeaponID = weaponID;
             return w;
         }
     }

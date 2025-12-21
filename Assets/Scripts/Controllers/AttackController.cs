@@ -23,7 +23,7 @@ namespace Controllers
 		[SyncVar] public bool IsAttackingTarget;
 		[SyncVar] float weaponCooldown;
 
-		WeaponScriptable weapon;
+		int weaponID;
 		public CharacterStats Stats { get; private set; }
 		
 		void Start()
@@ -163,18 +163,18 @@ namespace Controllers
 				}
 				
 				float distance = Vector3.Distance(transform.position, target.transform.position);
-				bool inRange = distance <= weapon.BaseRange;
+				bool inRange = distance <= WeaponLibrary.GetWeapon(weaponID).BaseRange;
 				
 				if (!inRange)
 				{
-					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, weapon.BaseRange * 0.75f);
+					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, WeaponLibrary.GetWeapon(weaponID).BaseRange * 0.75f);
 					movementController.SrvMove(stopPos);
 				}
 				else
 				{
 					movementController.SrvStop();
 
-					if (weaponCooldown >= weapon.BaseCooldown)
+					if (weaponCooldown >= WeaponLibrary.GetWeapon(weaponID).BaseCooldown)
 					{
 						weaponCooldown = 0;
 						PerformAttack(target);
@@ -189,9 +189,9 @@ namespace Controllers
 		{
 			if (!isServer) return;
 
-			float damage = weapon.BaseDamage + Stats.Strength;
+			float damage = WeaponLibrary.GetWeapon(weaponID).BaseDamage + Stats.Strength;
 
-			switch (weapon.AttackType)
+			switch (WeaponLibrary.GetWeapon(weaponID).AttackType)
 			{
 				case AttackType.Melee:
 					StartCoroutine(AttackMelee(target.transform, damage));
@@ -210,7 +210,7 @@ namespace Controllers
 		IEnumerator AttackMelee(Transform target, float damage)
 		{
 			Vector3 position = (target.position + transform.position) / 2f;
-			IEnumerable<Collider> hits = Physics.OverlapSphere(position, weapon.BaseRange / 2.0f).Except(GetComponents<Collider>());
+			IEnumerable<Collider> hits = Physics.OverlapSphere(position, WeaponLibrary.GetWeapon(weaponID).BaseRange / 2.0f).Except(GetComponents<Collider>());
 
 			Attack(hits, damage);
 			yield return null;
@@ -232,7 +232,7 @@ namespace Controllers
         
 				Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
 
-				List<Collider> hits = Physics.OverlapSphere(currentPos, weapon.AreaDiameter / 2.0f)
+				List<Collider> hits = Physics.OverlapSphere(currentPos, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f)
 					.Except(GetComponents<Collider>())
 					.ToList();
 
@@ -250,9 +250,9 @@ namespace Controllers
 
 		IEnumerator AttackArea(Transform target, float damage)
 		{
-			yield return new WaitForSeconds(weapon.CastTime);
+			yield return new WaitForSeconds(WeaponLibrary.GetWeapon(weaponID).CastTime);
 			
-			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, weapon.AreaDiameter / 2.0f).Except(GetComponents<Collider>());
+			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f).Except(GetComponents<Collider>());
 			
 			Attack(hits, damage);
 			yield return null;
@@ -299,7 +299,7 @@ namespace Controllers
 					}
 					if (Mouse.current.leftButton.wasPressedThisFrame)
 					{
-						weapon = physicalWeapon.Swap(weapon);
+						weaponID = physicalWeapon.Swap(weaponID);
 					}
 				}
 			}
@@ -309,9 +309,9 @@ namespace Controllers
 			}
 		}
 		
-		public void SwapWeapons(WeaponScriptable newWeapon)
+		public void SwapWeapons(int newWeaponID)
 		{
-			weapon = newWeapon;
+			weaponID = newWeaponID;
 		}
 		
 		[Server]
@@ -322,7 +322,7 @@ namespace Controllers
 				return;
 			}
 			GameObject droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
-			droppedWeapon.GetComponent<PhysicalWeapon>().SetWeapon(weapon);
+			droppedWeapon.GetComponent<PhysicalWeapon>().SetWeaponId(weaponID);
 			NetworkServer.Spawn(droppedWeapon);
 		}
 	}

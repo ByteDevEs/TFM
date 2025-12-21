@@ -243,8 +243,6 @@ namespace Lobby
 				float z = newLevel.transform.position.z + stairPosition.y * newLevel.RoomSize;
 				Vector3 targetPosition = new Vector3(x, y, z);
 				
-				print(targetPosition);
-
 				NavMeshAgent agent = player.GetComponent<NavMeshAgent>();
 
 				if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, 10.0f, NavMesh.AllAreas))

@@ -4,6 +4,7 @@ using Mirror;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Weapons;
 
 namespace Controllers
 {
@@ -33,7 +34,7 @@ namespace Controllers
 			movementController = GetComponent<MovementController>();
 			AttackController = GetComponent<AttackController>();
 			HealthController = GetComponent<HealthController>();
-			AttackController.SwapWeapons(Prefabs.GetInstance().WeaponPool[Random.Range(0, Prefabs.GetInstance().WeaponPool.Count)]);
+			AttackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());
 			
 			if (!isLocalPlayer)
 			{

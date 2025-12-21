@@ -144,8 +144,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   MaxHealth: 15
+  TimeToRegenPotion: 0
+  MaxPotionCount: 3
+  PotionHeal: 50
   CurrentHealth: 0
   HealthPercentage: 1
+  PotionCooldownPercentage: 0
+  PotionCount: 0
 --- !u!114 &6422151740325626461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,7 +175,7 @@ MonoBehaviour:
   interpolatePosition: 1
   interpolateRotation: 1
   interpolateScale: 1
-  coordinateSpace: 0
+  coordinateSpace: 1
   timelineOffset: 1
   showGizmos: 0
   showOverlay: 0
@@ -217,6 +222,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  DashDistance: 5
+  DashDuration: 0.2
+  DashCooldown: 2
 --- !u!114 &8159265548460717707
 MonoBehaviour:
   m_ObjectHideFlags: 0
