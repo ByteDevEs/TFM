@@ -183,6 +183,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  DashDistance: 5
+  DashDuration: 0.2
+  DashCooldown: 2
 --- !u!114 &9112354025182278503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +201,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  ReviveTime: 5
+  ReviveDistance: 2
+  NearestPlayer: {fileID: 0}
+  CanReviveNearPlayer: 0
+  ReviveTimer: 0
+  IsDead: 0
 --- !u!114 &7329050955176290639
 MonoBehaviour:
   m_ObjectHideFlags: 0

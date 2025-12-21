@@ -60,7 +60,7 @@ namespace Level
 							{
 								if (r < SpawnEnemyProbability)
 								{
-									GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform);
+									GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform, false);
 									Vector2 circle = Random.insideUnitCircle;
 									enemyGo.transform.localPosition = new Vector3(i * RoomSize, 0, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
 									NetworkServer.Spawn(enemyGo);

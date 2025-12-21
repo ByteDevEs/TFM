@@ -13,6 +13,7 @@ namespace Controllers
 	[RequireComponent(typeof(MovementController), typeof(CharacterStats))]
 	public class AttackController : NetworkBehaviour
 	{
+		PlayerController playerController;
 		MovementController movementController;
 		HealthController healthController;
 		Coroutine attackCoroutine;
@@ -27,6 +28,7 @@ namespace Controllers
 		
 		void Start()
 		{
+			playerController = GetComponent<PlayerController>();
 			movementController = GetComponent<MovementController>();
 			healthController = GetComponent<HealthController>();
 			if (healthController)
@@ -315,6 +317,10 @@ namespace Controllers
 		[Server]
 		void OnDeath(GameObject lastAttacker)
 		{
+			if (playerController)
+			{
+				return;
+			}
 			GameObject droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
 			droppedWeapon.GetComponent<PhysicalWeapon>().SetWeapon(weapon);
 			NetworkServer.Spawn(droppedWeapon);

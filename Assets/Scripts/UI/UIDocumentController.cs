@@ -169,15 +169,10 @@ namespace UI
 					return;
 				}
 
-				DataBinding dataBinding = new DataBinding
+				potionCountLabel.schedule.Execute(() =>
 				{
-					bindingMode = BindingMode.ToTarget,
-					dataSource = PlayerController.LocalPlayer.HealthController, 
-					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.HealthController.PotionCount)), 
-					updateTrigger = BindingUpdateTrigger.EveryUpdate
-				};
-
-				potionCountLabel.SetBinding("text", dataBinding);
+					potionCountLabel.text = $"{PlayerController.LocalPlayer.HealthController.PotionCount}";
+				}).Every(0);
 			}
 			
 			Button backToLobbyButton = document.rootVisualElement.Q<Button>("BackToLobbyButton");
@@ -271,7 +266,6 @@ namespace UI
 
 				levelUpMenu.schedule.Execute(() => 
 				{
-					Debug.Log($"Checking level up menu {PlayerController.LocalPlayer.AttackController.Stats.CanLevelUp}");
 					levelUpMenu.visible = PlayerController.LocalPlayer.AttackController.Stats.CanLevelUp > 0;
         
 				}).Every(0);
@@ -290,7 +284,7 @@ namespace UI
 					{
 						reviveContainer.visible = PlayerController.LocalPlayer.CanReviveNearPlayer;
 					}
-				);
+				).Every(0);
 			}
 			
 			ProgressBar reviveProgressBar = document.rootVisualElement.Q<ProgressBar>("ReviveProgressBar");
@@ -302,17 +296,16 @@ namespace UI
 					return;
 				}
 
-				DataBinding dataBinding = new DataBinding
-				{
-					bindingMode = BindingMode.ToTarget,
-					dataSource = PlayerController.LocalPlayer.NearestPlayer, 
-					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.NearestPlayer.RevivalProgress)), 
-					updateTrigger = BindingUpdateTrigger.EveryUpdate
-				};
-				
-				dataBinding.sourceToUiConverters.AddConverter((ref float v) => v * 100.0f);
-
-				reviveProgressBar.SetBinding("value", dataBinding);
+				reviveProgressBar.schedule.Execute(() =>
+					{
+						if (PlayerController.LocalPlayer.NearestPlayer)
+						{
+							float value = (PlayerController.LocalPlayer.NearestPlayer.ReviveTimer / PlayerController.LocalPlayer.NearestPlayer.ReviveTime) * 100.0f;
+							Debug.Log(value);
+							reviveProgressBar.value = value;
+						}
+					}
+				).Every(0);
 			}
 		}
 

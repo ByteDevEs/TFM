@@ -6,15 +6,9 @@ namespace Weapons
 {
     public class PhysicalWeapon : HoverableObject
     {
-        [SyncVar(hook = nameof(OnWeaponChanged))] WeaponScriptable weapon;
+        [SyncVar(hook = nameof(OnWeaponChanged))] public WeaponScriptable weapon;
         
         GameObject currentObj;
-
-        protected override void Start()
-        {
-            currentObj = transform.GetChild(0).gameObject;
-            base.Start();
-        }
 
         public override void SetHoverEffect()
         {

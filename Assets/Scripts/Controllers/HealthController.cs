@@ -21,6 +21,7 @@ namespace Controllers
 		public Action<GameObject> OnDeath;
 		
 		// public System.Action<float> OnDamaged;
+		PlayerController playerController;
 		EnemyController enemyController;
 		float potionCooldown;
 		GameObject lastAttacker;
@@ -37,6 +38,7 @@ namespace Controllers
 			
 			OnDeath += Die;
 			
+			playerController = GetComponent<PlayerController>();
 			enemyController = GetComponent<EnemyController>();
 		}
 
@@ -80,7 +82,6 @@ namespace Controllers
 			}
 
 			// OnDamaged?.Invoke(NewValue);
-
 			if (newValue <= 0)
 			{
 				OnDeath?.Invoke(lastAttacker);
@@ -106,16 +107,26 @@ namespace Controllers
 				enemyController.State = new AttackState(enemyController, attacker);
 			}
 		}
+
+		[Command]
+		public void Die()
+		{
+			TakeDamage(null, 999999);
+		}
 		
 		[Server]
 		void Die(GameObject attacker)
 		{
-			attacker.GetComponent<AttackController>().Stats.AddXp();
-			if (attacker.GetComponent<PlayerController>() is { } playerController)
+			if (attacker)
+			{
+				attacker.GetComponent<AttackController>().Stats.AddXp();
+			}
+			CurrentHealth = 0;
+			if (playerController)
 			{
 				playerController.IsDead = true;
 			}
-			else
+			else if (enemyController)
 			{
 				NetworkServer.Destroy(gameObject);
 			}
@@ -145,6 +156,16 @@ namespace Controllers
 			}
 			
 			PotionCount--;
+			CurrentHealth += PotionHeal;
+			if (CurrentHealth > MaxHealth)
+			{
+				CurrentHealth = MaxHealth;
+			}
+		}
+		
+		[Server]
+		public void SrvRevive()
+		{
 			CurrentHealth += PotionHeal;
 			if (CurrentHealth > MaxHealth)
 			{
