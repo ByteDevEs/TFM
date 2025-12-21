@@ -30,7 +30,7 @@
         </ui:VisualElement>
         <ui:VisualElement style="flex-grow: 1; height: auto; width: 50%;">
             <ui:VisualElement name="ReviveContainer" style="flex-grow: 1; flex-direction: column-reverse;">
-                <ui:ProgressBar value="55.97" title="Hold F to revive your partner" name="ReviveProgressBar" class="unity-progress-bar__container" style="justify-content: flex-start; align-content: flex-start; width: 80%; align-self: center; height: 20%; min-height: auto; max-height: none; font-size: 80%; color: rgb(0, 0, 0);"/>
+                <ui:ProgressBar title="Hold F to revive your partner" name="ReviveProgressBar" class="unity-progress-bar__container" style="justify-content: flex-start; align-content: flex-start; width: 80%; align-self: center; height: 20%; min-height: auto; max-height: none; font-size: 80%; color: rgb(0, 0, 0);"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement style="flex-grow: 1; width: 25%;"/>

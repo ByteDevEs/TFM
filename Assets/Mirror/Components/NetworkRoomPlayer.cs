@@ -80,6 +80,12 @@ namespace Mirror
         [Command]
         public void CmdChangeReadyState(bool readyState)
         {
+            SrvChangeReadyState(readyState);
+        }
+        
+        [Server]
+        public void SrvChangeReadyState(bool readyState)
+        {
             readyToBegin = readyState;
             NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
             if (room != null)

@@ -63,5 +63,14 @@ namespace Lobby
 				roomPlayer.Visuals.SetActive(false);
 			}
 		}
+
+		public void ShowAll()
+		{
+			CustomNetworkRoomPlayer[] roomPlayers = FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+			foreach (CustomNetworkRoomPlayer roomPlayer in roomPlayers)
+			{
+				roomPlayer.Visuals.SetActive(true);
+			}
+		}
 	}
 }

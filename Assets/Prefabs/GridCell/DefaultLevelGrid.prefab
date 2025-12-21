@@ -70,7 +70,7 @@ MonoBehaviour:
     y: 0
     z: 0
   Level: 0
-  SpawnEnemyProbability: 0.125
+  SpawnEnemyProbability: 0.375
   MaxEnemiesPerCell: 3
 --- !u!114 &2027858426659755807
 MonoBehaviour:

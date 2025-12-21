@@ -53,19 +53,6 @@ namespace Level
 						if (IsOverlapping(room, new int4(i, j, 1, 1)))
 						{
 							LevelCells[i * GridX + j] = true;
-
-							float mE = Random.Range(1, MaxEnemiesPerCell);
-							float r = Random.Range(0f, 1f);
-							for (int k = 0; k < mE; k++)
-							{
-								if (r < SpawnEnemyProbability)
-								{
-									GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform, false);
-									Vector2 circle = Random.insideUnitCircle;
-									enemyGo.transform.localPosition = new Vector3(i * RoomSize, 0, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
-									NetworkServer.Spawn(enemyGo);
-								}
-							}
 						}
 					}
 				}
@@ -105,6 +92,32 @@ namespace Level
 
 			StartPosition = FindRandomWallForRoom(startRoom);
 			ExitPosition = FindRandomWallForRoom(exitRoom);
+		}
+		
+		[Server]
+		public void SrvGenerateEnemies()
+		{
+			for (int x = 0; x < LevelCells.Length; x++)
+			{
+				int i = x % GridX;
+				int j = x / GridX;
+				
+				if (LevelCells[i * GridX + j])
+				{
+					float mE = Random.Range(1, MaxEnemiesPerCell);
+					float r = Random.Range(0f, 1f);
+					for (int k = 0; k < mE; k++)
+					{
+						if (r < SpawnEnemyProbability)
+						{
+							GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform, false);
+							Vector2 circle = Random.insideUnitCircle;
+							enemyGo.transform.localPosition = new Vector3(i * RoomSize, 0, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
+							NetworkServer.Spawn(enemyGo);
+						}
+					}
+				}
+			}
 		}
 
 		protected override void GenerateMesh()

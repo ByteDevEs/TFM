@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using Level;
 using Mirror;
 using Mirror.Discovery;
@@ -8,6 +10,7 @@ using UI;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 namespace Lobby
 {
@@ -17,14 +20,18 @@ namespace Lobby
 		public LevelGenerator LevelGenerator;
 		
 		static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
+		
 		NetworkDiscovery networkDiscovery;
 		Dictionary<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerStates;
-
+		Dictionary<NetworkConnectionToClient, GameObject> connections;
+		Coroutine checkingAllDead;
+		
 		public override void Start()
 		{
 			LevelGenerator = GetComponent<LevelGenerator>();
 			networkDiscovery = GetComponent<NetworkDiscovery>();
 			networkDiscovery.StartDiscovery();
+			connections = new Dictionary<NetworkConnectionToClient, GameObject>();
 
 			base.Start();
 		}
@@ -81,7 +88,6 @@ namespace Lobby
 
 			if (spawner != null)
 			{
-
 				GameObject roomPlayer = Instantiate(roomPlayerPrefab.gameObject, spawner.transform.position, spawner.transform.rotation);
 
 				NetworkServer.Spawn(roomPlayer, conn);
@@ -115,6 +121,8 @@ namespace Lobby
 		{
 			roomPlayer.GetComponent<CustomNetworkRoomPlayer>().OnClientPlayersReady();
 			GameObject gamePlayer = base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
+			connections.Add(conn, gamePlayer);
+			
 			return gamePlayer;
 		}
 
@@ -123,6 +131,93 @@ namespace Lobby
 			UIDocumentController.GetInstance().OpenMainMenu();
 
 			base.OnClientDisconnect();
+		}
+
+		public override void OnRoomServerSceneChanged(string sceneName)
+		{
+			Debug.Log(sceneName);
+			if (sceneName.Contains("GameScene"))
+			{
+				Debug.Log("Starting check of players");
+				if (checkingAllDead is not null)
+				{
+					StopCoroutine(checkingAllDead);
+				}
+				
+				checkingAllDead = StartCoroutine(StartGame());
+			}
+			
+			base.OnRoomServerSceneChanged(sceneName);
+		}
+
+		public override void OnRoomClientSceneChanged()
+		{
+			if (SceneManager.GetActiveScene().name.Contains("RoomScene"))
+			{
+				UIDocumentController.GetInstance().OpenRoomMenu();
+			}
+			
+			base.OnRoomClientSceneChanged();
+		}
+		
+		[Server]
+       IEnumerator StartGame()
+       {
+          yield return new WaitForSeconds(1.0f);
+
+          while (true)
+          {
+             yield return new WaitForSeconds(0.5f);
+
+             if (!SceneManager.GetActiveScene().name.Contains("GameScene"))
+             {
+                 yield break;
+             }
+
+             if (connections.Count == 0) 
+             {
+                 continue;
+             }
+
+             bool allDead = FindObjectsByType<PlayerController>(FindObjectsSortMode.InstanceID) is {} players
+                                 && players.Length != 0
+                                 && players.Count(player => player.IsDead) == players.Length
+                                 && SceneManager.GetActiveScene().name.Contains("GameScene");
+
+             if (allDead)
+             {
+	             Debug.Log("All players are dead. Returning to Room.");
+	             EndGameAndReturnToLobby();
+	             yield break;
+             }
+          }
+       }
+
+		[Server]
+		void EndGameAndReturnToLobby()
+		{
+			foreach (NetworkRoomPlayer roomPlayer in roomSlots)
+			{
+				if (roomPlayer == null) continue;
+
+				NetworkConnectionToClient conn = roomPlayer.connectionToClient;
+
+				if (conn != null && connections.TryGetValue(conn, out GameObject gamePlayer))
+				{
+					NetworkServer.ReplacePlayerForConnection(conn, roomPlayer.gameObject, ReplacePlayerOptions.Destroy);
+
+					(roomPlayer as CustomNetworkRoomPlayer)?.ShowAll();
+					(roomPlayer as CustomNetworkRoomPlayer)?.SrvChangeReadyState(false);
+
+					if (gamePlayer != null)
+					{
+						NetworkServer.Destroy(gamePlayer);
+					}
+				}
+			}
+
+			connections.Clear();
+			ServerChangeScene("RoomScene");
 		}
 
 		[Server]
