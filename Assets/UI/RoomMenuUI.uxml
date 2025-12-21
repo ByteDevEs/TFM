@@ -1,21 +1,21 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
         <ui:VisualElement style="flex-grow: 1; align-items: flex-start; align-content: auto;">
-            <ui:Button text="Back" name="BackToSearchMenuButton" style="align-items: auto; align-self: auto; align-content: auto; width: 25%; margin-top: 25px; margin-right: 0; margin-bottom: 0; margin-left: 25px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; height: 15%;" />
+            <ui:Button text="Back" name="BackToSearchMenuButton" style="align-items: auto; align-self: auto; align-content: auto; width: 25%; margin-top: 25px; margin-right: 0; margin-bottom: 0; margin-left: 25px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; justify-content: flex-end; height: 15%; -unity-text-generator: standard; -unity-text-auto-size: none; font-size: 90%;"/>
         </ui:VisualElement>
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
     </ui:VisualElement>
     <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
     </ui:VisualElement>
     <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
-        <ui:VisualElement style="flex-grow: 1;" />
-        <ui:VisualElement style="flex-grow: 1;" />
+        <ui:VisualElement style="flex-grow: 1;"/>
+        <ui:VisualElement style="flex-grow: 1;"/>
         <ui:VisualElement style="flex-grow: 1; flex-direction: column-reverse;">
-            <ui:Button text="Ready" name="ReadyButton" style="flex-direction: column; align-items: stretch; align-content: auto; align-self: auto; justify-content: flex-start; -unity-text-align: middle-center; margin-right: 25px; margin-bottom: 25px;" />
+            <ui:Button text="Ready" name="ReadyButton" style="flex-direction: column; align-items: stretch; align-content: auto; align-self: auto; justify-content: flex-start; -unity-text-align: middle-center; margin-right: 25px; margin-bottom: 25px; -unity-text-generator: standard; -unity-text-auto-size: none; font-size: 90%;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

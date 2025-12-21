@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using Lobby;
 using Mirror;
 using UI;
 using UnityEngine;
@@ -11,9 +14,21 @@ namespace Controllers
 	{
 		public static PlayerController LocalPlayer;
 
+		public float ReviveTime = 3f;
+		public float ReviveDistance = 5f;
+		
+		public PlayerController NearestPlayer { get; private set; }
+		[SyncVar] public bool CanReviveNearPlayer;
+		
+		
+		[SyncVar] float reviveTimer;
+		[SyncVar] public bool IsDead;
+		
+		public float RevivalProgress => reviveTimer / ReviveTime;
+		
 		CameraController cameraController;
 		MovementController movementController;
-		AttackController attackController;
+		public AttackController AttackController { get; private set; }
 		public HealthController HealthController { get; private set; }
 
 		void Start()
@@ -28,23 +43,50 @@ namespace Controllers
 			GetComponent<PlayerInput>();
 			cameraController = Instantiate(Prefabs.GetInstance().CameraPrefab);
 			movementController = GetComponent<MovementController>();
-			attackController = GetComponent<AttackController>();
+			AttackController = GetComponent<AttackController>();
 			HealthController = GetComponent<HealthController>();
-			attackController.SwapWeapons(Prefabs.GetInstance().WeaponPool[Random.Range(0, Prefabs.GetInstance().WeaponPool.Count)]);
+			AttackController.SwapWeapons(Prefabs.GetInstance().WeaponPool[Random.Range(0, Prefabs.GetInstance().WeaponPool.Count)]);
 		
 			UIDocumentController.GetInstance().OpenGameMenu();
 		}
-
+		
 		void Update()
 		{
-			if (!isLocalPlayer)
+			if (isServer)
 			{
-				return;
+				ServerUpdateReviveStatus();
 			}
 
-			if (Keyboard.current.fKey.wasPressedThisFrame)
+			if (isLocalPlayer && !IsDead)
 			{
-				attackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
+				ClientHandleInput();
+			}
+		}
+
+		[Server] 
+		void ServerUpdateReviveStatus()
+		{
+			Dictionary<NetworkConnectionToClient, GameObject> players = ((GameManager)NetworkManager.singleton).Players;
+    
+			CanReviveNearPlayer = players
+				.Where(player => player.Value && player.Value != gameObject)
+				.Any(player => Vector3.Distance(transform.position, player.Value.transform.position) < ReviveDistance);
+		}
+		
+		[Client] 
+		void ClientHandleInput()
+		{
+			if (!isLocalPlayer || IsDead) return;
+    
+			
+			if (Keyboard.current.qKey.wasPressedThisFrame)
+			{
+				HealthController.TakePotion();
+			}
+			
+			if (Keyboard.current.shiftKey.wasPressedThisFrame)
+			{
+				movementController.Dash();
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -52,15 +94,66 @@ namespace Controllers
 
 			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
 
-			if (attackController && !attackController.TryAttack(ray))
+			if (AttackController && !AttackController.TryAttack(ray))
 			{
-				if (!attackController.IsAttackingTarget)
+				if (!AttackController.IsAttackingTarget)
 				{
 					movementController.Move(ray);
 				}
 			}
 
-			attackController.SwapWeapons(ray);
+			AttackController.SwapWeapons(ray);
+
+			if (Keyboard.current.fKey.isPressed) 
+			{
+				CmdReviveTeammateClose();
+			}
+		}
+
+		[Command]
+		void CmdReviveTeammateClose()
+		{
+			var players = ((GameManager)NetworkManager.singleton).Players;
+
+			foreach (KeyValuePair<NetworkConnectionToClient, GameObject> player in players)
+			{
+				if (!player.Value) 
+				{
+					continue;
+				}
+
+				if (ReferenceEquals(player.Value, gameObject))
+				{
+					continue;
+				}
+      
+				if (Vector3.Distance(transform.position, player.Value.transform.position) < ReviveDistance
+				    && player.Value.GetComponent<PlayerController>() is { IsDead: true } pC)
+				{
+					NearestPlayer = pC;
+					break;
+				}
+      
+				NearestPlayer = null;
+			}
+
+			if (NearestPlayer is null)
+			{
+				return;
+			}
+
+			NearestPlayer.CmdRevive();
+		}
+		
+		[Command]
+		void CmdRevive()
+		{
+			reviveTimer += Time.deltaTime;
+			if (reviveTimer > ReviveTime)
+			{
+				reviveTimer = 0f;
+				IsDead = false;
+			}
 		}
 	}
 }

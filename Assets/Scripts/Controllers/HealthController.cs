@@ -1,21 +1,30 @@
+using System;
 using Enemies;
 using Enemies.EnemyStates;
 using Mirror;
 using UI;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Controllers
 {
 	public class HealthController : NetworkBehaviour
 	{
 		[SyncVar] public int MaxHealth = 100;
-		[SyncVar(hook = nameof(OnHealthChanged))] public float CurrentHealth;
-
-		public float HealthPercentage = 1;
-		public System.Action OnDeath;
+		public float TimeToRegenPotion;
+		public int MaxPotionCount = 3;
+		public int PotionHeal = 50;
+		[SyncVar(hook = nameof(OnHealthChanged))] [HideInInspector] public float CurrentHealth;
+		[HideInInspector] public float HealthPercentage = 1;
+		[SyncVar] [HideInInspector] public float PotionCooldownPercentage;
+		[SyncVar] [HideInInspector] public int PotionCount;
+		public Action<GameObject> OnDeath;
+		
 		// public System.Action<float> OnDamaged;
 		EnemyController enemyController;
-
+		float potionCooldown;
+		GameObject lastAttacker;
+		
 		void Start()
 		{
 			if (!isServer)
@@ -24,11 +33,42 @@ namespace Controllers
 			}
 			
 			CurrentHealth = MaxHealth;
-				
+			PotionCount = MaxPotionCount;
+			
 			OnDeath += Die;
 			
 			enemyController = GetComponent<EnemyController>();
 		}
+
+		void Update()
+		{
+			if (!isServer)
+			{
+				return;
+			}
+			
+			PotionCooldownPercentage = potionCooldown / TimeToRegenPotion;
+
+			if (PotionCount == MaxPotionCount)
+			{
+				return;
+			}
+			
+			potionCooldown -= Time.deltaTime;
+
+			if (potionCooldown > 0)
+			{
+				return;
+			}
+
+			PotionCount += 1;
+			
+			if (PotionCount != MaxPotionCount)
+			{
+				potionCooldown = TimeToRegenPotion;
+			}
+		}
+
 		void OnHealthChanged(float oldValue, float newValue)
 		{
 			float damage = oldValue - newValue;
@@ -43,7 +83,7 @@ namespace Controllers
 
 			if (newValue <= 0)
 			{
-				OnDeath?.Invoke();
+				OnDeath?.Invoke(lastAttacker);
 			}
 		}
 
@@ -54,6 +94,7 @@ namespace Controllers
 			{
 				return;
 			}
+			lastAttacker = attacker;
 			CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
 			if (enemyController)
 			{
@@ -67,9 +108,48 @@ namespace Controllers
 		}
 		
 		[Server]
-		void Die()
+		void Die(GameObject attacker)
 		{
-			NetworkServer.Destroy(gameObject);
+			attacker.GetComponent<AttackController>().Stats.AddXp();
+			if (attacker.GetComponent<PlayerController>() is { } playerController)
+			{
+				playerController.IsDead = true;
+			}
+			else
+			{
+				NetworkServer.Destroy(gameObject);
+			}
+		}
+		
+		public void TakePotion()
+		{
+			if (!isLocalPlayer)
+			{
+				return;
+			}
+			
+			CmdTakePotion();
+		}
+
+		[Command]
+		void CmdTakePotion()
+		{
+			if (PotionCount <= 0)
+			{
+				return;
+			}
+			
+			if (PotionCount == MaxPotionCount)
+			{
+				potionCooldown = TimeToRegenPotion;
+			}
+			
+			PotionCount--;
+			CurrentHealth += PotionHeal;
+			if (CurrentHealth > MaxHealth)
+			{
+				CurrentHealth = MaxHealth;
+			}
 		}
 	}
 }

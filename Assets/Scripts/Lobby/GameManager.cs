@@ -15,6 +15,7 @@ namespace Lobby
 	public class GameManager : NetworkRoomManager
 	{
 		public LevelGenerator LevelGenerator;
+		public Dictionary<NetworkConnectionToClient, GameObject> Players = new Dictionary<NetworkConnectionToClient, GameObject>();
 		
 		static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
 		NetworkDiscovery networkDiscovery;
@@ -115,7 +116,15 @@ namespace Lobby
 		{
 			roomPlayer.GetComponent<CustomNetworkRoomPlayer>().OnClientPlayersReady();
 			GameObject gamePlayer = base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
+			Players.Add(conn, gamePlayer);
 			return gamePlayer;
+		}
+
+		public override void OnServerDisconnect(NetworkConnectionToClient conn)
+		{
+			Players.Remove(conn);
+			
+			base.OnServerDisconnect(conn);
 		}
 
 		public override void OnClientDisconnect()
@@ -151,9 +160,8 @@ namespace Lobby
 				print(targetPosition);
 
 				NavMeshAgent agent = player.GetComponent<NavMeshAgent>();
-				NavMeshHit hit;
-				
-				if (NavMesh.SamplePosition(targetPosition, out hit, 10.0f, NavMesh.AllAreas))
+
+				if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, 10.0f, NavMesh.AllAreas))
 				{
 					agent.Warp(hit.position);
 					agent.SetDestination(hit.position);

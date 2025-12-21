@@ -213,7 +213,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  isAttackingTarget: 0
+  IsAttackingTarget: 0
 --- !u!114 &2258506339775883038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,9 +259,14 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 100
-  currentHealth: 100
-  healthPercentage: 1
+  MaxHealth: 100
+  TimeToRegenPotion: 20
+  MaxPotionCount: 3
+  PotionHeal: 50
+  CurrentHealth: 0
+  HealthPercentage: 1
+  PotionCooldownPercentage: 0
+  PotionCount: 2
 --- !u!114 &864048676074368002
 MonoBehaviour:
   m_ObjectHideFlags: 0

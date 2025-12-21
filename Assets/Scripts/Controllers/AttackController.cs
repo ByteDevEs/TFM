@@ -106,7 +106,6 @@ namespace Controllers
 
 			movementController.SrvStop();
 			
-			Debug.LogWarning("Test");
 			attackCoroutine = StartCoroutine(Attack(selectedTarget));
 		}
 
@@ -261,9 +260,9 @@ namespace Controllers
 		{
 			foreach (Collider c in hits)
 			{
-				if (c.GetComponent<HealthController>() is {} healthController)
+				if (c.GetComponent<HealthController>() is {} hC)
 				{
-					healthController.TakeDamage(gameObject, damage);
+					hC.TakeDamage(gameObject, damage);
 				}
 			}
 		}
@@ -314,7 +313,7 @@ namespace Controllers
 		}
 		
 		[Server]
-		void OnDeath()
+		void OnDeath(GameObject lastAttacker)
 		{
 			GameObject droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
 			droppedWeapon.GetComponent<PhysicalWeapon>().SetWeapon(weapon);

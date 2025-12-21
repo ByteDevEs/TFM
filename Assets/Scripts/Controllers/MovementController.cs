@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,11 +9,17 @@ namespace Controllers
 	[RequireComponent(typeof(NavMeshAgent), typeof(NetworkTransformReliable))]
 	public class MovementController : NetworkBehaviour
 	{
+		[SerializeField] float DashDistance = 5f;
+		[SerializeField] float DashDuration = 0.2f;
+		[SerializeField] float DashCooldown = 2f;
+		
 		public Vector3 Destination { get; private set; }
 		public float RemainingDistance => navMeshAgent.enabled ? navMeshAgent.remainingDistance : Mathf.Infinity;
 		public float StoppingDistance => navMeshAgent.enabled ? navMeshAgent.stoppingDistance : Mathf.Infinity;
 		
 		NavMeshAgent navMeshAgent;
+		double lastDashTime;
+		bool isDashing;
 
 		void Awake()
 		{
@@ -44,6 +51,18 @@ namespace Controllers
 			CmdMove(ray);
 		}
 
+		public void Dash()
+		{
+			if (!isLocalPlayer)
+			{
+				return;
+			}
+			
+			if (NetworkTime.time < lastDashTime + DashCooldown || isDashing) return;
+
+			CmdDash();
+		}
+
 		public void Stop()
 		{
 			if (!isLocalPlayer)
@@ -68,6 +87,35 @@ namespace Controllers
 			navMeshAgent.SetDestination(Destination);
 		}
 
+		[Server]
+		IEnumerator ServerDashRoutine()
+		{
+			isDashing = true;
+			lastDashTime = NetworkTime.time;
+
+			Vector3 dashDirection = transform.forward;
+			if (navMeshAgent.velocity.sqrMagnitude > 0.1f)
+			{
+				dashDirection = navMeshAgent.velocity.normalized;
+			}
+
+			navMeshAgent.ResetPath();
+            
+			float timer = 0f;
+			float speed = DashDistance / DashDuration;
+
+			while (timer < DashDuration)
+			{
+				navMeshAgent.Move(dashDirection * (speed * Time.deltaTime));
+                
+				timer += Time.deltaTime;
+				yield return null;
+			}
+
+			navMeshAgent.velocity = Vector3.zero;
+			isDashing = false;
+		}
+		
 		[Command]
 		void CmdMove(Ray ray)
 		{
@@ -85,6 +133,16 @@ namespace Controllers
 		{
 			Destination = transform.position;
 			navMeshAgent.SetDestination(Destination);
+		}
+		
+		[Command]
+		void CmdDash()
+		{
+			// Server validates cooldown
+			if (NetworkTime.time < lastDashTime + DashCooldown || isDashing) return;
+
+			// Start the dash logic
+			StartCoroutine(ServerDashRoutine());
 		}
 
 		[Server]

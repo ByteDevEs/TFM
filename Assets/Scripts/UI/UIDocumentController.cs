@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Controllers;
+using Helpers;
 using Lobby;
 using Mirror;
 using Mirror.Discovery;
@@ -124,6 +125,11 @@ namespace UI
 
 			if (healthMask is not null)
 			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+				
 				DataBinding dataBinding = new DataBinding
 				{
 					bindingMode = BindingMode.ToTarget,
@@ -137,14 +143,221 @@ namespace UI
 				
 				healthMask.SetBinding("style.height", dataBinding);
 			}
+			
+			RadialProgress potionCooldownProgress = document.rootVisualElement.Q<RadialProgress>("PotionCooldownProgress");
+
+			if (potionCooldownProgress is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				potionCooldownProgress.schedule.Execute(() => 
+				{
+					potionCooldownProgress.Progress = PlayerController.LocalPlayer.HealthController.PotionCooldownPercentage;
+        
+				}).Every(0);
+			}
+			
+			Label potionCountLabel = document.rootVisualElement.Q<Label>("PotionCountLabel");
+			
+			if (potionCountLabel is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				DataBinding dataBinding = new DataBinding
+				{
+					bindingMode = BindingMode.ToTarget,
+					dataSource = PlayerController.LocalPlayer.HealthController, 
+					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.HealthController.PotionCount)), 
+					updateTrigger = BindingUpdateTrigger.EveryUpdate
+				};
+
+				potionCountLabel.SetBinding("text", dataBinding);
+			}
+			
+			Button backToLobbyButton = document.rootVisualElement.Q<Button>("BackToLobbyButton");
+
+			if (backToLobbyButton is not null)
+			{
+				backToLobbyButton.clicked -= BackToLobbyButtonClicked;
+				backToLobbyButton.clicked += BackToLobbyButtonClicked;
+			}
+			
+			Button speedButton = document.rootVisualElement.Q<Button>("SpeedButton");
+
+			if (speedButton is not null)
+			{
+				speedButton.clicked -= SpeedButtonClicked;
+				speedButton.clicked += SpeedButtonClicked;
+			}
+			
+			Button strengthButton = document.rootVisualElement.Q<Button>("StrengthButton");
+
+			if (strengthButton is not null)
+			{
+				strengthButton.clicked -= StrengthButtonClicked;
+				strengthButton.clicked += StrengthButtonClicked;
+			}
+			
+			Button agilityButton = document.rootVisualElement.Q<Button>("AgilityButton");
+
+			if (agilityButton is not null)
+			{
+				agilityButton.clicked -= AgilityButtonClicked;
+				agilityButton.clicked += AgilityButtonClicked;
+			}
+			
+			Label speedLvLabel = document.rootVisualElement.Q<Label>("SpeedLvLabel");
+
+			if (speedLvLabel is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				speedLvLabel.schedule.Execute(() => 
+				{
+					speedLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Speed}";
+        
+				}).Every(0);
+			}
+			
+			Label strengthLvLabel = document.rootVisualElement.Q<Label>("StrengthLvLabel");
+
+			if (strengthLvLabel is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				strengthLvLabel.schedule.Execute(() => 
+				{
+					strengthLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Strength}";
+        
+				}).Every(0);
+			}
+			
+			Label agilityLvLabel = document.rootVisualElement.Q<Label>("AgilityLvLabel");
+
+			if (agilityLvLabel is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				agilityLvLabel.schedule.Execute(() => 
+				{
+					agilityLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Agility}";
+        
+				}).Every(0);
+			}
+			
+			VisualElement levelUpMenu = document.rootVisualElement.Q<VisualElement>("LevelUpMenu");
+
+			if (levelUpMenu is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				levelUpMenu.schedule.Execute(() => 
+				{
+					Debug.Log($"Checking level up menu {PlayerController.LocalPlayer.AttackController.Stats.CanLevelUp}");
+					levelUpMenu.visible = PlayerController.LocalPlayer.AttackController.Stats.CanLevelUp > 0;
+        
+				}).Every(0);
+			}
+			
+			VisualElement reviveContainer = document.rootVisualElement.Q<VisualElement>("ReviveContainer");
+			
+			if (reviveContainer is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				reviveContainer.schedule.Execute(() =>
+					{
+						reviveContainer.visible = PlayerController.LocalPlayer.CanReviveNearPlayer;
+					}
+				);
+			}
+			
+			ProgressBar reviveProgressBar = document.rootVisualElement.Q<ProgressBar>("ReviveProgressBar");
+			
+			if (reviveProgressBar is not null)
+			{
+				if (!PlayerController.LocalPlayer)
+				{
+					return;
+				}
+
+				DataBinding dataBinding = new DataBinding
+				{
+					bindingMode = BindingMode.ToTarget,
+					dataSource = PlayerController.LocalPlayer.NearestPlayer, 
+					dataSourcePath = new PropertyPath(nameof(PlayerController.LocalPlayer.NearestPlayer.RevivalProgress)), 
+					updateTrigger = BindingUpdateTrigger.EveryUpdate
+				};
+				
+				dataBinding.sourceToUiConverters.AddConverter((ref float v) => v * 100.0f);
+
+				reviveProgressBar.SetBinding("value", dataBinding);
+			}
 		}
 
+		void SpeedButtonClicked()
+		{
+			if (!PlayerController.LocalPlayer)
+			{
+				return;
+			}
+
+			PlayerController.LocalPlayer.AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Speed));
+		}
+		void StrengthButtonClicked()
+		{
+			if (!PlayerController.LocalPlayer)
+			{
+				return;
+			}
+
+			PlayerController.LocalPlayer.AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
+		}
+		void AgilityButtonClicked()
+		{
+			if (!PlayerController.LocalPlayer)
+			{
+				return;
+			}
+
+			PlayerController.LocalPlayer.AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Agility));
+		}
 		void PlayButtonClicked() => UpdateVisualTree(PlayMenu);
 		void SettingsButtonClicked() => UpdateVisualTree(OptionsMenu);
 		void BackToMainMenuButtonClicked() => UpdateVisualTree(MainMenu);
-		void BackToSearchMenuButtonClicked() => ((GameManager)NetworkManager.singleton).LeaveRoom();
+		void BackToSearchMenuButtonClicked()
+		{
+			((GameManager)NetworkManager.singleton).LeaveRoom();
+			UpdateVisualTree(PlayMenu);
+		}
 		void CreateRoomButtonClicked() => ((GameManager)NetworkManager.singleton).CreateRoom();
 		void ReadyButtonClicked() => GameManager.Ready();
+		void BackToLobbyButtonClicked()
+		{
+			((GameManager)NetworkManager.singleton).LeaveRoom();
+			UpdateVisualTree(PlayMenu);
+		}
 
 		public void AddServerToList(ServerResponse response)
 		{
