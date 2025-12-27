@@ -46,6 +46,7 @@ public class Prefabs : MonoBehaviour
 			o.transform.localRotation = Quaternion.identity;
 			o.GetComponent<AudioSource>().spatialize = true;
 			o.GetComponent<AudioSource>().spatialBlend = 1.0f;
+			o.GetComponent<AudioSource>().maxDistance = 5.0f;
 		}
 		else
 		{

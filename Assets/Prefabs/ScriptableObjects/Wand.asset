@@ -20,10 +20,10 @@ MonoBehaviour:
   BaseCooldown: 5
   AttackType: 1
   WeaponAttackSfx: MagicHit
-  WeaponAttackAnimationClip: 
+  WeaponAttackAnimationClip: WandAttackAnimation
   AttackDegree: 0
   AttackWidth: 0
   AreaDiameter: 5
   CastTime: 1
   HitSfx: MagicFall
-  ProjectilePrefab: {fileID: 0}
+  ProjectilePrefab: {fileID: 1126457245870616211, guid: 0bee5ca353d271243b904c4bfdeb8c87, type: 3}

@@ -18,6 +18,7 @@ namespace Controllers
         public Vector3 HandOffset;
         public Vector3 HandRotation;
         public LayerMask AttackableLayer;
+        public float ProjectileSpeed = 20f;
         
 		PlayerController playerController;
 		MovementController movementController;
@@ -234,32 +235,21 @@ namespace Controllers
 		    Vector3 startPos = transform.position;
 		    Vector3 targetPos = target.position; 
 		    
-		    const float projectileSpeed = 20f; 
 		    float distance = Vector3.Distance(startPos, targetPos);
 		    
-		    float flightDuration = distance / projectileSpeed; 
+		    float flightDuration = distance / ProjectileSpeed; 
 
 		    animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
-		    RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
-		    
-		    RpcSpawnProjectile(startPos, targetPos, projectileSpeed);
-
+		    StartCoroutine(AttackRangedVisuals(startPos, targetPos));
 		    float timer = 0f;
-		    Vector3 lastPos = startPos;
 
 		    while (timer < flightDuration)
 		    {
 		        timer += Time.deltaTime;
-		        float t = timer / flightDuration;
-
-		        Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
-		        
-		        Vector3 direction = (currentPos - lastPos).normalized;
-		        float distThisFrame = Vector3.Distance(lastPos, currentPos);
 
 		        float radius = WeaponLibrary.GetWeapon(weaponID).AttackWidth / 2.0f;
 
-		        IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f, AttackableLayer)
+		        IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, radius, AttackableLayer)
 			        .Where(hit => !hit.transform.gameObject.CompareTag(transform.tag))
 			        .Except(GetComponents<Collider>())
 			        .ToList();
@@ -270,13 +260,20 @@ namespace Controllers
 			        break;
 		        }
 
-		        lastPos = currentPos;
 		        yield return null;
 		    }
 		}
+		
+		IEnumerator AttackRangedVisuals(Vector3 startPos, Vector3 targetPos)
+		{
+			yield return new WaitForSeconds(0.25f);
+
+			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
+			RpcSpawnProjectile(startPos, targetPos);
+		}
 
 		[ClientRpc]
-		void RpcSpawnProjectile(Vector3 startPos, Vector3 targetPos, float speed)
+		void RpcSpawnProjectile(Vector3 startPos, Vector3 targetPos)
 		{
 		    WeaponScriptable weapon = WeaponLibrary.GetWeapon(weaponID);
 		    GameObject prefab = weapon.ProjectilePrefab;
@@ -284,7 +281,7 @@ namespace Controllers
 		    GameObject projectile = Instantiate(prefab, startPos, Quaternion.identity);
 		    projectile.transform.LookAt(targetPos);
 		    
-		    StartCoroutine(MoveProjectileTo(projectile, targetPos, speed));
+		    StartCoroutine(MoveProjectileTo(projectile, targetPos, ProjectileSpeed));
 		}
 
 		IEnumerator MoveProjectileTo(GameObject projectile, Vector3 targetPos, float speed)
@@ -311,8 +308,9 @@ namespace Controllers
 		}
 
 		IEnumerator AttackArea(Transform target, float damage)
-				{
+		{
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
+			
 			yield return new WaitForSeconds(WeaponLibrary.GetWeapon(weaponID).CastTime);
 			
 			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f, AttackableLayer)
@@ -320,8 +318,17 @@ namespace Controllers
 				.Except(GetComponents<Collider>());
 			
 			Attack(hits, damage);
+			animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).HitSfx);
+			RpcSpawnAreaDamage(target.position);
 			yield return null;
+		}
+		
+		[ClientRpc]
+		void RpcSpawnAreaDamage(Vector3 targetPosition)
+		{
+			GameObject instantiated = Instantiate(WeaponLibrary.GetWeapon(weaponID).ProjectilePrefab, targetPosition, Quaternion.identity);
+			Destroy(instantiated, 4.0f);
 		}
 
 		void Attack(IEnumerable<Collider> hits, float damage)
@@ -358,7 +365,7 @@ namespace Controllers
 		
 		public void SwapWeapons(Ray ray)
 		{
-			if (!Mouse.current.rightButton.isPressed)
+			if (!Mouse.current.rightButton.wasPressedThisFrame)
 			{
 				return;
 			}
@@ -389,16 +396,9 @@ namespace Controllers
 					lastWeaponHit.SetHoverEffect();
 				}
 				
-				if (!Mouse.current.leftButton.wasPressedThisFrame)
-				{
-					return;
-				}
-				
 				weaponID = physicalWeapon.Swap(weaponID);
 				movementController.Stop();
 			}
-			else
-			{}
 		}
 		
 		[Server]
