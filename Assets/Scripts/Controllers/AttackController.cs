@@ -310,6 +310,7 @@ namespace Controllers
 		IEnumerator AttackArea(Transform target, float damage)
 		{
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
+			animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 			
 			yield return new WaitForSeconds(WeaponLibrary.GetWeapon(weaponID).CastTime);
 			
@@ -318,7 +319,6 @@ namespace Controllers
 				.Except(GetComponents<Collider>());
 			
 			Attack(hits, damage);
-			animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).HitSfx);
 			RpcSpawnAreaDamage(target.position);
 			yield return null;

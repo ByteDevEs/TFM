@@ -130,6 +130,7 @@ MonoBehaviour:
   AttackableLayer:
     serializedVersion: 2
     m_Bits: 11264
+  ProjectileSpeed: 20
   IsAttackingTarget: 0
 --- !u!65 &777050608453988090
 BoxCollider:
