@@ -164,6 +164,8 @@ namespace Controllers
 			{
 				return;
 			}
+			
+			Debug.Log("Clicking: " + hit.transform.name);
 
 			Destination = hit.point;
 			navMeshAgent.SetDestination(Destination);

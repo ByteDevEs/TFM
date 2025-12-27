@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5281534739066419532}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 6464607023913177200}
   - component: {fileID: 2124689139708355365}
   - component: {fileID: 3791671504342080935}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: EnemyPrototype
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -247,9 +247,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  Hand: {fileID: 200131309386964848}
+  Hand: {fileID: 5142865130428416907}
   HandOffset: {x: 0.01, y: 0.035, z: -0.035}
   HandRotation: {x: 0, y: -90, z: 45}
+  AttackableLayer:
+    serializedVersion: 2
+    m_Bits: 4096
   IsAttackingTarget: 0
 --- !u!114 &6464607023913177200
 MonoBehaviour:
@@ -305,6 +308,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &5142865130428416907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8390282561744047133}
+  m_Layer: 13
+  m_Name: WeaponHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8390282561744047133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5142865130428416907}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6510064234664879614}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &321905497903280044
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -316,6 +350,10 @@ PrefabInstance:
     - target: {fileID: 2578838396832697869, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
       propertyPath: m_Name
       value: HandL
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578838396832697869, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 2928814751216029328, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
       propertyPath: m_Mesh
@@ -383,6 +421,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ProtoFeetR
       objectReference: {fileID: 0}
+    - target: {fileID: -3345989871969555833, guid: 376e2f4561e7c5e48bc7a8ec4e836b2e, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: -2106533068600194778, guid: 376e2f4561e7c5e48bc7a8ec4e836b2e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.2
@@ -448,6 +490,10 @@ PrefabInstance:
     - target: {fileID: -3345989871969555833, guid: 376e2f4561e7c5e48bc7a8ec4e836b2e, type: 3}
       propertyPath: m_Name
       value: ProtoFeetL
+      objectReference: {fileID: 0}
+    - target: {fileID: -3345989871969555833, guid: 376e2f4561e7c5e48bc7a8ec4e836b2e, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -2106533068600194778, guid: 376e2f4561e7c5e48bc7a8ec4e836b2e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -515,6 +561,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HandR
       objectReference: {fileID: 0}
+    - target: {fileID: 2578838396832697869, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 2928814751216029328, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -561,14 +611,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8887494786962207875, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8390282561744047133}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 3435579572971537686, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
---- !u!1 &200131309386964848 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2578838396832697869, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
-  m_PrefabInstance: {fileID: 2382084821664420221}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6510064234664879614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8887494786962207875, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
@@ -630,6 +678,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ProtoHead
       objectReference: {fileID: 0}
+    - target: {fileID: 8159657834481095664, guid: a8d432d16fabbe54d8a5327166096752, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -655,6 +707,10 @@ PrefabInstance:
     - target: {fileID: 360398373778262974, guid: 9797ff4ace84d5040aa060f7bfefe8dd, type: 3}
       propertyPath: m_Name
       value: Body
+      objectReference: {fileID: 0}
+    - target: {fileID: 360398373778262974, guid: 9797ff4ace84d5040aa060f7bfefe8dd, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 9002192189976469136, guid: 9797ff4ace84d5040aa060f7bfefe8dd, type: 3}
       propertyPath: m_LocalPosition.x

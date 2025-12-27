@@ -15,15 +15,15 @@ MonoBehaviour:
   WeaponID: 2
   Name: Wand
   Prefab: {fileID: 2578838396832697869, guid: 7dbd3dbbd6a982647b113835759fefcb, type: 3}
-  BaseDamage: 7
-  BaseRange: 4
+  BaseDamage: 10
+  BaseRange: 8
   BaseCooldown: 5
   AttackType: 1
   WeaponAttackSfx: MagicHit
   WeaponAttackAnimationClip: 
   AttackDegree: 0
   AttackWidth: 0
-  TraverseSpeed: 0
-  AreaDiameter: 3
-  CastTime: 2
+  AreaDiameter: 5
+  CastTime: 1
   HitSfx: MagicFall
+  ProjectilePrefab: {fileID: 0}

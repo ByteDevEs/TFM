@@ -8,7 +8,7 @@ namespace Helpers
     {
         protected GameObject[] Children;
 
-        bool isHovering;
+        protected bool isHovering;
         bool isClicking;
 
         float clickTime;

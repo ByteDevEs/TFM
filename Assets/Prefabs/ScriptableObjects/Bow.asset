@@ -20,10 +20,10 @@ MonoBehaviour:
   BaseCooldown: 2
   AttackType: 2
   WeaponAttackSfx: BowHit
-  WeaponAttackAnimationClip: 
+  WeaponAttackAnimationClip: BowAttackAnimation
   AttackDegree: 0
-  AttackWidth: 1
-  TraverseSpeed: 100
-  AreaDiameter: 2
+  AttackWidth: 4
+  AreaDiameter: 4
   CastTime: 0
   HitSfx: 
+  ProjectilePrefab: {fileID: -2048200183274179457, guid: 9e95a06976a7b754381d0b53d867a803, type: 3}

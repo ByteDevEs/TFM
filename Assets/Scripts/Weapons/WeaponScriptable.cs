@@ -26,11 +26,7 @@ namespace Weapons
 		#endif
 		public float AttackWidth;
 		#if UNITY_EDITOR
-		[ShowIf(nameof(AttackType), (int)AttackType.Ranged)]
-		#endif
-		public float TraverseSpeed;
-		#if UNITY_EDITOR
-		[ShowIf(nameof(AttackType), (int)AttackType.Ranged, (int)AttackType.Area)]
+		[ShowIf(nameof(AttackType), (int)AttackType.Area)]
 		#endif
 		public float AreaDiameter;
 		#if UNITY_EDITOR
@@ -41,6 +37,10 @@ namespace Weapons
 		[ShowIf(nameof(AttackType), (int)AttackType.Area)]
 		#endif
 		public string HitSfx;
+		#if UNITY_EDITOR
+		[ShowIf(nameof(AttackType), (int)AttackType.Ranged, (int)AttackType.Area)]
+		#endif
+		public GameObject ProjectilePrefab;
 	}
 
 	public enum AttackType

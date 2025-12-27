@@ -27,7 +27,21 @@ namespace Enemies
 			
 			base.Start();
 		}
-		
+
+		public override void RemoveEffect()
+		{
+			if (!isHovering)
+			{
+				return;
+			}
+
+			isHovering = false;
+			foreach (GameObject child in Children)
+			{
+				child.layer = LayerMask.NameToLayer("Enemy");
+			}
+		}
+
 		void Update()
 		{
 			if (isServer)
