@@ -11,6 +11,7 @@ namespace Level
 	{
 		public GameObject FloorPrefab;
 		public GameObject WallPrefab;
+		public GameObject ColumnPrefab;
 		public GameObject StartPrefab;
 		public GameObject ExitPrefab;
 		public float RoomSize = 1;

@@ -73,3 +73,4 @@ MonoBehaviour:
   OptionsMenu: {fileID: 0}
   RoomMenu: {fileID: 9197481963319205126, guid: 1bd7597cf2c0ab54ea0f3f510b3b08c8, type: 3}
   GameMenu: {fileID: 9197481963319205126, guid: 270772b03d9320e43b4d00dfd9620f0b, type: 3}
+  RoomButtonTemplate: {fileID: 9197481963319205126, guid: 6bd503211e607b54bbc8e9b43002722e, type: 3}

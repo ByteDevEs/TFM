@@ -51,6 +51,7 @@ MonoBehaviour:
   syncInterval: 0
   FloorPrefab: {fileID: 2267696794511580876, guid: 8fd4044e47f61b04fac50223fe960997, type: 3}
   WallPrefab: {fileID: 3266648259510826313, guid: 400f0a15c7fc85a44879c369b4c7039b, type: 3}
+  ColumnPrefab: {fileID: 3266648259510826313, guid: ca30d99e38600af4b9ca57cd2962eb9d, type: 3}
   StartPrefab: {fileID: 3266648259510826313, guid: bea760ba325d8854c90774d299ec05ba, type: 3}
   ExitPrefab: {fileID: 3266648259510826313, guid: d1a1488d4a346774cb44c94845e8f2a5, type: 3}
   RoomSize: 10

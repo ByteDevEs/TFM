@@ -1,0 +1,12 @@
+.unity-button {
+    transition: initial;
+    transition-duration: 0.2s;
+    transform-origin: left;
+}
+
+.unity-button:hover {
+    transition: initial;
+    transition-duration: 0.2s;
+    scale: 1.05 1.25 1;
+    transform-origin: left;
+}

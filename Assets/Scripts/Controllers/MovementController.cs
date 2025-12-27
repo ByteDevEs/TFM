@@ -12,6 +12,9 @@ namespace Controllers
 		[SerializeField] float DashDistance = 5f;
 		[SerializeField] float DashDuration = 0.2f;
 		[SerializeField] float DashCooldown = 2f;
+
+		public float Speed;
+		float baseSpeed;
 		
 		public Vector3 Destination { get; private set; }
 		public float RemainingDistance => navMeshAgent.enabled ? navMeshAgent.remainingDistance : Mathf.Infinity;
@@ -24,6 +27,12 @@ namespace Controllers
 		void Awake()
 		{
 			navMeshAgent = GetComponent<NavMeshAgent>();
+			baseSpeed = navMeshAgent.speed;
+		}
+
+		void Update()
+		{
+			navMeshAgent.speed = baseSpeed + Speed;
 		}
 
 		public void Move(Vector3 position)

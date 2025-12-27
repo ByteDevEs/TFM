@@ -5,6 +5,7 @@ using Lobby;
 using Mirror;
 using Mirror.Discovery;
 using Unity.Properties;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 namespace UI
@@ -32,6 +33,9 @@ namespace UI
 
 		[SerializeField]
 		VisualTreeAsset GameMenu;
+		
+		[SerializeField]
+		VisualTreeAsset RoomButtonTemplate;
 
 		void Awake()
 		{
@@ -107,17 +111,16 @@ namespace UI
 
 				foreach (KeyValuePair<long, ServerResponse> serverResponse in serversFound)
 				{
-					Button joinButton = new Button
+					TemplateContainer roomFound = RoomButtonTemplate.Instantiate();
+					
+					Button button = roomFound.Q<Button>("ServerFoundButton");
+					if (button != null)
 					{
-						text = $"Join {serverResponse.Value.uri.Host}"
-					};
-
-					joinButton.clicked += () =>
-					{
-						NetworkManager.singleton.StartClient(serverResponse.Value.uri);
-					};
-
-					container.hierarchy.Add(joinButton);
+						button.text = $"Join {serverResponse.Value.uri.Host}";
+						button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(serverResponse.Value.uri));
+					}
+            
+					container.hierarchy.Add(roomFound);
 				}
 			}
 			

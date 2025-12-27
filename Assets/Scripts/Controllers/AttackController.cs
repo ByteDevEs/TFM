@@ -300,6 +300,7 @@ namespace Controllers
 					if (Mouse.current.leftButton.wasPressedThisFrame)
 					{
 						weaponID = physicalWeapon.Swap(weaponID);
+						movementController.Stop();
 					}
 				}
 			}

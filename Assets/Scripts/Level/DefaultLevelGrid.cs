@@ -5,6 +5,7 @@ using DelaunatorSharp;
 using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace Level
@@ -125,7 +126,7 @@ namespace Level
 			print("Generating mesh");
 			
 			Mesh = new GameObject($"LevelMesh_{Level}");
-			Mesh.transform.SetParent(Container.transform, false); 
+			Mesh.transform.SetParent(Container.transform); 
 			Mesh.transform.localPosition = Vector3.zero;
 			
 			for (int x = 0; x < LevelCells.Length; x++)
@@ -133,7 +134,7 @@ namespace Level
 				int i = x % GridX;
 				int j = x / GridX;
 				GameObject cellContainer = new GameObject($"CellContainer_{i}_{j}");
-				cellContainer.transform.SetParent(Mesh.transform, false);
+				cellContainer.transform.SetParent(Mesh.transform);
 				cellContainer.transform.localPosition = new Vector3(i * RoomSize, 0, j * RoomSize);
 				cellContainer.transform.localScale = Vector3.one * RoomSize;
 
@@ -165,13 +166,74 @@ namespace Level
 				}
 				else
 				{
-					GameObject wall = Instantiate(WallPrefab, cellContainer.transform);
-					wall.transform.localPosition = new Vector3(0, -0.5f, 0);
-					wall.name = $"Wall_{i}_{j}";
+					GameObject wallContainer = new GameObject($"WallContainer_{i}_{j}");
+					wallContainer.transform.SetParent(cellContainer.transform, false);
+					if (i - 1 > 0 && LevelCells[(i - 1) * GridX + j])
+					{
+						const int rot = 90;
+						GameObject wall = Instantiate(WallPrefab, wallContainer.transform);
+						wall.transform.localPosition = new Vector3(0, -0.5f, 0);
+						wall.transform.localRotation = Quaternion.Euler(0, rot, 0);
+						wall.name = $"Wall_{rot}_{i}_{j}";
+					}
+					
+					if (j - 1 > 0 && LevelCells[i * GridX + (j - 1)])
+					{
+						const int rot = 0;
+						GameObject wall = Instantiate(WallPrefab, wallContainer.transform);
+						wall.transform.localPosition = new Vector3(0, -0.5f, 0);
+						wall.transform.localRotation = Quaternion.Euler(0, rot, 0);
+						wall.name = $"Wall_{rot}_{i}_{j}";
+					}
+					
+					bool n  = IsWall(i - 1, j);     // Up
+					bool s  = IsWall(i + 1, j);     // Down
+					bool w  = IsWall(i, j - 1);     // Left
+					bool e  = IsWall(i, j + 1);     // Right
+					bool nw = IsWall(i - 1, j - 1); // Up-Left
+					bool ne = IsWall(i - 1, j + 1); // Up-Right
+					bool se = IsWall(i + 1, j + 1); // Down-Right
+					bool sw = IsWall(i + 1, j - 1); // Down-Left
+					
+					if (n && w || !n && !w && nw)
+					{
+						SpawnColumn(wallContainer, 0, i, j);
+					}
+					
+					if (n && e || !n && !e && ne)
+					{
+						SpawnColumn(wallContainer, 90, i, j);
+					}
+					
+					if (s && e || !s && !e && se)
+					{
+						SpawnColumn(wallContainer, 180, i, j);
+					}
+					
+					if (s && w || !s && !w && sw)
+					{
+						SpawnColumn(wallContainer, 270, i, j); 
+					}
 				}
 			}
 
 			Surface.BuildNavMesh();
+		}
+		
+		bool IsWall(int r, int c)
+		{
+			if (r < 0 || r >= GridX || c < 0 || c >= GridY)
+				return false;
+    
+			return LevelCells[r * GridX + c];
+		}
+		
+		void SpawnColumn(GameObject cellContainer, int rot, int r, int c)
+		{
+			GameObject column = Instantiate(ColumnPrefab, cellContainer.transform);
+			column.transform.localPosition = new Vector3(0, -0.5f, 0); 
+			column.transform.localRotation = Quaternion.Euler(0, rot, 0);
+			column.name = $"Column_{rot}_{r}_{c}";
 		}
 
 		int3 FindRandomWallForRoom(int4 room)

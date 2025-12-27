@@ -135,8 +135,28 @@ namespace Lobby
 
 		public override void OnRoomServerSceneChanged(string sceneName)
 		{
-			Debug.Log(sceneName);
-			if (sceneName.Contains("GameScene"))
+			if (sceneName.Contains("RoomScene"))
+			{
+				NetworkStartPosition[] newSpawners = FindObjectsByType<NetworkStartPosition>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+				spawnerStates = newSpawners.ToDictionary(sp => sp, _ => (CustomNetworkRoomPlayer)null);
+				
+				int index = 0;
+				foreach (NetworkRoomPlayer player in roomSlots)
+				{
+					if (!player)
+					{
+						continue;
+					}
+					
+					if (index < newSpawners.Length)
+					{
+						NetworkStartPosition spawnerKey = newSpawners[index];
+						spawnerStates[spawnerKey] = player.GetComponent<CustomNetworkRoomPlayer>();
+					}
+					index++;
+				}
+			}
+			else if (sceneName.Contains("GameScene"))
 			{
 				Debug.Log("Starting check of players");
 				if (checkingAllDead is not null)
