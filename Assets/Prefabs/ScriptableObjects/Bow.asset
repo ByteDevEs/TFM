@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8211956c0ffad9741a0b2392ddefcf91, type: 3}
   m_Name: Bow
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.WeaponScriptable
+  WeaponID: 0
   Name: Bow
-  Prefab: {fileID: -617144640845579278, guid: 64dddffb3cb449c488fb5d5197cb1f6f, type: 3}
+  Prefab: {fileID: 7065141672076568397, guid: d9c6f7c16ef0ef64a9e97360debd3362, type: 3}
   BaseDamage: 5
   BaseRange: 5
   BaseCooldown: 2
   AttackType: 2
+  WeaponAttackSfx: BowHit
+  WeaponAttackAnimationClip: 
   AttackDegree: 0
-  AttackWidth: 0
-  TraverseSpeed: 0
-  AreaDiameter: 0
+  AttackWidth: 1
+  TraverseSpeed: 100
+  AreaDiameter: 2
   CastTime: 0
+  HitSfx: 

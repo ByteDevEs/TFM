@@ -17,16 +17,6 @@ namespace Weapons
             base.SetHoverEffect();
         }
 
-        public override void SetClickEffect()
-        {
-            base.SetClickEffect();
-        }
-
-        public override void RemoveEffect()
-        {
-            base.RemoveEffect();
-        }
-        
         void OnWeaponIDChanged(int _, int newID)
         {
             if (currentObj)

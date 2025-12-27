@@ -9,17 +9,23 @@ namespace Controllers
 	[RequireComponent(typeof(NavMeshAgent), typeof(NetworkTransformReliable))]
 	public class MovementController : NetworkBehaviour
 	{
+		static readonly int Walking = Animator.StringToHash("Walking");
 		[SerializeField] float DashDistance = 5f;
 		[SerializeField] float DashDuration = 0.2f;
 		[SerializeField] float DashCooldown = 2f;
-
+		
+		[SerializeField] float FootstepSoundMaxCooldown = 0.33f;
+		public float footstepSoundCooldown;
+		
 		public float Speed;
 		float baseSpeed;
 		
 		public Vector3 Destination { get; private set; }
 		public float RemainingDistance => navMeshAgent.enabled ? navMeshAgent.remainingDistance : Mathf.Infinity;
 		public float StoppingDistance => navMeshAgent.enabled ? navMeshAgent.stoppingDistance : Mathf.Infinity;
-		
+
+		AttackController attackController;
+		Animator animator;
 		NavMeshAgent navMeshAgent;
 		double lastDashTime;
 		bool isDashing;
@@ -27,12 +33,32 @@ namespace Controllers
 		void Awake()
 		{
 			navMeshAgent = GetComponent<NavMeshAgent>();
+			attackController = GetComponent<AttackController>();
+			animator = GetComponent<Animator>();
 			baseSpeed = navMeshAgent.speed;
 		}
 
 		void Update()
 		{
-			navMeshAgent.speed = baseSpeed + Speed;
+			navMeshAgent.speed = baseSpeed + Speed - 1;
+			Speed = attackController.Stats.Speed;
+
+			if (navMeshAgent.velocity != Vector3.zero)
+			{
+				footstepSoundCooldown -= Time.deltaTime * (navMeshAgent.speed / baseSpeed);
+				if (footstepSoundCooldown <= 0)
+				{
+					Prefabs.GetInstance().PlaySound("Footstep", transform);
+					footstepSoundCooldown = FootstepSoundMaxCooldown;
+				}
+			}
+
+			if (isServer && animator)
+			{
+				bool isWalking = navMeshAgent.velocity.magnitude > 0;
+				animator.speed = isWalking ? navMeshAgent.speed / baseSpeed : 1.0f;
+				animator.SetBool(Walking, navMeshAgent.velocity.magnitude > 0);
+			}
 		}
 
 		public void Move(Vector3 position)
@@ -101,6 +127,7 @@ namespace Controllers
 		{
 			isDashing = true;
 			lastDashTime = NetworkTime.time;
+			RpcPlaySound("Dash");
 
 			Vector3 dashDirection = transform.forward;
 			if (navMeshAgent.velocity.sqrMagnitude > 0.1f)
@@ -125,6 +152,11 @@ namespace Controllers
 			isDashing = false;
 		}
 		
+		[ClientRpc]
+		void RpcPlaySound(string soundName)
+		{
+			Prefabs.GetInstance().PlaySound(soundName, transform);
+		}
 		[Command]
 		void CmdMove(Ray ray)
 		{

@@ -5,7 +5,6 @@ using Lobby;
 using Mirror;
 using Mirror.Discovery;
 using Unity.Properties;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 namespace UI
@@ -58,8 +57,35 @@ namespace UI
 		{
 			document.visualTreeAsset = asset;
 			RefreshButtons();
+			RegisterButtonSounds();
 		}
 
+		void RegisterButtonSounds()
+		{
+			List<Button> allButtons = document.rootVisualElement.Query<Button>().ToList();
+
+			foreach (Button btn in allButtons)
+			{
+				btn.RegisterCallback<MouseEnterEvent>(OnButtonHover);
+				btn.clicked -= BtnOnClicked;
+				btn.clicked += BtnOnClicked;
+			}
+		}
+		static void BtnOnClicked()
+		{
+			Prefabs.GetInstance().PlaySound("Click");
+		}
+
+		static void OnButtonHover(MouseEnterEvent e)
+		{
+			if (e.currentTarget is not Button { enabledSelf: true })
+			{
+				return;
+			}
+			
+			Prefabs.GetInstance().PlaySound("Hover");
+		}
+		
 		void RefreshButtons()
 		{
 			Button playButton = document.rootVisualElement.Q<Button>("PlayButton");

@@ -34,7 +34,11 @@ namespace Controllers
 			movementController = GetComponent<MovementController>();
 			AttackController = GetComponent<AttackController>();
 			HealthController = GetComponent<HealthController>();
-			AttackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());
+
+			if (isServer)
+			{
+				AttackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());
+			}
 			
 			if (!isLocalPlayer)
 			{

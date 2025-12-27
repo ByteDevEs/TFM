@@ -156,11 +156,18 @@ namespace Controllers
 			}
 			
 			PotionCount--;
+			RpcPlaySound("Heal");
 			CurrentHealth += PotionHeal;
 			if (CurrentHealth > MaxHealth)
 			{
 				CurrentHealth = MaxHealth;
 			}
+		}
+		
+		[ClientRpc]
+		void RpcPlaySound(string soundName)
+		{
+			Prefabs.GetInstance().PlaySound(soundName, transform);
 		}
 		
 		[Server]

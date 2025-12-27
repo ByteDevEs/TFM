@@ -16,6 +16,11 @@ namespace Enemies
 
 		new void Start()
 		{
+			if (!isServer)
+			{
+				return;
+			}
+			
 			State = new IdleState(this);
 			AttackController attackController = GetComponent<AttackController>();
 			attackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());

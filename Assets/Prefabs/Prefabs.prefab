@@ -48,6 +48,48 @@ MonoBehaviour:
   PrototypeEnemy: {fileID: 2163876004968037099, guid: d6daf0c8172e300439a9ffd55eadec5b, type: 3}
   WeaponPool:
   - {fileID: 11400000, guid: 6636306fc6228a4459b3eb0e8ce8c0a1, type: 2}
-  - {fileID: 11400000, guid: 2e3af21cc22962c429871284f35716bf, type: 2}
   - {fileID: 11400000, guid: 091f632a057754b41a158f0c18eda5cc, type: 2}
+  - {fileID: 11400000, guid: 2e3af21cc22962c429871284f35716bf, type: 2}
   PhysicalWeapon: {fileID: 3303943036403685392, guid: 00f034fa48ce5da43a3e1ef5742f5184, type: 3}
+  Sounds:
+    keys:
+    - Footstep
+    - SwordHit
+    - BowHit
+    - MagicHit
+    - MagicFall
+    - Heal
+    - Click
+    - Hover
+    - Dash
+    values:
+    - v:
+      - {fileID: 8300000, guid: 554c3ff4e2938b14b8a96c92e4d5c797, type: 3}
+      - {fileID: 8300000, guid: a043329f8b02acf40a641060b15d4afc, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 6835039bdaf057b498c08a82e97b14f9, type: 3}
+      - {fileID: 8300000, guid: e4a1735d9b4df7342b45c3baa72d76ed, type: 3}
+      - {fileID: 8300000, guid: 8c8a6e087be81c0448169839606eb08b, type: 3}
+      - {fileID: 8300000, guid: c0a22b0e4001fbb46bd3464e899739e3, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 2d56bcb584a7ba1478b362b333c60a4d, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 65572a59f8f91664ba53daff70b1928b, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 0315da057ddc54c46a2d4f5ec9857ec2, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 1a40e0b4cf8b0df4cbc4383c5455d78d, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 52c41c956540bbc4e8db9d0b9d063bdd, type: 3}
+    - v:
+      - {fileID: 8300000, guid: 6fb5d0e1d23eaad42bd9d055f676662e, type: 3}
+    - v:
+      - {fileID: 8300000, guid: f384f544b34fcce44a75be5542099e05, type: 3}
+  MusicClips:
+  - {fileID: 8300000, guid: 16ab7c3c88b9c2e4fb0c790ead186ee8, type: 3}
+  - {fileID: 8300000, guid: 88b6815618f5ed34e8b45e068a5527b4, type: 3}
+  - {fileID: 8300000, guid: 457e4fe0fec04e44d8652521c39d48cf, type: 3}
+  - {fileID: 8300000, guid: 71898c2ca0472fd44a89c276a2f5ca49, type: 3}
+  - {fileID: 8300000, guid: cfad125ed02446944a1e42a9786fadb7, type: 3}
+  - {fileID: 8300000, guid: 64f61b5e248436c4faf25cd67c85f46a, type: 3}
+  - {fileID: 8300000, guid: 1d400e11ff96b214abeeeb6be01cec58, type: 3}

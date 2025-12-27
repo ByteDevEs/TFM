@@ -13,24 +13,32 @@ namespace Controllers
 	[RequireComponent(typeof(MovementController), typeof(CharacterStats))]
 	public class AttackController : NetworkBehaviour
 	{
+        public CharacterStats Stats { get; private set; }
+        public GameObject Hand;
+        public Vector3 HandOffset;
+        public Vector3 HandRotation;
+        
 		PlayerController playerController;
 		MovementController movementController;
 		HealthController healthController;
 		Coroutine attackCoroutine;
 		EnemyController lastEnemyHit;
 		PhysicalWeapon lastWeaponHit;
+        GameObject currentObj;
+        Animator animator;
+        
 		[SyncVar] GameObject selectedTarget;
 		[SyncVar] public bool IsAttackingTarget;
 		[SyncVar] float weaponCooldown;
-
-		int weaponID;
-		public CharacterStats Stats { get; private set; }
-		
+        [SyncVar(hook = nameof(OnWeaponIDChanged))] 
+		int weaponID = -1;
+        
 		void Start()
 		{
 			playerController = GetComponent<PlayerController>();
 			movementController = GetComponent<MovementController>();
 			healthController = GetComponent<HealthController>();
+			animator = GetComponent<Animator>();
 			if (healthController)
 			{
 				healthController.OnDeath += OnDeath;
@@ -213,6 +221,8 @@ namespace Controllers
 			IEnumerable<Collider> hits = Physics.OverlapSphere(position, WeaponLibrary.GetWeapon(weaponID).BaseRange / 2.0f).Except(GetComponents<Collider>());
 
 			Attack(hits, damage);
+			animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
+			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
 			yield return null;
 		}
 
@@ -236,6 +246,7 @@ namespace Controllers
 					.Except(GetComponents<Collider>())
 					.ToList();
 
+				RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
 				if (hits.Count > 0)
 				{
 					Attack(hits, damage);
@@ -250,11 +261,13 @@ namespace Controllers
 
 		IEnumerator AttackArea(Transform target, float damage)
 		{
+			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
 			yield return new WaitForSeconds(WeaponLibrary.GetWeapon(weaponID).CastTime);
 			
 			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f).Except(GetComponents<Collider>());
 			
 			Attack(hits, damage);
+			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).HitSfx);
 			yield return null;
 		}
 
@@ -267,6 +280,12 @@ namespace Controllers
 					hC.TakeDamage(gameObject, damage);
 				}
 			}
+		}
+
+		[ClientRpc]
+		void RpcPlaySound(string soundName)
+		{
+			Prefabs.GetInstance().PlaySound(soundName, transform);
 		}
 
 		Vector3 GetPositionAtMaxAttackRange(Transform target, float range)
@@ -283,33 +302,53 @@ namespace Controllers
 			return target.position - dir * range;
 		}
 		
+		
 		public void SwapWeapons(Ray ray)
+		{
+			if (!Mouse.current.press.isPressed)
+			{
+				return;
+			}
+
+			if (!isLocalPlayer)
+			{
+				return;
+			}
+			
+			CmdSwapWeapons(ray);
+		}
+		
+		[Command]
+		void CmdSwapWeapons(Ray ray)
 		{
 			if (Physics.Raycast(ray, out RaycastHit hit))
 			{
 				PhysicalWeapon physicalWeapon = hit.collider.GetComponent<PhysicalWeapon>();
 
-				if (physicalWeapon)
+				if (!physicalWeapon)
 				{
-					if (lastWeaponHit != physicalWeapon)
-					{
-						lastWeaponHit?.RemoveEffect();
-						lastWeaponHit = physicalWeapon;
-						lastWeaponHit.SetHoverEffect();
-					}
-					if (Mouse.current.leftButton.wasPressedThisFrame)
-					{
-						weaponID = physicalWeapon.Swap(weaponID);
-						movementController.Stop();
-					}
+					return;
 				}
+				
+				if (lastWeaponHit != physicalWeapon)
+				{
+					lastWeaponHit = physicalWeapon;
+					lastWeaponHit.SetHoverEffect();
+				}
+				
+				if (!Mouse.current.leftButton.wasPressedThisFrame)
+				{
+					return;
+				}
+				
+				weaponID = physicalWeapon.Swap(weaponID);
+				movementController.Stop();
 			}
 			else
-			{
-				lastWeaponHit?.RemoveEffect();
-			}
+			{}
 		}
 		
+		[Server]
 		public void SwapWeapons(int newWeaponID)
 		{
 			weaponID = newWeaponID;
@@ -325,6 +364,25 @@ namespace Controllers
 			GameObject droppedWeapon = Instantiate(Prefabs.GetInstance().PhysicalWeapon, transform.position, Quaternion.identity);
 			droppedWeapon.GetComponent<PhysicalWeapon>().SetWeaponId(weaponID);
 			NetworkServer.Spawn(droppedWeapon);
+		}
+		
+		void OnWeaponIDChanged(int _, int newID)
+		{
+
+			WeaponScriptable weaponData = WeaponLibrary.GetWeapon(newID);
+			Debug.Log("Replaced weapon to " + weaponData.name);
+			if (currentObj)
+			{
+				Destroy(currentObj);
+			}
+
+			if (weaponData != null && weaponData.Prefab != null)
+			{
+				currentObj = Instantiate(weaponData.Prefab, Hand.transform);
+				currentObj.transform.localPosition = HandOffset;
+				currentObj.transform.localRotation = Quaternion.Euler(HandRotation);
+				currentObj.transform.localScale = Vector3.one * 0.5f;
+			}
 		}
 	}
 }
