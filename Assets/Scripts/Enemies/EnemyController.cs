@@ -16,6 +16,8 @@ namespace Enemies
 
 		new void Start()
 		{
+			base.Start();
+			
 			if (!isServer)
 			{
 				return;
@@ -24,18 +26,16 @@ namespace Enemies
 			State = new IdleState(this);
 			AttackController attackController = GetComponent<AttackController>();
 			attackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());
-			
-			base.Start();
 		}
 
 		public override void RemoveEffect()
 		{
-			if (!isHovering)
+			if (!IsHovering)
 			{
 				return;
 			}
 
-			isHovering = false;
+			IsHovering = false;
 			foreach (GameObject child in Children)
 			{
 				child.layer = LayerMask.NameToLayer("Enemy");

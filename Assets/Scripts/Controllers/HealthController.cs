@@ -26,7 +26,7 @@ namespace Controllers
 		float potionCooldown;
 		GameObject lastAttacker;
 		
-		void Start()
+		void Awake()
 		{
 			if (!isServer)
 			{

@@ -8,7 +8,7 @@ namespace Helpers
     {
         protected GameObject[] Children;
 
-        protected bool isHovering;
+        protected bool IsHovering;
         bool isClicking;
 
         float clickTime;
@@ -21,12 +21,12 @@ namespace Helpers
 
         public virtual void SetHoverEffect()
         {
-            if (isHovering)
+            if (IsHovering)
             {
                 return;
             }
 
-            isHovering = true;
+            IsHovering = true;
 
             foreach (var child in Children)
             {
@@ -43,7 +43,7 @@ namespace Helpers
         {
             clickTime = Time.time;
 
-            if (!isHovering || isClicking)
+            if (!IsHovering || isClicking)
             {
                 yield break;
             }
@@ -66,12 +66,12 @@ namespace Helpers
 
         public virtual void RemoveEffect()
         {
-            if (!isHovering)
+            if (!IsHovering)
             {
                 return;
             }
 
-            isHovering = false;
+            IsHovering = false;
             foreach (var child in Children)
             {
                 child.layer = 0;

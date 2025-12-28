@@ -164,9 +164,9 @@ namespace Controllers
 			// Debug.Log("Reviving " + NearestPlayer.name + " who is dead " + NearestPlayer.IsDead + ": " + reviveTimer / ReviveTime);
 			if (NearestPlayer.ReviveTimer > ReviveTime && NearestPlayer.IsDead)
 			{
+				NearestPlayer.ReviveTimer = 0f;
 				NearestPlayer.IsDead = false;
 				NearestPlayer.HealthController.SrvRevive();
-				NearestPlayer.ReviveTimer = 0f;
 			}
 		}
 	}
