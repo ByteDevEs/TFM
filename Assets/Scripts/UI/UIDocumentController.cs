@@ -279,7 +279,7 @@ namespace UI
 
 				agilityLvLabel.schedule.Execute(() => 
 				{
-					agilityLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Agility}";
+					agilityLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Health}";
         
 				}).Every(0);
 			}
@@ -363,7 +363,7 @@ namespace UI
 				return;
 			}
 
-			PlayerController.LocalPlayer.AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Agility));
+			PlayerController.LocalPlayer.AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Health));
 		}
 		void PlayButtonClicked() => UpdateVisualTree(PlayMenu);
 		void SettingsButtonClicked() => UpdateVisualTree(OptionsMenu);

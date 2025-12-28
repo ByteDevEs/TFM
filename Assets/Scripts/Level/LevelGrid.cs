@@ -32,7 +32,7 @@ namespace Level
 		protected GameObject Mesh;
 		protected NavMeshSurface Surface;
 
-		void Awake()
+		protected void Awake()
 		{
 			Surface = GetComponent<NavMeshSurface>();
 			Container =  new GameObject("LevelGrid");

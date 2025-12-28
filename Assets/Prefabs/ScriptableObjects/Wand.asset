@@ -17,7 +17,7 @@ MonoBehaviour:
   Prefab: {fileID: 7065141672076568397, guid: e4721539a31384743a4b3cf8c41bb03d, type: 3}
   BaseDamage: 10
   BaseRange: 8
-  BaseCooldown: 5
+  BaseCooldown: 3.5
   AttackType: 1
   WeaponAttackSfx: MagicHit
   WeaponAttackAnimationClip: WandAttackAnimation

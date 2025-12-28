@@ -5,7 +5,6 @@ using DelaunatorSharp;
 using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace Level
@@ -13,6 +12,7 @@ namespace Level
 	public class DefaultLevelGrid : LevelGrid
 	{
 		public float SpawnEnemyProbability = 0.125f;
+		public float MaxSpawnEnemyProbability = 0.375f;
 		public int MaxEnemiesPerCell = 3;
 		
 		int[] triangles = Array.Empty<int>();
@@ -20,6 +20,14 @@ namespace Level
 		List<(int u, int v, float distance)> unusedEdges;
 		readonly HashSet<(int u, int v)> uniqueEdges = new HashSet<(int u, int v)>();
 		List<int> mstLines;
+		LevelGenerator levelGenerator;
+
+		new void Awake()
+		{
+			levelGenerator = FindAnyObjectByType<LevelGenerator>();
+
+			base.Awake();
+		}
 
 		[Server] public void SrvGenerateLevelGrid()
 		{
@@ -107,9 +115,10 @@ namespace Level
 				{
 					float mE = Random.Range(1, MaxEnemiesPerCell);
 					float r = Random.Range(0f, 1f);
+					float probability = Mathf.Lerp(SpawnEnemyProbability, MaxSpawnEnemyProbability, Mathf.Clamp01(Level / (levelGenerator.LastLevel/4.0f)));
 					for (int k = 0; k < mE; k++)
 					{
-						if (r < SpawnEnemyProbability)
+						if (r < probability)
 						{
 							GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform, false);
 							Vector2 circle = Random.insideUnitCircle;

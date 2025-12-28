@@ -105,7 +105,7 @@ namespace Controllers
 			
 			if (Keyboard.current.kKey.wasPressedThisFrame)
 			{
-				HealthController.Die();
+				AttackController.Stats.AddXp();
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();

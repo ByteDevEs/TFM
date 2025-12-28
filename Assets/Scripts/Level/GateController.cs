@@ -34,7 +34,7 @@ namespace Level
 			{
 				if (GateType.Equals(GateTypeEnum.Start))
 				{
-					if (CurrentLevel == 0)
+					if (CurrentLevel == 1)
 					{
 						return;
 					}
