@@ -75,10 +75,10 @@ namespace Controllers
 		{
 			float damage = oldValue - newValue;
 			HealthPercentage = newValue / MaxHealth;
-			if (damage > 0)
+			if (damage != 0)
 			{
 				DamageTextSpawner spawner = FindAnyObjectByType<DamageTextSpawner>();
-				spawner.SpawnDamageText(damage, transform.position + Vector3.up * Random.Range(0.5f, 1f));
+				spawner.SpawnDamageText(damage, transform.position + Vector3.up * Random.Range(1f, 1.5f));
 			}
 
 			// OnDamaged?.Invoke(NewValue);
@@ -88,8 +88,23 @@ namespace Controllers
 			}
 		}
 
+		public void TakeDamage(GameObject attacker, int amount)
+		{
+			if (isServer)
+			{
+				SrvTakeDamage(attacker, amount);
+			}
+			else
+			{
+				CmdTakeDamage(attacker, amount);
+			}
+		}
+
+		[Command]
+		public void CmdTakeDamage(GameObject attacker, float amount) => SrvTakeDamage(attacker, amount);
+
 		[Server]
-		public void TakeDamage(GameObject attacker, float amount)
+		public void SrvTakeDamage(GameObject attacker, float amount)
 		{
 			if (CurrentHealth <= 0)
 			{
@@ -111,7 +126,7 @@ namespace Controllers
 		[Command]
 		public void Die()
 		{
-			TakeDamage(null, 999999);
+			SrvTakeDamage(null, 999999);
 		}
 		
 		[Server]
@@ -134,18 +149,23 @@ namespace Controllers
 		
 		public void TakePotion()
 		{
-			if (!isLocalPlayer)
+			if(isServer)
 			{
-				return;
+				SrvTakePotion();
 			}
-			
-			CmdTakePotion();
+			else 
+			{
+				CmdTakePotion();
+			}
 		}
 
 		[Command]
-		void CmdTakePotion()
+		void CmdTakePotion() => SrvTakePotion();
+
+		[Server]
+		void SrvTakePotion()
 		{
-			if (PotionCount <= 0)
+			if (PotionCount <= 0 || Mathf.Approximately(CurrentHealth, MaxHealth))
 			{
 				return;
 			}
@@ -157,7 +177,7 @@ namespace Controllers
 			
 			PotionCount--;
 			RpcPlaySound("Heal");
-			CurrentHealth += PotionHeal;
+			CurrentHealth = Math.Min(CurrentHealth + PotionHeal, MaxHealth);
 			if (CurrentHealth > MaxHealth)
 			{
 				CurrentHealth = MaxHealth;
@@ -173,7 +193,7 @@ namespace Controllers
 		[Server]
 		public void SrvRevive()
 		{
-			CurrentHealth += PotionHeal;
+			CurrentHealth = Math.Min(CurrentHealth + PotionHeal, MaxHealth);
 			if (CurrentHealth > MaxHealth)
 			{
 				CurrentHealth = MaxHealth;

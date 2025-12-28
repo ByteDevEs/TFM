@@ -1,6 +1,8 @@
+using System;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 namespace UI
 {
 	public class DamageText : MonoBehaviour
@@ -16,7 +18,8 @@ namespace UI
 
 		public void Set(float amount)
 		{
-			text.text = amount.ToString(CultureInfo.InvariantCulture);
+			text.text = Math.Abs(amount).ToString(CultureInfo.InvariantCulture);
+			text.color = Math.Sign(amount) >= 0 ? Color.red : Color.green;
 			velocity = new Vector3(Random.Range(-0.5f, 0.5f), 1.2f, 0);
 			lifetime = 1.6f;
 		}

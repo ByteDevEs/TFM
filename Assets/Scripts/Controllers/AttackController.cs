@@ -337,7 +337,7 @@ namespace Controllers
 			{
 				if (c.GetComponent<HealthController>() is {} hC)
 				{
-					hC.TakeDamage(gameObject, damage);
+					hC.SrvTakeDamage(gameObject, damage);
 				}
 			}
 		}
