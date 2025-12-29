@@ -1,7 +1,6 @@
 using System;
 using Mirror;
 using TMPro;
-using UI;
 using UnityEngine;
 namespace Lobby
 {
@@ -64,7 +63,11 @@ namespace Lobby
 			}
 		}
 
-		public void ShowAll()
+		[Server]
+		public void SrvShowAll() => RpcShowAll();
+
+		[ClientRpc]
+		void RpcShowAll()
 		{
 			CustomNetworkRoomPlayer[] roomPlayers = FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
 			foreach (CustomNetworkRoomPlayer roomPlayer in roomPlayers)

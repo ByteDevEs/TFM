@@ -226,7 +226,7 @@ namespace Lobby
 				{
 					NetworkServer.ReplacePlayerForConnection(conn, roomPlayer.gameObject, ReplacePlayerOptions.Destroy);
 
-					(roomPlayer as CustomNetworkRoomPlayer)?.ShowAll();
+					(roomPlayer as CustomNetworkRoomPlayer)?.SrvShowAll();
 					(roomPlayer as CustomNetworkRoomPlayer)?.SrvChangeReadyState(false);
 
 					if (gamePlayer != null)
