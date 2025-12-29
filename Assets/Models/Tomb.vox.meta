@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: aac23e7fd153d554d8c618923d048940
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 95d11b926ed043ddb11867067c4701ae, type: 3}
+  overrideDefaults: 0
+  optimizeMesh: 1
+  generatePaletteAlways: 0
+  paletteOverride: {instanceID: 0}
+  voxelsPerUnit: 10

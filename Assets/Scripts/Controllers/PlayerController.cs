@@ -16,13 +16,15 @@ namespace Controllers
 
 		public float ReviveTime = 3f;
 		public float ReviveDistance = 5f;
+		public GameObject BodyObject;
+		public GameObject TombObject;
 
 		[SyncVar] [HideInInspector] public PlayerController NearestPlayer;
 		[SyncVar] public bool CanReviveNearPlayer;
 		
 		
 		[SyncVar] public float ReviveTimer;
-		[SyncVar] public bool IsDead;
+		[SyncVar(hook = nameof(PlayerDied))] public bool IsDead;
 		
 		CameraController cameraController;
 		MovementController movementController;
@@ -182,6 +184,12 @@ namespace Controllers
 				NearestPlayer.IsDead = false;
 				NearestPlayer.HealthController.SrvRevive();
 			}
+		}
+
+		void PlayerDied(bool _, bool newValue)
+		{
+			TombObject.SetActive(newValue);
+			BodyObject.SetActive(!newValue);
 		}
 	}
 }
