@@ -18,14 +18,14 @@ namespace Lobby
 	public class GameManager : NetworkRoomManager
 	{
 		public LevelGenerator LevelGenerator;
-		
+
 		static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
 		
 		NetworkDiscovery networkDiscovery;
 		Dictionary<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerStates;
 		Dictionary<NetworkConnectionToClient, GameObject> connections;
 		Coroutine checkingAllDead;
-		
+
 		public override void Start()
 		{
 			LevelGenerator = GetComponent<LevelGenerator>();

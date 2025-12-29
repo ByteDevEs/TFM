@@ -10,3 +10,20 @@
     scale: 1.05 1.25 1;
     transform-origin: left;
 }
+
+.unity-base-slider--horizontal {
+    align-content: center;
+}
+
+.unity-base-slider--horizontal .unity-base-slider__tracker {
+    height: 100%;
+    top: 0;
+}
+
+.unity-base-slider--horizontal .unity-base-slider__dragger {
+    height: 120%;
+    top: -10px;
+    padding: 0;
+    margin: 0;
+    border-color: transparent;
+}

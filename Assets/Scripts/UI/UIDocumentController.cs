@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Controllers;
 using Helpers;
 using Lobby;
@@ -88,50 +89,43 @@ namespace UI
 		
 		void RefreshButtons()
 		{
-			Button playButton = Document.rootVisualElement.Q<Button>("PlayButton");
-			if (playButton is not null)
+			if (Document.rootVisualElement.Q<Button>("PlayButton") is {} playButton)
 			{
 				playButton.clicked -= PlayButtonClicked;
 				playButton.clicked += PlayButtonClicked;
 			}
 
-			Button settingsButton = Document.rootVisualElement.Q<Button>("SettingsButton");
-			if (settingsButton is not null)
+			if (Document.rootVisualElement.Q<Button>("SettingsButton") is {} settingsButton)
 			{
 				settingsButton.clicked -= SettingsButtonClicked;
 				settingsButton.clicked += SettingsButtonClicked;
 			}
 
-			Button backToMainMenuButton = Document.rootVisualElement.Q<Button>("BackToMainMenuButton");
-			if (backToMainMenuButton is not null)
+			if (Document.rootVisualElement.Q<Button>("BackToMainMenuButton") is {} backToMainMenuButton)
 			{
 				backToMainMenuButton.clicked -= BackToMainMenuButtonClicked;
 				backToMainMenuButton.clicked += BackToMainMenuButtonClicked;
 			}
 
-			Button backToSearchMenuButton = Document.rootVisualElement.Q<Button>("BackToSearchMenuButton");
-			if (backToSearchMenuButton is not null)
+			if (Document.rootVisualElement.Q<Button>("BackToSearchMenuButton") is {} backToSearchMenuButton)
 			{
 				backToSearchMenuButton.clicked -= BackToSearchMenuButtonClicked;
 				backToSearchMenuButton.clicked += BackToSearchMenuButtonClicked;
 			}
 
-			Button createRoomButton = Document.rootVisualElement.Q<Button>("CreateRoomButton");
-			if (createRoomButton is not null)
+			if (Document.rootVisualElement.Q<Button>("CreateRoomButton") is {} createRoomButton)
 			{
 				createRoomButton.clicked -= CreateRoomButtonClicked;
 				createRoomButton.clicked += CreateRoomButtonClicked;
 			}
 
-			Button readyButton = Document.rootVisualElement.Q<Button>("ReadyButton");
-			if (readyButton is not null)
+			if (Document.rootVisualElement.Q<Button>("ReadyButton") is {} readyButton)
 			{
 				readyButton.clicked -= ReadyButtonClicked;
 				readyButton.clicked += ReadyButtonClicked;
 			}
 
-			ListView container = Document.rootVisualElement.Q<ListView>("ServerListView");
-			if (container is not null)
+			if (Document.rootVisualElement.Q<ListView>("ServerListView") is {} container)
 			{
 				container.hierarchy.Clear();
 
@@ -142,17 +136,18 @@ namespace UI
 					Button button = roomFound.Q<Button>("ServerFoundButton");
 					if (button != null)
 					{
-						button.text = $"Join {serverResponse.Value.uri.Host}";
+						if (button.Children().First() is Label label)
+						{
+							label.text = $"Join {serverResponse.Value.uri.Host}";
+						}
 						button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(serverResponse.Value.uri));
 					}
             
 					container.hierarchy.Add(roomFound);
 				}
 			}
-			
-			VisualElement healthMask = Document.rootVisualElement.Q<VisualElement>("HealthMask");
 
-			if (healthMask is not null)
+			if (Document.rootVisualElement.Q<VisualElement>("HealthMask") is {} healthMask)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -172,10 +167,8 @@ namespace UI
 				
 				healthMask.SetBinding("style.height", dataBinding);
 			}
-			
-			RadialProgress potionCooldownProgress = Document.rootVisualElement.Q<RadialProgress>("PotionCooldownProgress");
 
-			if (potionCooldownProgress is not null)
+			if (Document.rootVisualElement.Q<RadialProgress>("PotionCooldownProgress") is {} potionCooldownProgress)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -188,10 +181,8 @@ namespace UI
         
 				}).Every(0);
 			}
-			
-			Label potionCountLabel = Document.rootVisualElement.Q<Label>("PotionCountLabel");
-			
-			if (potionCountLabel is not null)
+
+			if (Document.rootVisualElement.Q<Label>("PotionCountLabel") is {} potionCountLabel)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -203,42 +194,32 @@ namespace UI
 					potionCountLabel.text = $"{PlayerController.LocalPlayer.HealthController.PotionCount}";
 				}).Every(0);
 			}
-			
-			Button backToLobbyButton = Document.rootVisualElement.Q<Button>("BackToLobbyButton");
 
-			if (backToLobbyButton is not null)
+			if (Document.rootVisualElement.Q<Button>("BackToLobbyButton") is {} backToLobbyButton)
 			{
 				backToLobbyButton.clicked -= BackToLobbyButtonClicked;
 				backToLobbyButton.clicked += BackToLobbyButtonClicked;
 			}
-			
-			Button speedButton = Document.rootVisualElement.Q<Button>("SpeedButton");
 
-			if (speedButton is not null)
+			if (Document.rootVisualElement.Q<Button>("SpeedButton") is {} speedButton)
 			{
 				speedButton.clicked -= SpeedButtonClicked;
 				speedButton.clicked += SpeedButtonClicked;
 			}
-			
-			Button strengthButton = Document.rootVisualElement.Q<Button>("StrengthButton");
 
-			if (strengthButton is not null)
+			if (Document.rootVisualElement.Q<Button>("StrengthButton") is {} strengthButton)
 			{
 				strengthButton.clicked -= StrengthButtonClicked;
 				strengthButton.clicked += StrengthButtonClicked;
 			}
-			
-			Button maxHealthButton = Document.rootVisualElement.Q<Button>("MaxHealthButton");
 
-			if (maxHealthButton is not null)
+			if (Document.rootVisualElement.Q<Button>("MaxHealthButton") is {} maxHealthButton)
 			{
 				maxHealthButton.clicked -= MaxHealthButtonClicked;
 				maxHealthButton.clicked += MaxHealthButtonClicked;
 			}
-			
-			Label speedLvLabel = Document.rootVisualElement.Q<Label>("SpeedLvLabel");
 
-			if (speedLvLabel is not null)
+			if (Document.rootVisualElement.Q<Label>("SpeedLvLabel") is {} speedLvLabel)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -251,10 +232,8 @@ namespace UI
         
 				}).Every(0);
 			}
-			
-			Label strengthLvLabel = Document.rootVisualElement.Q<Label>("StrengthLvLabel");
 
-			if (strengthLvLabel is not null)
+			if (Document.rootVisualElement.Q<Label>("StrengthLvLabel") is {} strengthLvLabel)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -267,10 +246,8 @@ namespace UI
         
 				}).Every(0);
 			}
-			
-			Label maxHealthLvLabel = Document.rootVisualElement.Q<Label>("MaxHealthLvLabel");
 
-			if (maxHealthLvLabel is not null)
+			if (Document.rootVisualElement.Q<Label>("MaxHealthLvLabel") is {} maxHealthLvLabel)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -283,10 +260,8 @@ namespace UI
         
 				}).Every(0);
 			}
-			
-			VisualElement levelUpMenu = Document.rootVisualElement.Q<VisualElement>("LevelUpMenu");
 
-			if (levelUpMenu is not null)
+			if (Document.rootVisualElement.Q<VisualElement>("LevelUpMenu") is {} levelUpMenu)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -299,10 +274,8 @@ namespace UI
         
 				}).Every(0);
 			}
-			
-			VisualElement reviveContainer = Document.rootVisualElement.Q<VisualElement>("ReviveContainer");
-			
-			if (reviveContainer is not null)
+
+			if (Document.rootVisualElement.Q<VisualElement>("ReviveContainer") is {} reviveContainer)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -315,10 +288,8 @@ namespace UI
 					}
 				).Every(0);
 			}
-			
-			ProgressBar reviveProgressBar = Document.rootVisualElement.Q<ProgressBar>("ReviveProgressBar");
-			
-			if (reviveProgressBar is not null)
+
+			if (Document.rootVisualElement.Q<ProgressBar>("ReviveProgressBar") is {} reviveProgressBar)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
@@ -335,6 +306,24 @@ namespace UI
 						}
 					}
 				).Every(0);
+			}
+
+			if (Document.rootVisualElement.Q<Slider>("MusicSlider") is {} musicSlider)
+			{
+				musicSlider.value = Settings.GetInstance().MusicVolume;
+				musicSlider.schedule.Execute(() => {
+					Settings.GetInstance().MusicVolume = musicSlider.value;
+					PlayerPrefs.SetFloat("MusicVolume", musicSlider.value);
+				}).Every(0);
+			}
+
+			if (Document.rootVisualElement.Q<Slider>("SFXSlider") is {} sfxSlider)
+			{
+				sfxSlider.value = Settings.GetInstance().SfxVolume;
+				sfxSlider.schedule.Execute(() => {
+					Settings.GetInstance().SfxVolume = sfxSlider.value;
+					PlayerPrefs.SetFloat("SFXVolume", sfxSlider.value);
+				}).Every(0);
 			}
 		}
 
@@ -395,17 +384,19 @@ namespace UI
 				return;
 			}
 
-			Button joinButton = new Button
+			TemplateContainer roomFound = RoomButtonTemplate.Instantiate();
+					
+			Button button = roomFound.Q<Button>("ServerFoundButton");
+			if (button != null)
 			{
-				text = $"Join {response.uri.Host}"
-			};
-
-			joinButton.clicked += () =>
-			{
-				NetworkManager.singleton.StartClient(response.uri);
-			};
-
-			container.hierarchy.Add(joinButton);
+				if (button.Children().First() is Label label)
+				{
+					label.text = $"Join {response.uri.Host}";
+				}
+				button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(response.uri));
+			}
+            
+			container.hierarchy.Add(roomFound);
 		}
 		public void OpenMainMenu() => UpdateVisualTree(MainMenu);
 		public void OpenGameMenu() => UpdateVisualTree(GameMenu);

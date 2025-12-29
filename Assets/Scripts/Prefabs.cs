@@ -54,9 +54,10 @@ public class Prefabs : MonoBehaviour
 		}
 		
 		o.GetComponent<AudioSource>().pitch = Random.Range(0.95f, 1.05f);
+		o.GetComponent<AudioSource>().volume = Settings.GetInstance().SfxVolume / 100.0f;
 		o.GetComponent<AudioSource>().Play();
 		
-		StartCoroutine(DestroySoundGameObject(o, o.GetComponent<AudioSource>().clip.length + 1));
+		StartCoroutine(DestroySoundGameObject(o.GetComponent<AudioSource>(), o.GetComponent<AudioSource>().clip.length + 1, true));
 	}
 
 	void PlayLoopMusic()
@@ -68,16 +69,22 @@ public class Prefabs : MonoBehaviour
 		o.GetComponent<AudioSource>().spatialBlend = 0.0f;
 		DontDestroyOnLoad(o);
 		
-		o.GetComponent<AudioSource>().volume = 0.1f;
+		o.GetComponent<AudioSource>().volume = 0.025f * (Settings.GetInstance().MusicVolume / 100.0f);
 		o.GetComponent<AudioSource>().Play();
 		
-		StartCoroutine(DestroySoundGameObject(o, o.GetComponent<AudioSource>().clip.length + 1));
+		StartCoroutine(DestroySoundGameObject(o.GetComponent<AudioSource>(), o.GetComponent<AudioSource>().clip.length + 1, false));
 		Invoke(nameof(PlayLoopMusic), o.GetComponent<AudioSource>().clip.length);
 	}
 	
-	IEnumerator DestroySoundGameObject(GameObject o, float clipLength)
+	IEnumerator DestroySoundGameObject(AudioSource @as, float clipLength, bool isSfx)
 	{
-		yield return new WaitForSeconds(clipLength);
-		Destroy(o);
+		while (@as.volume < clipLength)
+		{
+			@as.volume = isSfx
+				? Settings.GetInstance().SfxVolume / 100.0f
+				: 0.025f * Settings.GetInstance().MusicVolume / 100.0f;
+			yield return new WaitForSeconds(0.01f);
+		}
+		Destroy(@as);
 	}
 }
