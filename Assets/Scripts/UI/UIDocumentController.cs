@@ -14,8 +14,8 @@ namespace UI
 	{
 		public static UIDocumentController GetInstance() => instance;
 		static UIDocumentController instance;
-		
-		UIDocument document;
+
+		public UIDocument Document { get; private set; }
 		Dictionary<long, ServerResponse> serversFound;
 
 		[SerializeField]
@@ -48,21 +48,21 @@ namespace UI
 				Destroy(gameObject);
 			}
 
-			document = GetComponent<UIDocument>();
+			Document = GetComponent<UIDocument>();
 			serversFound = new Dictionary<long, ServerResponse>();
 			UpdateVisualTree(MainMenu);
 		}
 
 		void UpdateVisualTree(VisualTreeAsset asset)
 		{
-			document.visualTreeAsset = asset;
+			Document.visualTreeAsset = asset;
 			RefreshButtons();
 			RegisterButtonSounds();
 		}
 
 		void RegisterButtonSounds()
 		{
-			List<Button> allButtons = document.rootVisualElement.Query<Button>().ToList();
+			List<Button> allButtons = Document.rootVisualElement.Query<Button>().ToList();
 
 			foreach (Button btn in allButtons)
 			{
@@ -88,49 +88,49 @@ namespace UI
 		
 		void RefreshButtons()
 		{
-			Button playButton = document.rootVisualElement.Q<Button>("PlayButton");
+			Button playButton = Document.rootVisualElement.Q<Button>("PlayButton");
 			if (playButton is not null)
 			{
 				playButton.clicked -= PlayButtonClicked;
 				playButton.clicked += PlayButtonClicked;
 			}
 
-			Button settingsButton = document.rootVisualElement.Q<Button>("SettingsButton");
+			Button settingsButton = Document.rootVisualElement.Q<Button>("SettingsButton");
 			if (settingsButton is not null)
 			{
 				settingsButton.clicked -= SettingsButtonClicked;
 				settingsButton.clicked += SettingsButtonClicked;
 			}
 
-			Button backToMainMenuButton = document.rootVisualElement.Q<Button>("BackToMainMenuButton");
+			Button backToMainMenuButton = Document.rootVisualElement.Q<Button>("BackToMainMenuButton");
 			if (backToMainMenuButton is not null)
 			{
 				backToMainMenuButton.clicked -= BackToMainMenuButtonClicked;
 				backToMainMenuButton.clicked += BackToMainMenuButtonClicked;
 			}
 
-			Button backToSearchMenuButton = document.rootVisualElement.Q<Button>("BackToSearchMenuButton");
+			Button backToSearchMenuButton = Document.rootVisualElement.Q<Button>("BackToSearchMenuButton");
 			if (backToSearchMenuButton is not null)
 			{
 				backToSearchMenuButton.clicked -= BackToSearchMenuButtonClicked;
 				backToSearchMenuButton.clicked += BackToSearchMenuButtonClicked;
 			}
 
-			Button createRoomButton = document.rootVisualElement.Q<Button>("CreateRoomButton");
+			Button createRoomButton = Document.rootVisualElement.Q<Button>("CreateRoomButton");
 			if (createRoomButton is not null)
 			{
 				createRoomButton.clicked -= CreateRoomButtonClicked;
 				createRoomButton.clicked += CreateRoomButtonClicked;
 			}
 
-			Button readyButton = document.rootVisualElement.Q<Button>("ReadyButton");
+			Button readyButton = Document.rootVisualElement.Q<Button>("ReadyButton");
 			if (readyButton is not null)
 			{
 				readyButton.clicked -= ReadyButtonClicked;
 				readyButton.clicked += ReadyButtonClicked;
 			}
 
-			ListView container = document.rootVisualElement.Q<ListView>("ServerListView");
+			ListView container = Document.rootVisualElement.Q<ListView>("ServerListView");
 			if (container is not null)
 			{
 				container.hierarchy.Clear();
@@ -150,7 +150,7 @@ namespace UI
 				}
 			}
 			
-			VisualElement healthMask = document.rootVisualElement.Q<VisualElement>("HealthMask");
+			VisualElement healthMask = Document.rootVisualElement.Q<VisualElement>("HealthMask");
 
 			if (healthMask is not null)
 			{
@@ -173,7 +173,7 @@ namespace UI
 				healthMask.SetBinding("style.height", dataBinding);
 			}
 			
-			RadialProgress potionCooldownProgress = document.rootVisualElement.Q<RadialProgress>("PotionCooldownProgress");
+			RadialProgress potionCooldownProgress = Document.rootVisualElement.Q<RadialProgress>("PotionCooldownProgress");
 
 			if (potionCooldownProgress is not null)
 			{
@@ -189,7 +189,7 @@ namespace UI
 				}).Every(0);
 			}
 			
-			Label potionCountLabel = document.rootVisualElement.Q<Label>("PotionCountLabel");
+			Label potionCountLabel = Document.rootVisualElement.Q<Label>("PotionCountLabel");
 			
 			if (potionCountLabel is not null)
 			{
@@ -204,7 +204,7 @@ namespace UI
 				}).Every(0);
 			}
 			
-			Button backToLobbyButton = document.rootVisualElement.Q<Button>("BackToLobbyButton");
+			Button backToLobbyButton = Document.rootVisualElement.Q<Button>("BackToLobbyButton");
 
 			if (backToLobbyButton is not null)
 			{
@@ -212,7 +212,7 @@ namespace UI
 				backToLobbyButton.clicked += BackToLobbyButtonClicked;
 			}
 			
-			Button speedButton = document.rootVisualElement.Q<Button>("SpeedButton");
+			Button speedButton = Document.rootVisualElement.Q<Button>("SpeedButton");
 
 			if (speedButton is not null)
 			{
@@ -220,7 +220,7 @@ namespace UI
 				speedButton.clicked += SpeedButtonClicked;
 			}
 			
-			Button strengthButton = document.rootVisualElement.Q<Button>("StrengthButton");
+			Button strengthButton = Document.rootVisualElement.Q<Button>("StrengthButton");
 
 			if (strengthButton is not null)
 			{
@@ -228,7 +228,7 @@ namespace UI
 				strengthButton.clicked += StrengthButtonClicked;
 			}
 			
-			Button maxHealthButton = document.rootVisualElement.Q<Button>("MaxHealthButton");
+			Button maxHealthButton = Document.rootVisualElement.Q<Button>("MaxHealthButton");
 
 			if (maxHealthButton is not null)
 			{
@@ -236,7 +236,7 @@ namespace UI
 				maxHealthButton.clicked += MaxHealthButtonClicked;
 			}
 			
-			Label speedLvLabel = document.rootVisualElement.Q<Label>("SpeedLvLabel");
+			Label speedLvLabel = Document.rootVisualElement.Q<Label>("SpeedLvLabel");
 
 			if (speedLvLabel is not null)
 			{
@@ -252,7 +252,7 @@ namespace UI
 				}).Every(0);
 			}
 			
-			Label strengthLvLabel = document.rootVisualElement.Q<Label>("StrengthLvLabel");
+			Label strengthLvLabel = Document.rootVisualElement.Q<Label>("StrengthLvLabel");
 
 			if (strengthLvLabel is not null)
 			{
@@ -268,7 +268,7 @@ namespace UI
 				}).Every(0);
 			}
 			
-			Label maxHealthLvLabel = document.rootVisualElement.Q<Label>("MaxHealthLvLabel");
+			Label maxHealthLvLabel = Document.rootVisualElement.Q<Label>("MaxHealthLvLabel");
 
 			if (maxHealthLvLabel is not null)
 			{
@@ -284,7 +284,7 @@ namespace UI
 				}).Every(0);
 			}
 			
-			VisualElement levelUpMenu = document.rootVisualElement.Q<VisualElement>("LevelUpMenu");
+			VisualElement levelUpMenu = Document.rootVisualElement.Q<VisualElement>("LevelUpMenu");
 
 			if (levelUpMenu is not null)
 			{
@@ -300,7 +300,7 @@ namespace UI
 				}).Every(0);
 			}
 			
-			VisualElement reviveContainer = document.rootVisualElement.Q<VisualElement>("ReviveContainer");
+			VisualElement reviveContainer = Document.rootVisualElement.Q<VisualElement>("ReviveContainer");
 			
 			if (reviveContainer is not null)
 			{
@@ -316,7 +316,7 @@ namespace UI
 				).Every(0);
 			}
 			
-			ProgressBar reviveProgressBar = document.rootVisualElement.Q<ProgressBar>("ReviveProgressBar");
+			ProgressBar reviveProgressBar = Document.rootVisualElement.Q<ProgressBar>("ReviveProgressBar");
 			
 			if (reviveProgressBar is not null)
 			{
@@ -388,7 +388,7 @@ namespace UI
 				return;
 			}
 
-			ListView container = document.rootVisualElement.Q<ListView>("ServerListView");
+			ListView container = Document.rootVisualElement.Q<ListView>("ServerListView");
 			serversFound.Add(response.serverId, response);
 			if (container is null)
 			{

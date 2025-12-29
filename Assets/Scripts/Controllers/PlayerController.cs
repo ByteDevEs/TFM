@@ -97,6 +97,16 @@ namespace Controllers
 			{
 				return;
 			}
+
+			Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+
+			Vector2 panelPos = new Vector2(mouseScreenPos.x, Screen.height - mouseScreenPos.y);
+			cameraController.SetPosition(mouseScreenPos, transform.position);
+
+			if (UIDocumentController.GetInstance().Document.rootVisualElement.panel.Pick(panelPos) != null)
+			{
+				return; 
+			}
 			
 			if (Keyboard.current.qKey.wasPressedThisFrame)
 			{
@@ -110,11 +120,10 @@ namespace Controllers
 			
 			if (Keyboard.current.kKey.wasPressedThisFrame)
 			{
-				AttackController.Stats.AddXp();
+				HealthController.TakeDamage(null, 9999999);
 			}
 
 			Vector2 mousePos = Mouse.current.position.ReadValue();
-			cameraController.SetPosition(mousePos, transform.position);
 
 			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
 
