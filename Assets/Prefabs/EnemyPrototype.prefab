@@ -196,7 +196,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2163876004968037099}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.4
   m_Speed: 8
@@ -230,8 +230,11 @@ MonoBehaviour:
   DashDuration: 0.2
   DashCooldown: 2
   FootstepSoundMaxCooldown: 0.33
-  footstepSoundCooldown: 0
+  FootstepSoundCooldown: 0
   Speed: 0
+  AttackController: {fileID: 8159265548460717707}
+  Animator: {fileID: 3791671504342080935}
+  NavMeshAgent: {fileID: 3014299380016649659}
 --- !u!114 &8159265548460717707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,6 +250,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  Stats: {fileID: 6464607023913177200}
   Hand: {fileID: 5142865130428416907}
   HandOffset: {x: 0.01, y: 0.035, z: -0.035}
   HandRotation: {x: 0, y: -90, z: 45}
@@ -254,6 +258,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   ProjectileSpeed: 20
+  PlayerController: {fileID: 0}
+  MovementController: {fileID: 2980713918279028058}
+  HealthController: {fileID: 5264457326429143671}
+  Animator: {fileID: 3791671504342080935}
   IsAttackingTarget: 0
 --- !u!114 &6464607023913177200
 MonoBehaviour:

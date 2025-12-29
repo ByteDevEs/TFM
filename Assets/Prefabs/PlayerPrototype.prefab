@@ -124,6 +124,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  Stats: {fileID: 864048676074368002}
   Hand: {fileID: 4410332364873837474}
   HandOffset: {x: 0.01, y: 0.035, z: -0.035}
   HandRotation: {x: 0, y: -90, z: 45}
@@ -131,6 +132,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 11264
   ProjectileSpeed: 20
+  PlayerController: {fileID: 9112354025182278503}
+  MovementController: {fileID: 7616292823452623313}
+  HealthController: {fileID: 1635623351972320866}
+  Animator: {fileID: 3650864752120925317}
   IsAttackingTarget: 0
 --- !u!65 &777050608453988090
 BoxCollider:
@@ -245,8 +250,11 @@ MonoBehaviour:
   DashDuration: 0.2
   DashCooldown: 2
   FootstepSoundMaxCooldown: 0.33
-  footstepSoundCooldown: 0
+  FootstepSoundCooldown: 0
   Speed: 0
+  AttackController: {fileID: 7329050955176290639}
+  Animator: {fileID: 3650864752120925317}
+  NavMeshAgent: {fileID: 5059502452714471918}
 --- !u!114 &9112354025182278503
 MonoBehaviour:
   m_ObjectHideFlags: 0

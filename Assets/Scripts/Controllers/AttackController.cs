@@ -13,21 +13,21 @@ namespace Controllers
 	[RequireComponent(typeof(MovementController), typeof(CharacterStats))]
 	public class AttackController : NetworkBehaviour
 	{
-        public CharacterStats Stats { get; private set; }
+		public CharacterStats Stats;
         public GameObject Hand;
         public Vector3 HandOffset;
         public Vector3 HandRotation;
         public LayerMask AttackableLayer;
         public float ProjectileSpeed = 20f;
         
-		PlayerController playerController;
-		MovementController movementController;
-		HealthController healthController;
+		public PlayerController PlayerController;
+		public MovementController MovementController;
+		public HealthController HealthController;
+		public Animator Animator;
 		Coroutine attackCoroutine;
 		EnemyController lastEnemyHit;
 		PhysicalWeapon lastWeaponHit;
         GameObject currentObj;
-        Animator animator;
         
 		[SyncVar] GameObject selectedTarget;
 		[SyncVar] public bool IsAttackingTarget;
@@ -37,15 +37,7 @@ namespace Controllers
         
 		void Start()
 		{
-			playerController = GetComponent<PlayerController>();
-			movementController = GetComponent<MovementController>();
-			healthController = GetComponent<HealthController>();
-			animator = GetComponent<Animator>();
-			if (healthController)
-			{
-				healthController.OnDeath += OnDeath;
-			}
-			Stats = GetComponent<CharacterStats>();
+			HealthController.OnDeath += OnDeath;
 		}
 
 		void Update()
@@ -116,7 +108,7 @@ namespace Controllers
 				attackCoroutine = null;
 			}
 
-			movementController.SrvStop();
+			MovementController.SrvStop();
 			
 			attackCoroutine = StartCoroutine(Attack(selectedTarget));
 		}
@@ -130,7 +122,7 @@ namespace Controllers
 				attackCoroutine = null;
 			}
 
-			movementController.SrvStop();
+			MovementController.SrvStop();
 			IsAttackingTarget = false;
 		}
 		
@@ -145,7 +137,7 @@ namespace Controllers
 				return;
 			}
 
-			movementController.SrvStop();
+			MovementController.SrvStop();
 			attackCoroutine = StartCoroutine(Attack(selectedTarget));
 		}
 
@@ -158,7 +150,7 @@ namespace Controllers
 				attackCoroutine = null;
 			}
 
-			movementController.SrvStop();
+			MovementController.SrvStop();
 			IsAttackingTarget = false;
 		}
 		
@@ -178,12 +170,12 @@ namespace Controllers
 				if (!inRange)
 				{
 					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, WeaponLibrary.GetWeapon(weaponID).BaseRange * 0.5f);
-					movementController.SrvMove(stopPos);
+					MovementController.SrvMove(stopPos);
 				}
 				else
 				{
-					movementController.SrvStop();
-					movementController.SrvLookAt(target);
+					MovementController.SrvStop();
+					MovementController.SrvLookAt(target);
 
 					if (weaponCooldown >= WeaponLibrary.GetWeapon(weaponID).BaseCooldown)
 					{
@@ -226,7 +218,7 @@ namespace Controllers
 				.Except(GetComponents<Collider>());
 
 			Attack(hits, damage);
-			animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
+			Animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
 			yield return null;
 		}
@@ -240,7 +232,7 @@ namespace Controllers
 		    
 		    float flightDuration = distance / ProjectileSpeed; 
 
-		    animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
+		    Animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 		    StartCoroutine(AttackRangedVisuals(startPos, targetPos));
 		    float timer = 0f;
 
@@ -311,7 +303,7 @@ namespace Controllers
 		IEnumerator AttackArea(Transform target, float damage)
 		{
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
-			animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
+			Animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 			
 			yield return new WaitForSeconds(WeaponLibrary.GetWeapon(weaponID).CastTime);
 			
@@ -398,7 +390,7 @@ namespace Controllers
 				}
 				
 				weaponID = physicalWeapon.Swap(weaponID);
-				movementController.Stop();
+				MovementController.Stop();
 			}
 		}
 		
@@ -411,7 +403,7 @@ namespace Controllers
 		[Server]
 		void OnDeath(GameObject lastAttacker)
 		{
-			if (playerController)
+			if (PlayerController)
 			{
 				return;
 			}

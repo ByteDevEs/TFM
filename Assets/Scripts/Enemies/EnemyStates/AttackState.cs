@@ -26,6 +26,13 @@ namespace Enemies.EnemyStates
 		
 		public void Update(EnemyController enemyController)
 		{
+			if (!target || !movementController)
+			{
+				attackController.SrvStopAttacking();
+				enemyController.State = new IdleState(enemyController, 0f);
+				return;
+			}
+			
 			if (movementController.Destination != Vector3.zero
 			    && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius)
 			{

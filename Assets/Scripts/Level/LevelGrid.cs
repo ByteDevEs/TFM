@@ -40,8 +40,6 @@ namespace Level
 		}
 
 		protected abstract void GenerateMesh();
-		
-		protected abstract void SrvGenerateEnemies();
 
 		[Server]
 		public void AddPlayer()
@@ -70,10 +68,6 @@ namespace Level
 				else
 				{
 					GenerateMesh();
-					if (isServer)
-					{
-						SrvGenerateEnemies();
-					}
 				}
 				
 				foreach (NavMeshAgent meshAgent in Container.GetComponentsInChildren<NavMeshAgent>())

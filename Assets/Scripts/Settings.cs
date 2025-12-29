@@ -14,7 +14,7 @@ public class Settings : MonoBehaviour
 
 	void Awake()
 	{
-		if (instance is null)
+		if (!instance)
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);

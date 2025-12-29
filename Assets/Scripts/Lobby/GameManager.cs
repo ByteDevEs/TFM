@@ -84,7 +84,7 @@ namespace Lobby
 
 		public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
 		{
-			(NetworkStartPosition spawner, _) = spawnerStates.FirstOrDefault(x => x.Value is null);
+			(NetworkStartPosition spawner, _) = spawnerStates.FirstOrDefault(x => !x.Value);
 
 			if (spawner != null)
 			{

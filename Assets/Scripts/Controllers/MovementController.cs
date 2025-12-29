@@ -21,31 +21,28 @@ namespace Controllers
 		float baseSpeed;
 		
 		public Vector3 Destination { get; private set; }
-		public float RemainingDistance => navMeshAgent.enabled ? navMeshAgent.remainingDistance : Mathf.Infinity;
-		public float StoppingDistance => navMeshAgent.enabled ? navMeshAgent.stoppingDistance : Mathf.Infinity;
+		public float RemainingDistance => NavMeshAgent.enabled ? NavMeshAgent.remainingDistance : Mathf.Infinity;
+		public float StoppingDistance => NavMeshAgent.enabled ? NavMeshAgent.stoppingDistance : Mathf.Infinity;
 
-		AttackController attackController;
-		Animator animator;
-		NavMeshAgent navMeshAgent;
+		public AttackController AttackController;
+		public Animator Animator;
+		public NavMeshAgent NavMeshAgent;
 		double lastDashTime;
 		bool isDashing;
 
-		void Awake()
+		void Start()
 		{
-			navMeshAgent = GetComponent<NavMeshAgent>();
-			attackController = GetComponent<AttackController>();
-			animator = GetComponent<Animator>();
-			baseSpeed = navMeshAgent.speed;
+			baseSpeed = NavMeshAgent.speed;
 		}
 
 		void Update()
 		{
-			navMeshAgent.speed = baseSpeed + Speed - 1;
-			Speed = attackController.Stats.Speed;
+			Speed = AttackController.Stats.Speed;
+			NavMeshAgent.speed = baseSpeed + Speed - 1;
 
-			if (navMeshAgent.velocity != Vector3.zero)
+			if (NavMeshAgent.velocity != Vector3.zero)
 			{
-				FootstepSoundCooldown -= Time.deltaTime * (navMeshAgent.speed / baseSpeed);
+				FootstepSoundCooldown -= Time.deltaTime * (NavMeshAgent.speed / baseSpeed);
 				if (FootstepSoundCooldown <= 0)
 				{
 					Prefabs.GetInstance().PlaySound("Footstep", transform);
@@ -53,11 +50,11 @@ namespace Controllers
 				}
 			}
 
-			if (isServer && animator)
+			if (isServer && Animator)
 			{
-				bool isWalking = navMeshAgent.velocity.magnitude > 0;
-				animator.speed = isWalking ? navMeshAgent.speed / baseSpeed : 1.0f;
-				animator.SetBool(Walking, navMeshAgent.velocity.magnitude > 0);
+				bool isWalking = NavMeshAgent.velocity.magnitude > 0;
+				Animator.speed = isWalking ? NavMeshAgent.speed / baseSpeed : 1.0f;
+				Animator.SetBool(Walking, NavMeshAgent.velocity.magnitude > 0);
 			}
 		}
 
@@ -112,14 +109,14 @@ namespace Controllers
 		void CmdMove(Vector3 position)
 		{
 			Destination = position;
-			navMeshAgent.SetDestination(Destination);
+			NavMeshAgent.SetDestination(Destination);
 		}
 		
 		[Server]
 		public void SrvMove(Vector3 position)
 		{
 			Destination = position;
-			navMeshAgent.SetDestination(Destination);
+			NavMeshAgent.SetDestination(Destination);
 		}
 
 		[Server]
@@ -130,25 +127,25 @@ namespace Controllers
 			RpcPlaySound("Dash");
 
 			Vector3 dashDirection = transform.forward;
-			if (navMeshAgent.velocity.sqrMagnitude > 0.1f)
+			if (NavMeshAgent.velocity.sqrMagnitude > 0.1f)
 			{
-				dashDirection = navMeshAgent.velocity.normalized;
+				dashDirection = NavMeshAgent.velocity.normalized;
 			}
 
-			navMeshAgent.ResetPath();
+			NavMeshAgent.ResetPath();
             
 			float timer = 0f;
 			float speed = DashDistance / DashDuration;
 
 			while (timer < DashDuration)
 			{
-				navMeshAgent.Move(dashDirection * (speed * Time.deltaTime));
+				NavMeshAgent.Move(dashDirection * (speed * Time.deltaTime));
                 
 				timer += Time.deltaTime;
 				yield return null;
 			}
 
-			navMeshAgent.velocity = Vector3.zero;
+			NavMeshAgent.velocity = Vector3.zero;
 			isDashing = false;
 		}
 		
@@ -166,14 +163,14 @@ namespace Controllers
 			}
 			
 			Destination = hit.point;
-			navMeshAgent.SetDestination(Destination);
+			NavMeshAgent.SetDestination(Destination);
 		}
 
 		[Command]
 		void CmdStop()
 		{
 			Destination = transform.position;
-			navMeshAgent.SetDestination(Destination);
+			NavMeshAgent.SetDestination(Destination);
 		}
 		
 		[Command]
@@ -190,7 +187,7 @@ namespace Controllers
 		public void SrvStop()
 		{
 			Destination = transform.position;
-			navMeshAgent.SetDestination(Destination);
+			NavMeshAgent.SetDestination(Destination);
 		}
 		
 		[Server]

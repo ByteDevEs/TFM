@@ -17,7 +17,7 @@ namespace Controllers
 		public float ReviveTime = 3f;
 		public float ReviveDistance = 5f;
 
-		[SyncVar] public PlayerController NearestPlayer;
+		[SyncVar] [HideInInspector] public PlayerController NearestPlayer;
 		[SyncVar] public bool CanReviveNearPlayer;
 		
 		
@@ -155,7 +155,7 @@ namespace Controllers
 				NearestPlayer = null;
 			}
 
-			if (NearestPlayer is null)
+			if (!NearestPlayer)
 			{
 				return;
 			}

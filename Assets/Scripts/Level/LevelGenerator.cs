@@ -58,6 +58,7 @@ namespace Level
 					defaultGrid.SrvGenerateMst();
 					defaultGrid.SrvGenerateCells();
 					defaultGrid.SrvGenerateStartAndExit();
+					defaultGrid.SrvGenerateEnemies();
 				}
 			}
 			else

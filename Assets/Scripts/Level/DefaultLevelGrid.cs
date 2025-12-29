@@ -4,6 +4,7 @@ using System.Linq;
 using DelaunatorSharp;
 using Mirror;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -104,7 +105,7 @@ namespace Level
 		}
 		
 		[Server]
-		protected override void SrvGenerateEnemies()
+		public void SrvGenerateEnemies()
 		{
 			for (int x = 0; x < LevelCells.Length; x++)
 			{
@@ -121,7 +122,7 @@ namespace Level
 						if (r < probability)
 						{
 							Vector2 circle = Random.insideUnitCircle;
-							Vector3 localPos = new Vector3(i * RoomSize, -4.383331f, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
+							Vector3 localPos = new Vector3(i * RoomSize, 0, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
 							GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform.position + localPos, Quaternion.identity, Container.transform);
 							NetworkServer.Spawn(enemyGo);
 						}

@@ -9,7 +9,7 @@ public class CharacterStats : NetworkBehaviour
 	[SyncVar] int levelUpXp;
 	[field: SyncVar] public int CanLevelUp { get; private set; }
 
-	public void Start()
+	public void Awake()
 	{
 		Speed = 1;
 		Strength = 1;

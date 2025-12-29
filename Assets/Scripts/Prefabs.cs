@@ -20,7 +20,7 @@ public class Prefabs : MonoBehaviour
 
 	void Awake()
 	{
-		if (instance is null)
+		if (!instance)
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
