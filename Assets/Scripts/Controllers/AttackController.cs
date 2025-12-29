@@ -177,7 +177,7 @@ namespace Controllers
 				
 				if (!inRange)
 				{
-					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, WeaponLibrary.GetWeapon(weaponID).BaseRange * 0.75f);
+					Vector3 stopPos = GetPositionAtMaxAttackRange(target.transform, WeaponLibrary.GetWeapon(weaponID).BaseRange * 0.5f);
 					movementController.SrvMove(stopPos);
 				}
 				else
