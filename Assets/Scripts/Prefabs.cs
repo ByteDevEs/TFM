@@ -76,15 +76,23 @@ public class Prefabs : MonoBehaviour
 		Invoke(nameof(PlayLoopMusic), o.GetComponent<AudioSource>().clip.length);
 	}
 	
-	IEnumerator DestroySoundGameObject(AudioSource @as, float clipLength, bool isSfx)
+	IEnumerator DestroySoundGameObject(AudioSource audioSource, float clipLength, bool isSfx)
 	{
-		while (@as.volume < clipLength)
+		float t = 0.0f;
+    
+		Settings settings = Settings.GetInstance(); 
+
+		while (t < clipLength)
 		{
-			@as.volume = isSfx
-				? Settings.GetInstance().SfxVolume / 100.0f
-				: 0.025f * Settings.GetInstance().MusicVolume / 100.0f;
-			yield return new WaitForSeconds(0.01f);
+			t += Time.deltaTime;
+
+			audioSource.volume = isSfx
+				? settings.SfxVolume / 100.0f
+				: 0.025f * settings.MusicVolume / 100.0f;
+
+			yield return null; 
 		}
-		Destroy(@as);
+
+		Destroy(audioSource.gameObject);
 	}
 }

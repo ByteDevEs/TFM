@@ -197,22 +197,22 @@ namespace Controllers
 			switch (WeaponLibrary.GetWeapon(weaponID).AttackType)
 			{
 				case AttackType.Melee:
-					StartCoroutine(AttackMelee(target.transform, damage));
+					StartCoroutine(AttackMelee(target.transform.position, damage));
 					break;
 
 				case AttackType.Ranged:
-					StartCoroutine(AttackRanged(target.transform, damage));
+					StartCoroutine(AttackRanged(target.transform.position, damage));
 					break;
 
 				case AttackType.Area:
-					StartCoroutine(AttackArea(target.transform, damage));
+					StartCoroutine(AttackArea(target.transform.position, damage));
 					break;
 			}
 		}
 
-		IEnumerator AttackMelee(Transform target, float damage)
+		IEnumerator AttackMelee(Vector3 targetPos, float damage)
 		{
-			Vector3 position = (target.position + transform.position) / 2f;
+			Vector3 position = (targetPos + transform.position) / 2f;
 			IEnumerable<Collider> hits = Physics.OverlapSphere(position, WeaponLibrary.GetWeapon(weaponID).BaseRange / 2.0f, AttackableLayer)
 				.Where(hit => !hit.transform.gameObject.CompareTag(transform.tag))
 				.Except(GetComponents<Collider>());
@@ -223,38 +223,37 @@ namespace Controllers
 			yield return null;
 		}
 
-		IEnumerator AttackRanged(Transform target, float damage)
+		IEnumerator AttackRanged(Vector3 targetPos, float damage)
 		{
-		    Vector3 startPos = transform.position;
-		    Vector3 targetPos = target.position; 
-		    
-		    float distance = Vector3.Distance(startPos, targetPos);
-		    
-		    float flightDuration = distance / ProjectileSpeed; 
+			Vector3 startPos = transform.position;
+			float distance = Vector3.Distance(startPos, targetPos);
+    
+			float flightDuration = distance / ProjectileSpeed; 
 
-		    Animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
-		    StartCoroutine(AttackRangedVisuals(startPos, targetPos));
-		    float timer = 0f;
+			Animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
+    
+			yield return new WaitForSeconds(0.25f);
 
-		    while (timer < flightDuration)
-		    {
-		        timer += Time.deltaTime;
+			StartCoroutine(AttackRangedVisuals(startPos, targetPos));
+    
+			float timer = 0f;
+			while (timer < flightDuration)
+			{
+				timer += Time.deltaTime;
+				yield return null;
+			}
 
-		        float radius = WeaponLibrary.GetWeapon(weaponID).AttackWidth / 2.0f;
+			float radius = WeaponLibrary.GetWeapon(weaponID).AttackWidth / 2.0f;
 
-		        IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, radius, AttackableLayer)
-			        .Where(hit => !hit.transform.gameObject.CompareTag(transform.tag))
-			        .Except(GetComponents<Collider>())
-			        .ToList();
-		        
-		        if (hits.Any())
-		        {
-			        Attack(hits, damage);
-			        break;
-		        }
-
-		        yield return null;
-		    }
+			IEnumerable<Collider> hits = Physics.OverlapSphere(targetPos, radius, AttackableLayer)
+				.Where(hit => !hit.transform.gameObject.CompareTag(transform.tag))
+				.Except(GetComponents<Collider>())
+				.ToList();
+    
+			if (hits.Any())
+			{
+				Attack(hits, damage);
+			}
 		}
 		
 		IEnumerator AttackRangedVisuals(Vector3 startPos, Vector3 targetPos)
@@ -300,20 +299,20 @@ namespace Controllers
 			Destroy(projectile, 0.1f);
 		}
 
-		IEnumerator AttackArea(Transform target, float damage)
+		IEnumerator AttackArea(Vector3 targetPos, float damage)
 		{
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).WeaponAttackSfx);
 			Animator.Play(WeaponLibrary.GetWeapon(weaponID).WeaponAttackAnimationClip);
 			
 			yield return new WaitForSeconds(WeaponLibrary.GetWeapon(weaponID).CastTime);
 			
-			IEnumerable<Collider> hits = Physics.OverlapSphere(target.position, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f, AttackableLayer)
+			IEnumerable<Collider> hits = Physics.OverlapSphere(targetPos, WeaponLibrary.GetWeapon(weaponID).AreaDiameter / 2.0f, AttackableLayer)
 				.Where(hit => !hit.transform.gameObject.CompareTag(transform.tag))
 				.Except(GetComponents<Collider>());
 			
 			Attack(hits, damage);
 			RpcPlaySound(WeaponLibrary.GetWeapon(weaponID).HitSfx);
-			RpcSpawnAreaDamage(target.position);
+			RpcSpawnAreaDamage(targetPos);
 			yield return null;
 		}
 		

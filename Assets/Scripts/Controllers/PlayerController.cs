@@ -4,6 +4,7 @@ using Mirror;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using Weapons;
 
 namespace Controllers
@@ -102,14 +103,25 @@ namespace Controllers
 
 			Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
 
-			Vector2 panelPos = new Vector2(mouseScreenPos.x, Screen.height - mouseScreenPos.y);
+			// --- FIX STARTS HERE ---
+    
+			var uiDocument = UIDocumentController.GetInstance().Document;
+			var rootVisualElement = uiDocument.rootVisualElement;
+
+			Vector2 panelLocalPos = RuntimePanelUtils.ScreenToPanel(
+				rootVisualElement.panel, 
+				mouseScreenPos
+			);
+
 			cameraController.SetPosition(mouseScreenPos, transform.position);
 
-			if (UIDocumentController.GetInstance().Document.rootVisualElement.panel.Pick(panelPos) != null)
+			VisualElement pickedElement = rootVisualElement.panel.Pick(panelLocalPos);
+
+			if (pickedElement != null && pickedElement != rootVisualElement)
 			{
 				return; 
 			}
-			
+
 			if (Keyboard.current.qKey.wasPressedThisFrame)
 			{
 				HealthController.TakePotion();
@@ -122,12 +134,11 @@ namespace Controllers
 			
 			if (Keyboard.current.kKey.wasPressedThisFrame)
 			{
-				HealthController.TakeDamage(null, 9999999);
+				AttackController.Stats.AddXp();
 			}
 
-			Vector2 mousePos = Mouse.current.position.ReadValue();
 
-			Ray ray = cameraController.Camera.ScreenPointToRay(mousePos);
+			Ray ray = cameraController.Camera.ScreenPointToRay(mouseScreenPos);
 
 			if (AttackController && !AttackController.TryAttack(ray))
 			{
