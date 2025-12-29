@@ -253,6 +253,7 @@ MonoBehaviour:
   AttackableLayer:
     serializedVersion: 2
     m_Bits: 4096
+  ProjectileSpeed: 20
   IsAttackingTarget: 0
 --- !u!114 &6464607023913177200
 MonoBehaviour:

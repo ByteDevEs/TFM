@@ -26,7 +26,8 @@ namespace Enemies.EnemyStates
 		
 		public void Update(EnemyController enemyController)
 		{
-			if (movementController.Destination != Vector3.zero && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius)
+			if (movementController.Destination != Vector3.zero
+			    && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius)
 			{
 				timer -= Time.deltaTime;
 
@@ -40,6 +41,13 @@ namespace Enemies.EnemyStates
 			}
 
 			timer = MaxTime;
+
+			if (target.GetComponent<PlayerController>().IsDead)
+			{
+				attackController.SrvStopAttacking();
+				enemyController.State = new IdleState(enemyController, 0f);
+				return;
+			}
 
 			attackController.SrvEnemyAttack(target);
 		}

@@ -104,7 +104,7 @@ namespace Level
 		}
 		
 		[Server]
-		public void SrvGenerateEnemies()
+		protected override void SrvGenerateEnemies()
 		{
 			for (int x = 0; x < LevelCells.Length; x++)
 			{
@@ -120,9 +120,9 @@ namespace Level
 					{
 						if (r < probability)
 						{
-							GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform, false);
 							Vector2 circle = Random.insideUnitCircle;
-							enemyGo.transform.localPosition = new Vector3(i * RoomSize, 0, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
+							Vector3 localPos = new Vector3(i * RoomSize, -4.383331f, j * RoomSize) + new Vector3(circle.x, 0, circle.y);
+							GameObject enemyGo = Instantiate(Prefabs.GetInstance().PrototypeEnemy, Container.transform.position + localPos, Quaternion.identity, Container.transform);
 							NetworkServer.Spawn(enemyGo);
 						}
 					}

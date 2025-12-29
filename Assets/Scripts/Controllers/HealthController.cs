@@ -23,31 +23,40 @@ namespace Controllers
 		// public System.Action<float> OnDamaged;
 		PlayerController playerController;
 		EnemyController enemyController;
+		int initialMaxHealth;
 		float potionCooldown;
 		GameObject lastAttacker;
-		
-		void Awake()
+		bool started;
+
+		void Start()
 		{
-			if (!isServer)
+			initialMaxHealth = MaxHealth;
+			if (isServer)
 			{
-				return;
+				CurrentHealth = MaxHealth;
+				PotionCount = MaxPotionCount;
+			
+				OnDeath += Die;
+			
+				playerController = GetComponent<PlayerController>();
+				enemyController = GetComponent<EnemyController>();
 			}
 			
-			CurrentHealth = MaxHealth;
-			PotionCount = MaxPotionCount;
-			
-			OnDeath += Die;
-			
-			playerController = GetComponent<PlayerController>();
-			enemyController = GetComponent<EnemyController>();
+			started = true;
 		}
 
 		void Update()
 		{
+			HealthPercentage = CurrentHealth / MaxHealth;
+			
 			if (!isServer)
 			{
 				return;
 			}
+
+			MaxHealth = playerController is not null
+				? initialMaxHealth + (playerController.AttackController.Stats.Health - 1) * 10
+				: initialMaxHealth;
 			
 			PotionCooldownPercentage = potionCooldown / TimeToRegenPotion;
 
@@ -73,8 +82,13 @@ namespace Controllers
 
 		void OnHealthChanged(float oldValue, float newValue)
 		{
+			if (!started)
+			{
+				return;
+			}
+			
 			float damage = oldValue - newValue;
-			HealthPercentage = newValue / MaxHealth;
+			
 			if (damage != 0)
 			{
 				DamageTextSpawner spawner = FindAnyObjectByType<DamageTextSpawner>();

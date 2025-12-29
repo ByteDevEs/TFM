@@ -1,3 +1,4 @@
+using Controllers;
 using Mirror;
 using UnityEngine;
 namespace Enemies.EnemyStates
@@ -15,6 +16,11 @@ namespace Enemies.EnemyStates
 			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 			foreach (GameObject player in players)
 			{
+				if (player.GetComponent<PlayerController>().IsDead)
+				{
+					continue;
+				}
+			
 				Vector3 forward = enemyController.transform.forward;
 				Vector3 direction = player.transform.position - enemyController.transform.position;
 				float angle = Vector3.Angle(forward, direction);

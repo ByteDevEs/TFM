@@ -25,9 +25,9 @@
                     <ui:Label text="Lvl. 1" name="StrengthLvLabel" style="color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 598px; -unity-text-generator: advanced; height: 100%; -unity-text-align: upper-right; white-space: pre; align-items: stretch;"/>
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-grow: 1; height: 25%; flex-direction: row; justify-content: space-between;">
-                    <ui:Button text="+" name="AgilityButton" style="-unity-text-generator: advanced; -unity-text-auto-size: best-fit 50px 3140px; aspect-ratio: 1; height: 100%; font-size: 90%; -unity-text-align: middle-center; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); -unity-font-style: bold; color: rgb(255, 255, 255); background-color: rgba(255, 255, 255, 0);"/>
-                    <ui:Label text="Agility" style="color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 598px; -unity-text-generator: advanced; height: 100%; flex-grow: 1;"/>
-                    <ui:Label text="Lvl. 1" name="AgilityLvLabel" style="color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 598px; -unity-text-generator: advanced; height: 100%; -unity-text-align: upper-right; white-space: pre; align-items: stretch;"/>
+                    <ui:Button text="+" name="MaxHealthButton" style="-unity-text-generator: advanced; -unity-text-auto-size: best-fit 50px 3140px; aspect-ratio: 1; height: 100%; font-size: 90%; -unity-text-align: middle-center; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); -unity-font-style: bold; color: rgb(255, 255, 255); background-color: rgba(255, 255, 255, 0);"/>
+                    <ui:Label text="Max Health" enable-rich-text="true" style="color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 598px; -unity-text-generator: advanced; height: 100%; flex-grow: 1;"/>
+                    <ui:Label text="Lvl. 1" name="MaxHealthLvLabel" style="color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 598px; -unity-text-generator: advanced; height: 100%; -unity-text-align: upper-right; white-space: pre; align-items: stretch;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

@@ -228,12 +228,12 @@ namespace UI
 				strengthButton.clicked += StrengthButtonClicked;
 			}
 			
-			Button agilityButton = document.rootVisualElement.Q<Button>("AgilityButton");
+			Button maxHealthButton = document.rootVisualElement.Q<Button>("MaxHealthButton");
 
-			if (agilityButton is not null)
+			if (maxHealthButton is not null)
 			{
-				agilityButton.clicked -= AgilityButtonClicked;
-				agilityButton.clicked += AgilityButtonClicked;
+				maxHealthButton.clicked -= MaxHealthButtonClicked;
+				maxHealthButton.clicked += MaxHealthButtonClicked;
 			}
 			
 			Label speedLvLabel = document.rootVisualElement.Q<Label>("SpeedLvLabel");
@@ -268,18 +268,18 @@ namespace UI
 				}).Every(0);
 			}
 			
-			Label agilityLvLabel = document.rootVisualElement.Q<Label>("AgilityLvLabel");
+			Label maxHealthLvLabel = document.rootVisualElement.Q<Label>("MaxHealthLvLabel");
 
-			if (agilityLvLabel is not null)
+			if (maxHealthLvLabel is not null)
 			{
 				if (!PlayerController.LocalPlayer)
 				{
 					return;
 				}
 
-				agilityLvLabel.schedule.Execute(() => 
+				maxHealthLvLabel.schedule.Execute(() => 
 				{
-					agilityLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Health}";
+					maxHealthLvLabel.text = $"Lvl. {PlayerController.LocalPlayer.AttackController.Stats.Health}";
         
 				}).Every(0);
 			}
@@ -356,7 +356,7 @@ namespace UI
 
 			PlayerController.LocalPlayer.AttackController.Stats.LevelUpProperty(nameof(CharacterStats.Strength));
 		}
-		void AgilityButtonClicked()
+		void MaxHealthButtonClicked()
 		{
 			if (!PlayerController.LocalPlayer)
 			{

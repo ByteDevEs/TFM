@@ -467,7 +467,7 @@ MonoBehaviour:
   index: 0
   NameText: {fileID: 2448711624379140888}
   StateText: {fileID: 4012234247680627254}
-  Visuals: {fileID: 7784330581045427138}
+  Visuals: {fileID: 4157486431030757982}
 --- !u!1 &7784330581045427138
 GameObject:
   m_ObjectHideFlags: 0

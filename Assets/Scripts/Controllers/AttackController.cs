@@ -183,6 +183,7 @@ namespace Controllers
 				else
 				{
 					movementController.SrvStop();
+					movementController.SrvLookAt(target);
 
 					if (weaponCooldown >= WeaponLibrary.GetWeapon(weaponID).BaseCooldown)
 					{

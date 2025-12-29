@@ -15,7 +15,7 @@ namespace Controllers
 		[SerializeField] float DashCooldown = 2f;
 		
 		[SerializeField] float FootstepSoundMaxCooldown = 0.33f;
-		public float footstepSoundCooldown;
+		public float FootstepSoundCooldown;
 		
 		public float Speed;
 		float baseSpeed;
@@ -45,11 +45,11 @@ namespace Controllers
 
 			if (navMeshAgent.velocity != Vector3.zero)
 			{
-				footstepSoundCooldown -= Time.deltaTime * (navMeshAgent.speed / baseSpeed);
-				if (footstepSoundCooldown <= 0)
+				FootstepSoundCooldown -= Time.deltaTime * (navMeshAgent.speed / baseSpeed);
+				if (FootstepSoundCooldown <= 0)
 				{
 					Prefabs.GetInstance().PlaySound("Footstep", transform);
-					footstepSoundCooldown = FootstepSoundMaxCooldown;
+					FootstepSoundCooldown = FootstepSoundMaxCooldown;
 				}
 			}
 
@@ -165,8 +165,6 @@ namespace Controllers
 				return;
 			}
 			
-			Debug.Log("Clicking: " + hit.transform.name);
-
 			Destination = hit.point;
 			navMeshAgent.SetDestination(Destination);
 		}
@@ -193,6 +191,12 @@ namespace Controllers
 		{
 			Destination = transform.position;
 			navMeshAgent.SetDestination(Destination);
+		}
+		
+		[Server]
+		public void SrvLookAt(GameObject target)
+		{
+			transform.LookAt(target.transform);
 		}
 	}
 }
