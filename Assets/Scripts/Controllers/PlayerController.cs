@@ -57,6 +57,11 @@ namespace Controllers
 		{
 			if (IsDead)
 			{
+				if (isServer)
+				{
+					AttackController.SrvStopAttacking();
+				}
+				
 				return;
 			}
 			
