@@ -101,6 +101,12 @@ namespace UI
 				settingsButton.clicked += SettingsButtonClicked;
 			}
 
+			if (Document.rootVisualElement.Q<Button>("QuitButton") is {} quitButton)
+			{
+				quitButton.clicked -= QuitButtonClicked;
+				quitButton.clicked += QuitButtonClicked;
+			}
+
 			if (Document.rootVisualElement.Q<Button>("BackToMainMenuButton") is {} backToMainMenuButton)
 			{
 				backToMainMenuButton.clicked -= BackToMainMenuButtonClicked;
@@ -356,6 +362,7 @@ namespace UI
 		}
 		void PlayButtonClicked() => UpdateVisualTree(PlayMenu);
 		void SettingsButtonClicked() => UpdateVisualTree(OptionsMenu);
+		void QuitButtonClicked() => Application.Quit();
 		void BackToMainMenuButtonClicked() => UpdateVisualTree(MainMenu);
 		void BackToSearchMenuButtonClicked()
 		{

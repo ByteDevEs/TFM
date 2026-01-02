@@ -103,10 +103,8 @@ namespace Controllers
 
 			Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
 
-			// --- FIX STARTS HERE ---
-    
-			var uiDocument = UIDocumentController.GetInstance().Document;
-			var rootVisualElement = uiDocument.rootVisualElement;
+			UIDocument uiDocument = UIDocumentController.GetInstance().Document;
+			VisualElement rootVisualElement = uiDocument.rootVisualElement;
 
 			Vector2 panelLocalPos = RuntimePanelUtils.ScreenToPanel(
 				rootVisualElement.panel, 
@@ -131,12 +129,6 @@ namespace Controllers
 			{
 				movementController.Dash();
 			}
-			
-			if (Keyboard.current.kKey.wasPressedThisFrame)
-			{
-				AttackController.Stats.AddXp();
-			}
-
 
 			Ray ray = cameraController.Camera.ScreenPointToRay(mouseScreenPos);
 

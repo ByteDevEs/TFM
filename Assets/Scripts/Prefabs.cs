@@ -82,7 +82,7 @@ public class Prefabs : MonoBehaviour
     
 		Settings settings = Settings.GetInstance(); 
 
-		while (t < clipLength)
+		while (t < clipLength && audioSource)
 		{
 			t += Time.deltaTime;
 
@@ -93,6 +93,9 @@ public class Prefabs : MonoBehaviour
 			yield return null; 
 		}
 
-		Destroy(audioSource.gameObject);
+		if (audioSource)
+		{
+			Destroy(audioSource.gameObject);
+		}
 	}
 }

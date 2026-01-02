@@ -33,7 +33,7 @@
         </ui:VisualElement>
         <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; height: auto; width: 50%;">
             <ui:VisualElement name="ReviveContainer" picking-mode="Ignore" style="flex-grow: 1; flex-direction: column-reverse;">
-                <ui:ProgressBar title="Hold F to revive your partner" name="ReviveProgressBar" value="0" picking-mode="Ignore" class="unity-progress-bar__container progress-bar" style="justify-content: flex-start; align-content: flex-start; width: 80%; align-self: center; height: 20%; min-height: auto; max-height: none; font-size: 80%; color: rgb(0, 0, 0); margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-background-image-tint-color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 200px; -unity-text-generator: advanced;"/>
+                <ui:ProgressBar title="Hold F to revive your partner" name="ReviveProgressBar" value="0" picking-mode="Ignore" class="unity-progress-bar__container progress-bar" style="justify-content: flex-start; align-content: flex-start; width: 80%; align-self: center; height: 20%; min-height: auto; max-height: none; font-size: 60%; color: rgb(0, 0, 0); margin-right: 0; margin-bottom: 0; margin-left: 0; -unity-background-image-tint-color: rgb(255, 255, 255); -unity-text-auto-size: best-fit 10px 50px; -unity-text-generator: advanced; -unity-font-definition: url(&quot;project://database/Assets/Fonts/PixelatedEleganceRegular-ovyAA.ttf?fileID=12800000&amp;guid=ee5e01a15ac376f45a2dfbdca433691d&amp;type=3#PixelatedEleganceRegular-ovyAA&quot;);"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1; width: 25%;"/>

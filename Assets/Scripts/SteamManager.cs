@@ -18,7 +18,7 @@ public sealed class SteamManager : MonoBehaviour
 	bool initialized;
 	SteamAPIWarningMessageHook_t steamAPIWarningMessageHook;
 
-	public static bool Initialized => GetInstance().initialized;
+	public static bool Initialized => instance != null && instance.initialized;
 
 	public static SteamManager GetInstance()
 	{
@@ -139,6 +139,17 @@ public sealed class SteamManager : MonoBehaviour
 		}
 
 		SteamAPI.Shutdown();
+	}
+	
+	void OnApplicationQuit()
+	{
+		if (instance == null || instance != this || !initialized)
+		{
+			return;
+		}
+
+		SteamAPI.Shutdown();
+		initialized = false;
 	}
 
 	public void SetRichPresence(string key, string value) => SteamFriends.SetRichPresence(key, value);
