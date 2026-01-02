@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 namespace Lobby
 {
@@ -20,8 +20,17 @@ namespace Lobby
 		public LevelGenerator LevelGenerator;
 
 		static CustomNetworkRoomPlayer LocalRoomPlayer => FindObjectsByType<CustomNetworkRoomPlayer>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID).First(roomPlayer => roomPlayer.isLocalPlayer);
-		
+
+		protected Callback<LobbyCreated_t> LobbyCreated;
+		protected Callback<GameLobbyJoinRequested_t> GameLobbyJoinRequested;
+		protected Callback<LobbyEnter_t> LobbyEntered;
+		protected Callback<LobbyMatchList_t> LobbyList;
+
+		public CSteamID CurrentLobbyID;
+		const string HostAddressKey = "HostAddress";
+
 		NetworkDiscovery networkDiscovery;
+
 		Dictionary<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerStates;
 		Dictionary<NetworkConnectionToClient, GameObject> connections;
 		Coroutine checkingAllDead;
@@ -29,27 +38,100 @@ namespace Lobby
 		public override void Start()
 		{
 			LevelGenerator = GetComponent<LevelGenerator>();
+			connections = new Dictionary<NetworkConnectionToClient, GameObject>();
+
 			networkDiscovery = GetComponent<NetworkDiscovery>();
 			networkDiscovery.StartDiscovery();
-			connections = new Dictionary<NetworkConnectionToClient, GameObject>();
+
+			if (SteamManager.Initialized)
+			{
+				LobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
+				GameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
+				LobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+				LobbyList = Callback<LobbyMatchList_t>.Create(OnLobbyMatchList);
+			}
 
 			base.Start();
 		}
 
 		public void CreateRoom()
 		{
-			Console.Write("Starting room...");
 			StartHost();
+
+			if (SteamManager.Initialized)
+			{
+				SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, maxConnections);
+			}
+
 			networkDiscovery.AdvertiseServer();
-			// SteamManager.GetInstance().SetRichPresence("steam_display", "#Status_AtMainMenu");
+		}
+
+		void OnLobbyCreated(LobbyCreated_t callback)
+		{
+			if (callback.m_eResult != EResult.k_EResultOK) return;
+
+			CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
+
+			SteamMatchmaking.SetLobbyData(CurrentLobbyID, HostAddressKey, SteamUser.GetSteamID().ToString());
+			SteamMatchmaking.SetLobbyData(CurrentLobbyID, "name", SteamFriends.GetPersonaName() + "'s Room");
+		}
+
+		public void OnServerFound(ServerResponse response)
+		{
+			UIDocumentController.GetInstance().AddServerToList(response);
+		}
+
+		void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
+		{
+			SteamMatchmaking.JoinLobby(callback.m_steamIDLobby);
+		}
+
+		void OnLobbyEntered(LobbyEnter_t callback)
+		{
+			if (NetworkServer.active)
+			{
+				return;
+			}
+
+			CurrentLobbyID = new CSteamID(callback.m_ulSteamIDLobby);
+			string hostAddress = SteamMatchmaking.GetLobbyData(CurrentLobbyID, HostAddressKey);
+
+			networkAddress = hostAddress;
+			StartClient();
+		}
+
+		public void SearchSteamLobbies()
+		{
+			SteamMatchmaking.RequestLobbyList();
+		}
+
+		void OnLobbyMatchList(LobbyMatchList_t callback)
+		{
+			for (int i = 0; i < callback.m_nLobbiesMatching; i++)
+			{
+				CSteamID lobbyID = SteamMatchmaking.GetLobbyByIndex(i);
+				string lobbyData = SteamMatchmaking.GetLobbyData(lobbyID, "name");
+
+				UIDocumentController.GetInstance().AddSteamLobbyToUI(lobbyID, lobbyData);
+			}
 		}
 
 		public void LeaveRoom()
 		{
-			if (isNetworkActive)
+			if (!isNetworkActive)
 			{
-				StopHost();
+				return;
 			}
+
+			if (NetworkServer.active)
+			{
+				if (CurrentLobbyID != CSteamID.Nil)
+				{
+					SteamMatchmaking.LeaveLobby(CurrentLobbyID);
+				}
+				networkDiscovery.StopDiscovery();
+			}
+			StopHost();
 		}
 
 		public static void Ready()
@@ -62,9 +144,48 @@ namespace Lobby
 			LocalRoomPlayer.CmdChangeReadyState(!LocalRoomPlayer.readyToBegin);
 		}
 
-		public void OnServerFound(ServerResponse response)
+		public override void OnRoomServerSceneChanged(string sceneName)
 		{
-			UIDocumentController.GetInstance().AddServerToList(response);
+			if (sceneName.Contains("RoomScene"))
+			{
+				if (CurrentLobbyID != CSteamID.Nil)
+				{
+					SteamMatchmaking.SetLobbyJoinable(CurrentLobbyID, true);
+				}
+
+				networkDiscovery.AdvertiseServer();
+
+				NetworkStartPosition[] newSpawners = FindObjectsByType<NetworkStartPosition>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+				spawnerStates = newSpawners.ToDictionary(sp => sp, _ => (CustomNetworkRoomPlayer)null);
+
+				int index = 0;
+				foreach (NetworkRoomPlayer player in roomSlots.Where(player => player))
+				{
+					if (index < newSpawners.Length)
+					{
+						spawnerStates[newSpawners[index]] = player.GetComponent<CustomNetworkRoomPlayer>();
+					}
+					index++;
+				}
+			}
+			else if (sceneName.Contains("GameScene"))
+			{
+				if (CurrentLobbyID != CSteamID.Nil)
+				{
+					SteamMatchmaking.SetLobbyJoinable(CurrentLobbyID, false);
+				}
+
+				networkDiscovery.StopDiscovery();
+
+				if (checkingAllDead is not null)
+				{
+					StopCoroutine(checkingAllDead);
+				}
+
+				checkingAllDead = StartCoroutine(StartGame());
+			}
+
+			base.OnRoomServerSceneChanged(sceneName);
 		}
 
 		public override void OnRoomClientConnect()
@@ -85,14 +206,11 @@ namespace Lobby
 		public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
 		{
 			(NetworkStartPosition spawner, _) = spawnerStates.FirstOrDefault(x => !x.Value);
-
 			if (spawner != null)
 			{
 				GameObject roomPlayer = Instantiate(roomPlayerPrefab.gameObject, spawner.transform.position, spawner.transform.rotation);
-
 				NetworkServer.Spawn(roomPlayer, conn);
 				spawnerStates[spawner] = roomPlayer.GetComponent<CustomNetworkRoomPlayer>();
-
 				return roomPlayer;
 			}
 
@@ -105,7 +223,6 @@ namespace Lobby
 			if (conn.identity)
 			{
 				CustomNetworkRoomPlayer roomPlayer = conn.identity.GetComponent<CustomNetworkRoomPlayer>();
-
 				KeyValuePair<NetworkStartPosition, CustomNetworkRoomPlayer> spawnerEntry = spawnerStates.FirstOrDefault(sp => sp.Value == roomPlayer);
 
 				if (spawnerEntry.Key)
@@ -113,7 +230,6 @@ namespace Lobby
 					spawnerStates[spawnerEntry.Key] = null;
 				}
 			}
-
 			base.OnRoomServerDisconnect(conn);
 		}
 
@@ -122,52 +238,13 @@ namespace Lobby
 			roomPlayer.GetComponent<CustomNetworkRoomPlayer>().OnClientPlayersReady();
 			GameObject gamePlayer = base.OnRoomServerCreateGamePlayer(conn, roomPlayer);
 			connections.Add(conn, gamePlayer);
-			
 			return gamePlayer;
 		}
 
 		public override void OnClientDisconnect()
 		{
 			UIDocumentController.GetInstance().OpenMainMenu();
-
 			base.OnClientDisconnect();
-		}
-
-		public override void OnRoomServerSceneChanged(string sceneName)
-		{
-			if (sceneName.Contains("RoomScene"))
-			{
-				NetworkStartPosition[] newSpawners = FindObjectsByType<NetworkStartPosition>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
-				spawnerStates = newSpawners.ToDictionary(sp => sp, _ => (CustomNetworkRoomPlayer)null);
-				
-				int index = 0;
-				foreach (NetworkRoomPlayer player in roomSlots)
-				{
-					if (!player)
-					{
-						continue;
-					}
-					
-					if (index < newSpawners.Length)
-					{
-						NetworkStartPosition spawnerKey = newSpawners[index];
-						spawnerStates[spawnerKey] = player.GetComponent<CustomNetworkRoomPlayer>();
-					}
-					index++;
-				}
-			}
-			else if (sceneName.Contains("GameScene"))
-			{
-				Debug.Log("Starting check of players");
-				if (checkingAllDead is not null)
-				{
-					StopCoroutine(checkingAllDead);
-				}
-				
-				checkingAllDead = StartCoroutine(StartGame());
-			}
-			
-			base.OnRoomServerSceneChanged(sceneName);
 		}
 
 		public override void OnRoomClientSceneChanged()
@@ -176,50 +253,52 @@ namespace Lobby
 			{
 				UIDocumentController.GetInstance().OpenRoomMenu();
 			}
-			
+
 			base.OnRoomClientSceneChanged();
 		}
-		
+
 		[Server]
-       IEnumerator StartGame()
-       {
-          yield return new WaitForSeconds(1.0f);
+		IEnumerator StartGame()
+		{
+			yield return new WaitForSeconds(1.0f);
 
-          while (true)
-          {
-             yield return new WaitForSeconds(0.5f);
+			while (true)
+			{
+				yield return new WaitForSeconds(0.5f);
 
-             if (!SceneManager.GetActiveScene().name.Contains("GameScene"))
-             {
-                 yield break;
-             }
+				if (!SceneManager.GetActiveScene().name.Contains("GameScene"))
+				{
+					yield break;
+				}
 
-             if (connections.Count == 0) 
-             {
-                 continue;
-             }
+				if (connections.Count == 0)
+				{
+					continue;
+				}
 
-             bool allDead = FindObjectsByType<PlayerController>(FindObjectsSortMode.InstanceID) is {} players
-                                 && players.Length != 0
-                                 && players.Count(player => player.IsDead) == players.Length
-                                 && SceneManager.GetActiveScene().name.Contains("GameScene");
+				bool allDead = FindObjectsByType<PlayerController>(FindObjectsSortMode.InstanceID) is {} players
+				               && players.Length != 0
+				               && players.Count(player => player.IsDead) == players.Length
+				               && SceneManager.GetActiveScene().name.Contains("GameScene");
 
-             if (allDead)
-             {
-	             Debug.Log("All players are dead. Returning to Room.");
-	             EndGameAndReturnToLobby();
-	             yield break;
-             }
-          }
-       }
+				if (allDead)
+				{
+					EndGameAndReturnToLobby();
+					yield break;
+				}
+			}
+		}
 
 		[Server]
 		void EndGameAndReturnToLobby()
 		{
 			foreach (NetworkRoomPlayer roomPlayer in roomSlots)
 			{
-				if (roomPlayer == null) continue;
-
+				if (roomPlayer == null)
+				{
+					continue;
+				}
+				
 				NetworkConnectionToClient conn = roomPlayer.connectionToClient;
 
 				if (conn != null && connections.TryGetValue(conn, out GameObject gamePlayer))

@@ -23,7 +23,7 @@ namespace Lobby
 
 		public override void OnStartLocalPlayer()
 		{
-			CmdChangePlayerName(SteamManager.GetInstance().GetSteamName());
+			CmdChangePlayerName(Steamworks.SteamFriends.GetPersonaName());
 			StateText.text = readyToBegin ? "Ready" : "Not Ready";
 			StateText.color = readyToBegin ? Color.green : Color.red;
 			base.OnStartLocalPlayer();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Controllers;
@@ -5,6 +6,7 @@ using Helpers;
 using Lobby;
 using Mirror;
 using Mirror.Discovery;
+using Steamworks;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,7 +19,7 @@ namespace UI
 		static UIDocumentController instance;
 
 		public UIDocument Document { get; private set; }
-		Dictionary<long, ServerResponse> serversFound;
+		Dictionary<string, string> serversFound;
 
 		[SerializeField]
 		VisualTreeAsset MainMenu;
@@ -50,7 +52,7 @@ namespace UI
 			}
 
 			Document = GetComponent<UIDocument>();
-			serversFound = new Dictionary<long, ServerResponse>();
+			serversFound = new Dictionary<string, string>();
 			UpdateVisualTree(MainMenu);
 		}
 
@@ -135,7 +137,7 @@ namespace UI
 			{
 				container.hierarchy.Clear();
 
-				foreach (KeyValuePair<long, ServerResponse> serverResponse in serversFound)
+				foreach (KeyValuePair<string, string> serverResponse in serversFound)
 				{
 					TemplateContainer roomFound = RoomButtonTemplate.Instantiate();
 					
@@ -144,9 +146,9 @@ namespace UI
 					{
 						if (button.Children().First() is Label label)
 						{
-							label.text = $"Join {serverResponse.Value.uri.Host}";
+							label.text = $"Join {serverResponse.Value}";
 						}
-						button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(serverResponse.Value.uri));
+						button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(new Uri(serverResponse.Value)));
 					}
             
 					container.hierarchy.Add(roomFound);
@@ -379,13 +381,13 @@ namespace UI
 
 		public void AddServerToList(ServerResponse response)
 		{
-			if (serversFound.ContainsKey(response.serverId))
+			if (serversFound.ContainsKey(response.serverId.ToString()))
 			{
 				return;
 			}
 
 			ListView container = Document.rootVisualElement.Q<ListView>("ServerListView");
-			serversFound.Add(response.serverId, response);
+			serversFound.Add(response.serverId.ToString(), response.uri.Host);
 			if (container is null)
 			{
 				return;
@@ -401,6 +403,36 @@ namespace UI
 					label.text = $"Join {response.uri.Host}";
 				}
 				button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(response.uri));
+			}
+            
+			container.hierarchy.Add(roomFound);
+		}
+		public void AddSteamLobbyToUI(CSteamID lobbyID, string s)
+		{
+			if (serversFound.ContainsKey(s))
+			{
+				return;
+			}
+
+			ListView container = Document.rootVisualElement.Q<ListView>("ServerListView");
+			serversFound.Add(s, lobbyID.ToString());
+			if (container is null)
+			{
+				return;
+			}
+
+			TemplateContainer roomFound = RoomButtonTemplate.Instantiate();
+					
+			Button button = roomFound.Q<Button>("ServerFoundButton");
+			if (button != null)
+			{
+				if (button.Children().First() is Label label)
+				{
+					CSteamID lobbyOwner = SteamMatchmaking.GetLobbyOwner(lobbyID);
+					string personaName = SteamFriends.GetFriendPersonaName(lobbyOwner);
+					label.text = $"Join {personaName}";
+				}
+				button.clickable = new Clickable(() => NetworkManager.singleton.StartClient(new Uri(lobbyID.ToString())));
 			}
             
 			container.hierarchy.Add(roomFound);
