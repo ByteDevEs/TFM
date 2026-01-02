@@ -58,6 +58,7 @@ namespace Level
 			if (newPlayerCount == 0)
 			{
 				Container.SetActive(false);
+				Surface.BuildNavMesh();
 			}
 			else if (oldPlayerCount == 0)
 			{
@@ -74,6 +75,8 @@ namespace Level
 				{
 					meshAgent.enabled = true;
 				}
+				
+				Surface.BuildNavMesh();
 			}
 		}
 	}

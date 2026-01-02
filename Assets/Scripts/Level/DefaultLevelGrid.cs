@@ -4,7 +4,6 @@ using System.Linq;
 using DelaunatorSharp;
 using Mirror;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -226,8 +225,6 @@ namespace Level
 					}
 				}
 			}
-
-			Surface.BuildNavMesh();
 		}
 		
 		bool IsWall(int r, int c)
