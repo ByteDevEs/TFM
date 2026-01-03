@@ -8,13 +8,9 @@ namespace Enemies.EnemyStates
 		MovementController movementController;
 		readonly GameObject target;
 
-		float timer;
-		const float MaxTime = 5f;
-
 		public AttackState(EnemyController enemyController, GameObject target)
 		{
 			this.target = target;
-			timer = MaxTime;
 			Start(enemyController);
 		}
 		
@@ -36,20 +32,12 @@ namespace Enemies.EnemyStates
 			if (movementController.Destination != Vector3.zero
 			    && Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius)
 			{
-				timer -= Time.deltaTime;
-
-				if (timer <= 0f)
-				{
-					attackController.SrvStopAttacking();
-					enemyController.State = new IdleState(enemyController, 0f);
-				}
-				
+				attackController.SrvStopAttacking();
+				enemyController.State = new IdleState(enemyController, 0f);
 				return;
 			}
 
-			timer = MaxTime;
-
-			if (target.GetComponent<PlayerController>().IsDead)
+			if (target.GetComponent<PlayerController>().IsDead || Vector3.Distance(movementController.Destination, target.transform.position) > enemyController.DetectionRadius + 20.0f)
 			{
 				attackController.SrvStopAttacking();
 				enemyController.State = new IdleState(enemyController, 0f);

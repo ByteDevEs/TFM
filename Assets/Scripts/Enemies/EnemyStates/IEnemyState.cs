@@ -32,6 +32,7 @@ namespace Enemies.EnemyStates
 				if (isInAngle && isInRadius)
 				{
 					enemyController.State = new AttackState(enemyController, player);
+					return;
 				}
 			}
 		}

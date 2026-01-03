@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DelaunatorSharp;
+using Enemies;
 using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
@@ -104,7 +105,7 @@ namespace Level
 		}
 		
 		[Server]
-		public void SrvGenerateEnemies()
+		void SrvGenerateEnemies()
 		{
 			for (int x = 0; x < LevelCells.Length; x++)
 			{
@@ -225,8 +226,26 @@ namespace Level
 					}
 				}
 			}
+
+			if (isServer)
+			{
+				SrvGenerateEnemies();
+			}
+			else
+			{
+				ClientSetEnemiesAsChildren();
+			}
 		}
 		
+		[Client]
+		void ClientSetEnemiesAsChildren()
+		{
+			foreach (EnemyController enemyController in FindObjectsByType<EnemyController>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID).Where(el => el.transform.parent == null))
+			{
+				enemyController.transform.SetParent(Container.transform);
+			}
+		}
+
 		bool IsWall(int r, int c)
 		{
 			if (r < 0 || r >= GridX || c < 0 || c >= GridY)

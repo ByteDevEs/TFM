@@ -1,6 +1,8 @@
+using System;
 using Controllers;
 using Enemies.EnemyStates;
 using Helpers;
+using Mirror;
 using UnityEngine;
 using Weapons;
 
@@ -13,6 +15,7 @@ namespace Enemies
 		public float DetectionAngle;
 		
 		public IEnemyState State;
+		[SyncVar] public string stateString;
 
 		new void Start()
 		{
@@ -26,6 +29,12 @@ namespace Enemies
 			State = new IdleState(this);
 			AttackController attackController = GetComponent<AttackController>();
 			attackController.SwapWeapons(WeaponLibrary.GetRandomWeaponID());
+		}
+
+		[Server]
+		void OnEnable()
+		{
+			State = new IdleState(this, 0f);
 		}
 
 		public override void RemoveEffect()
@@ -46,6 +55,7 @@ namespace Enemies
 		{
 			if (isServer)
 			{
+				stateString = State.ToString();
 				State.Update(this);
 			}
 		}

@@ -387,7 +387,7 @@ namespace UI
 			}
 
 			ListView container = Document.rootVisualElement.Q<ListView>("ServerListView");
-			serversFound.Add(response.serverId.ToString(), response.uri.Host);
+			serversFound.Add(response.serverId.ToString(), response.uri.ToString());
 			if (container is null)
 			{
 				return;

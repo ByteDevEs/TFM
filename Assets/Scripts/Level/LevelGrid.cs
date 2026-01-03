@@ -1,4 +1,6 @@
 using System;
+using Enemies;
+using Enemies.EnemyStates;
 using Mirror;
 using Unity.AI.Navigation;
 using Unity.Mathematics;
@@ -57,8 +59,12 @@ namespace Level
 		{
 			if (newPlayerCount == 0)
 			{
+				foreach (EnemyController enemyController in Container.GetComponentsInChildren<EnemyController>())
+				{
+					enemyController.GetComponent<NavMeshAgent>().enabled = false;
+				}
+				
 				Container.SetActive(false);
-				Surface.BuildNavMesh();
 			}
 			else if (oldPlayerCount == 0)
 			{
@@ -69,14 +75,14 @@ namespace Level
 				else
 				{
 					GenerateMesh();
+				
+					Surface.BuildNavMesh();
 				}
 				
 				foreach (NavMeshAgent meshAgent in Container.GetComponentsInChildren<NavMeshAgent>())
 				{
 					meshAgent.enabled = true;
 				}
-				
-				Surface.BuildNavMesh();
 			}
 		}
 	}
